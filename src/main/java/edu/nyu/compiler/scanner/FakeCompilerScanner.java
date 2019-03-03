@@ -29,8 +29,10 @@ class FakeCompilerScanner {
 	}
 
 	public Token nextToken() {
-		currentLine = new LineInput(input.nextLine(), lineNumber++); 
-		return currentToken; 
+		if (currentLine.endOfLine()) {
+			currentLine = new LineInput(input.nextLine(), lineNumber++); 			
+		}
+		return currentLine.nextToken();
 	}
 
 	public boolean endOfFile() {

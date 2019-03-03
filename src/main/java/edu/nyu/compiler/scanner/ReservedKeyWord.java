@@ -41,10 +41,9 @@ public enum ReservedKeyWord {
     OP_MULT("*"),
     OP_DIV("/"),
     OP_UMINUS("-"),
-    ID(INPUT_DEPENDENT_KEYWORD),
-    INT_LIT(INPUT_DEPENDENT_KEYWORD);
+    ID("INPUT_DEPENDENT_KEYWORD"),
+    INT_LIT("INPUT_DEPENDENT_KEYWORD");
 
-    private static final String INPUT_DEPENDENT_KEYWORD = "input"; 
     private final String keywordString; 
 
     private ReservedKeyWord(String keywordString) {
