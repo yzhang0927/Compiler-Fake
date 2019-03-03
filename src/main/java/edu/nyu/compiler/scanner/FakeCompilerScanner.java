@@ -1,6 +1,7 @@
 package edu.nyu.compiler.scanner;
 
 import java.util.Scanner; 
+import java.io.InputStream;
 
 /**
  * This is the scanner class for the compiler design homework
@@ -12,7 +13,11 @@ class FakeCompilerScanner {
 
 	private Token currentToken; 
 
+	private LineInput currentLine; 
+
 	private Scanner input;
+
+	private int lineNumber; 
 
 	public FakeCompilerScanner() {
 		this(System.in); 
@@ -20,13 +25,15 @@ class FakeCompilerScanner {
 
 	public FakeCompilerScanner(InputStream source) {
 		input = new Scanner(source);
+		lineNumber = 1; 
 	}
 
 	public Token nextToken() {
-		if (input.hasNext()) {
+		currentLine = new LineInput(input.nextLine(), lineNumber++); 
+		return currentToken; 
+	}
 
-		} else {
-
-		}
+	public boolean endOfFile() {
+		return input.hasNextLine(); 
 	}
 }
