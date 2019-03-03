@@ -18,7 +18,7 @@ public enum ReservedKeyWord {
     OP_COMMA(","),
     KW_END("end"),
     KW_WHILE("while"),
-    KW_DO("while"),
+    KW_DO("do"),
     KW_IF("if"),
     KW_THEN("then"),
     KW_ELSIF("elsif"),
@@ -48,5 +48,9 @@ public enum ReservedKeyWord {
 
     private ReservedKeyWord(String keywordString) {
         this.keywordString = keywordString; 
+    }
+
+    public String getKeywordString() {
+        return keywordString; 
     }
 }
