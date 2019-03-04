@@ -12,7 +12,7 @@ class LineInput {
 
     private int currPos; 
 
-    private ReservedKeyWord currKWType; 
+    private TokenContext currContext; // This is the context switch
 
     public LineInput(String currLine, int lineNumber) {
         this.currLine = currLine; 
