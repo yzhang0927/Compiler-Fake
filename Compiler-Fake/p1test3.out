@@ -1,0 +1,10 @@
+Comment "*** From outline.txt file" on line 1, char 1 to 25
+Comment "*** Calculator only" on line 3, char 0 to 19
+KW_IF on line 4, char 0 to 5
+INT_LIT value 123 on line 4, char 7 to 9
+OP_MUL on line 4, char 10
+INT_LIT value 231 on line 4, char 11 to 13
+OP_PLUS on line 4, char 14
+LPAR on line 4, char 15
+...
+

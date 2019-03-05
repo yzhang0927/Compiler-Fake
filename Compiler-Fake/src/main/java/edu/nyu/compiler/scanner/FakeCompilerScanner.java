@@ -35,6 +35,13 @@ class FakeCompilerScanner {
 		return currentLine.next();
 	}
 
+	public Token peek() {
+		if (currentLine.endOfLine()) {
+			currentLine = new LineInput(input.nextLine(), lineNumber++);
+		}
+		return currentLine.peek();
+	}
+
 	public boolean endOfFile() {
 		return input.hasNextLine(); 
 	}

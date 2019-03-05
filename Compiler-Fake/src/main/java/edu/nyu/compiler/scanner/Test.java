@@ -1,10 +1,12 @@
 package edu.nyu.compiler.scanner;
-
+import java.io.File;
 import java.util.List;
 
 class Test {
 	public static void main(String[] args) {
-		FakeCompilerScanner testScanner = new FakeCompilerScanner(); 
+		File file = new File("src/test.txt");
+		FakeCompilerScanner testScanner = new FakeCompilerScanner();
+
 		String testText = "*** this test file contains all the legal tokens in the language, I believe\n" +
 				"*** this is a comment\n" +
 				"*** all keywords\n" +
@@ -76,9 +78,7 @@ class Test {
 				"\\\\!#@!$\n" +
 				"*** end of garbage";
 
-
         while (!testScanner.endOfFile()) {
-
         }
 	}
 }
