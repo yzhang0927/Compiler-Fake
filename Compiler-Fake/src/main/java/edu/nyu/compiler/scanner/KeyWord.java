@@ -24,6 +24,10 @@ public class KeyWord extends Word {
             this.keywordString = keywordString;
         }
 
+        private String getKeywordString() {
+            return this.keywordString;
+        }
+
     }
 
     public KeyWord(String token, int lineNum, int startCharPos, int finishCharPos) {
@@ -32,7 +36,7 @@ public class KeyWord extends Word {
 
     public boolean validate(char tk){
         for (ReservedKey me : ReservedKey.values()) {
-            if (me.name().equals(this.getToken()))
+            if (me.getKeywordString().equals(this.getToken()))
                 return true;
         }
         return false;

@@ -8,7 +8,7 @@ class LineInput {
     private final int lineNumber;
 
     private Token currToken; 
-
+    private boolean flagComment;
     private final String currLine;
 
     private int currPos = 0;
@@ -32,7 +32,7 @@ class LineInput {
             currContext = getContextType(currChar);
 
             if (currContext == TokenContext.Unidentified) {
-                System.out.println(String.format("unidentified character scanned at line: %d, col: %d",currLine,currPos));
+                System.out.println(String.format("unidentified character scanned at line: %d, col: %d",lineNumber,currPos));
 
             } else if (currContext == TokenContext.NonGreedyOperator) {
                 NonGreedyOperator possibleToken =
@@ -45,9 +45,12 @@ class LineInput {
             } else if (currContext == TokenContext.GreedyOperator) {
                 //*
                 if (currChar == '*') {
-                    if ( currPos+1 < currLine.length() && currLine.charAt(currPos)=='*' && currLine.charAt(currPos+1)=='*') { break; }
+                    if ( currPos+1 < currLine.length() && currLine.charAt(currPos)=='*' && currLine.charAt(currPos+1)=='*') {
                         //comment encountered, break loop.
-                    else {
+                        System.out.println("comment on line: " + lineNumber);
+                        this.flagComment = true;
+                        break;
+                    } else {
                         NonGreedyOperator possibleToken = new NonGreedyOperator ("*",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -207,7 +210,7 @@ class LineInput {
             //currKWType = ReservedKeyWord.INT_LIT;
         } else{
             context = TokenContext.Unidentified;
-            System.out.println(String.format("unidentified character%c at line: %d, col: %d",c,currLine,currPos-1));
+            System.out.println(String.format("unidentified character%c at line: %d, col: %d",c,lineNumber,currPos-1));
         }
         return context;
     }
@@ -242,7 +245,19 @@ class LineInput {
         return lineNumber; 
     }
 
+    public String getLine() {
+        return this.currLine;
+    }
+
     public boolean endOfLine() {
         return currPos >= currLine.length();
+    }
+
+    public boolean isFlagComment() {
+        return this.flagComment;
+    }
+
+    public void clearComment() {
+        this.flagComment = false;
     }
 }

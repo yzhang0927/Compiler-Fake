@@ -1,6 +1,8 @@
 package edu.nyu.compiler.scanner;
 
-import java.util.Scanner; 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.util.Scanner;
 import java.io.InputStream;
 
 /**
@@ -17,20 +19,24 @@ class FakeCompilerScanner {
 
 	private Scanner input;
 
-	private int lineNumber; 
+	private int lineNumber;
 
-	public FakeCompilerScanner() {
-		this(System.in); 
-	}
-
-	public FakeCompilerScanner(InputStream source) {
-		input = new Scanner(source);
-		lineNumber = 1; 
+	public FakeCompilerScanner(String inFileAddr) {
+		File inFile = new File(inFileAddr);
+		String encoding = "utf-8";
+		try {
+			input = new Scanner(inFile,encoding);
+			lineNumber = 1;
+			currentLine = new LineInput(input.nextLine(),lineNumber);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public Token next() {
-		if (currentLine.endOfLine()) {
-			currentLine = new LineInput(input.nextLine(), lineNumber++); 			
+		if (currentLine.endOfLine()||currentLine.isFlagComment()) {
+			currentLine = new LineInput(input.nextLine(), lineNumber++);
+			currentLine.clearComment();
 		}
 		return currentLine.next();
 	}
@@ -42,7 +48,15 @@ class FakeCompilerScanner {
 		return currentLine.peek();
 	}
 
+	public int getLineNumber() {
+		return this.lineNumber;
+	}
+
+	public String getLine() {
+		return currentLine.getLine();
+	}
+
 	public boolean endOfFile() {
-		return input.hasNextLine(); 
+		return !input.hasNextLine();
 	}
 }
