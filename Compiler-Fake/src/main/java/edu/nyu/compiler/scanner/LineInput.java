@@ -24,7 +24,7 @@ class LineInput {
     public Token next() {
         ReservedKeyWord currKWType;
         while(!endOfLine()) {
-            TokenContext lastContext = currContext;
+
             char currChar = currLine.charAt(currPos++);
 
             if (currChar == ' ') { continue; }
@@ -32,11 +32,9 @@ class LineInput {
             currContext = getContextType(currChar);
 
             if (currContext == TokenContext.Unidentified) {
-                System.out.println(String.format("unidentified character scanned at line: %d, col: %d",lineNumber,currPos));
-
+                //System.out.println(String.format("unidentified character scanned at line: %d, col: %d",lineNumber,currPos));
             } else if (currContext == TokenContext.NonGreedyOperator) {
-                NonGreedyOperator possibleToken =
-                        new NonGreedyOperator(String.valueOf(currChar),lineNumber,startPos,currPos);
+                NonGreedyOperator possibleToken = new NonGreedyOperator(String.valueOf(currChar),lineNumber,startPos,currPos);
                 //already checked
                 possibleToken.setkwType(possibleToken.getTokenType());
                 currToken = possibleToken;
@@ -66,6 +64,7 @@ class LineInput {
                     }
                     else {
                         System.out.println("solo ! is illegal");
+                        System.out.println(String.format("unidentified character ! at line: %d, col: %d",lineNumber,currPos-1));
                     }
 
                 } else if (currChar == '<') {
@@ -138,10 +137,42 @@ class LineInput {
                 else {
                     System.out.println("sth wrong with greedy op");
                 }
-                startPos = currPos;
+
 
             } else {
                 //number or letter
+                TokenContext lastContext = currContext;
+
+                while (currPos < currLine.length() && currContext==lastContext) {
+                    currContext = getContextType(currLine.charAt(currPos++));
+                }
+                String possibleTokenString = currLine.substring(startPos, currPos);
+                if (lastContext == TokenContext.Number) {
+                    Number possibleToken = new Number(possibleTokenString, lineNumber, startPos, currPos);
+                    if (possibleToken.validate(' ')) {
+                        possibleToken.setkwType(ReservedKeyWord.INT_LIT);
+                        currToken = possibleToken;
+                        break;
+                    }
+                } else {
+                    if (isKeyWord(possibleTokenString)) {
+                        KeyWord possibleToken = new KeyWord(possibleTokenString, lineNumber, startPos, currPos);
+                        possibleToken.setkwType(possibleToken.getTokenType());
+                        currToken = possibleToken;
+                        break;
+                    } else {
+                        Identifier possibleToken = new Identifier(possibleTokenString, lineNumber, startPos, currPos);
+                        if (possibleToken.validate(' ')) {
+                            possibleToken.setkwType(ReservedKeyWord.ID);
+                            currToken = possibleToken;
+                            break;
+                        }
+                    }
+
+                }
+                startPos = currPos;
+
+                /*
                 if (currPos >= currLine.length() && lastContext == null) {
                     lastContext = currContext;
                 }
@@ -182,8 +213,10 @@ class LineInput {
                     else {
                         System.out.println("sth wrong with number and word");
                     }
-                }
+                }*/
             }
+
+
             startPos = currPos;
         }
         return currToken;
@@ -210,12 +243,10 @@ class LineInput {
             //currKWType = ReservedKeyWord.INT_LIT;
         } else{
             context = TokenContext.Unidentified;
-            System.out.println(String.format("unidentified character%c at line: %d, col: %d",c,lineNumber,currPos-1));
+            System.out.println(String.format("unidentified character %c at line: %d, col: %d",c,lineNumber,currPos-1));
         }
         return context;
     }
-
-
 
     private boolean isNumber(char possibleNum) {
         return (possibleNum >= '0' && possibleNum <= '9');

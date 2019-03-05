@@ -1,3 +1,4 @@
+####!@#%^}}{
 *** scanner test 2
 *** this comment contains something that looks like legal code: a=1; b=a+b;
 *** but it's still just a comment!!!!
@@ -7,3 +8,4 @@
 \
 \\!#@!$
 *** end of garbage
+

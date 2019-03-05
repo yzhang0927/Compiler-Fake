@@ -34,7 +34,7 @@ class FakeCompilerScanner {
 	}
 
 	public Token next() {
-		if (currentLine.endOfLine()||currentLine.isFlagComment()) {
+		if (currentLine.endOfLine() || currentLine.isFlagComment()) {
 			currentLine = new LineInput(input.nextLine(), lineNumber++);
 			currentLine.clearComment();
 		}
@@ -42,8 +42,9 @@ class FakeCompilerScanner {
 	}
 
 	public Token peek() {
-		if (currentLine.endOfLine()) {
+		if (currentLine.endOfLine() || currentLine.isFlagComment()) {
 			currentLine = new LineInput(input.nextLine(), lineNumber++);
+			currentLine.clearComment();
 		}
 		return currentLine.peek();
 	}

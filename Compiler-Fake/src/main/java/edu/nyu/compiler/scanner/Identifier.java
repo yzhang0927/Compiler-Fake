@@ -12,6 +12,7 @@ public class Identifier extends Word {
         String patternString = "^[a-zA-Z_]{1,80}$";
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(getToken());
+
         if (matcher.matches()){
             return true;
         }

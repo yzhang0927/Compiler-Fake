@@ -37,6 +37,11 @@ public abstract class KeyList{
         add("in");
         add("return");
         add("print");
+        add("array");
+        add("tuple");
+        add("local");
+        add("global");
+        add("defun");
     }};
 
 

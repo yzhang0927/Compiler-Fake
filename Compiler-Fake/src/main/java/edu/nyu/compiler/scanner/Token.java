@@ -22,7 +22,7 @@ public abstract class Token {
 	public String getToken() {
 		return token; 
 	}
-
+	public ReservedKeyWord getKwType() { return kwType; }
 	public void setkwType(ReservedKeyWord kw){
 		this.kwType = kw;
 	}
