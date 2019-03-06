@@ -4,6 +4,11 @@
 
 # Compiled class directory
 target/
+out/
+TODO/
+
+# IDE Artifacts
+*.iml
 
 # Compiled class file
 *.class

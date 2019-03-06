@@ -5,14 +5,15 @@ public abstract class Token {
 	private final int finishCharPos; 
 	private final int lineNum; 
 	private final String token; 
-	private final ReservedKeyWord kwType; 
+	private ReservedKeyWord kwType;
 
-	public Token(String token, int lineNum, int startCharPos, int finishCharPos, ReservedKeyWord kwType) {
+	public Token(String token, int lineNum, int startCharPos, int finishCharPos) {
 		this.token = token; 
 		this.lineNum = lineNum; 
 		this.startCharPos = startCharPos; 
 		this.finishCharPos = finishCharPos; 
-		this.kwType = kwType; 
+		this.kwType = null;
+		System.out.println(this.token);
 	}
 
 	public String beautify() {
@@ -22,6 +23,12 @@ public abstract class Token {
 	public String getToken() {
 		return token; 
 	}
+	public ReservedKeyWord getKwType() { return kwType; }
 
-	public abstract boolean validate(Token prevToken); 
+	public int getStartCharPos() { return startCharPos; }
+	public int getFinishCharPos() { return finishCharPos; }
+	public void setkwType(ReservedKeyWord kw){
+		this.kwType = kw;
+	}
+	public abstract boolean validate(char prevChar);
 }

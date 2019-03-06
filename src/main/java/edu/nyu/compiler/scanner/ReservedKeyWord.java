@@ -5,17 +5,11 @@ import java.util.HashMap;
 public enum ReservedKeyWord {
 
     KW_ARRAY("array"),
-    OP_DOTDOT(".."),
-    LBRAK("["),
-    RBRAK("]"),
-    SEMI(";"),
     KW_TUPLE("tuple"),
     KW_LOCAL("local"),
     KW_GLOBAL("global"),
     KW_DEFUN("defun"), 
-    LPAR("("),
-    RPAR(")"),
-    OP_COMMA(","),
+
     KW_END("end"),
     KW_WHILE("while"),
     KW_DO("do"),
@@ -25,11 +19,20 @@ public enum ReservedKeyWord {
     KW_ELSE("else"),
     KW_FOREACH("foreach"),
     KW_IN("in"),
-    OP_DOT("."),
     RETURN("return"),
     PRINT("print"),
+
+    LBRAK("["),
+    RBRAK("]"),
+    SEMI(";"),
+    LPAR("("),
+    RPAR(")"),
+    OP_COMMA(","),
+
+    OP_DOT("."),
     ASSIGN("="),
     EXCHANGE("<->"),
+    OP_DOTDOT(".."),
     OP_LESS("<"),
     OP_GREATER(">"),
     OP_LESSEQUAL("<="),
@@ -53,4 +56,5 @@ public enum ReservedKeyWord {
     public String getKeywordString() {
         return keywordString; 
     }
+
 }
