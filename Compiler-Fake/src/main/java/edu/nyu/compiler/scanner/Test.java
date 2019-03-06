@@ -19,6 +19,7 @@ class Test {
 
 			if (temp != null){
 				System.out.println(temp.getKwType());
+				System.out.println(' '+ String.valueOf(temp.getStartCharPos())+' '+ String.valueOf(temp.getFinishCharPos()));
 			} else {
 				System.out.println("no more tokens on this line");
 			}

@@ -27,7 +27,8 @@ class LineInput {
 
             char currChar = currLine.charAt(currPos++);
 
-            if (currChar == ' ') { continue; }
+            if (currChar == ' ') {
+                continue; }
 
             currContext = getContextType(currChar);
 
@@ -55,11 +56,11 @@ class LineInput {
                         break;
                     }
                 } else if (currChar == '!') {
-                    if (currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
                         GreedyOperator possibleToken = new GreedyOperator ("!=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
-                        currPos ++;
+
                         break;
                     }
                     else {
@@ -70,16 +71,15 @@ class LineInput {
                 } else if (currChar == '<') {
 
                     if (currPos+1 < currLine.length() && currLine.charAt(currPos)=='=' && currLine.charAt(currPos+1)=='>') {
+                        currPos += 2;
                         GreedyOperator possibleToken = new GreedyOperator ("<=>",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
-                        currPos += 2;
                         break;
-                    } else if (currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                    } else if (currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
                         GreedyOperator possibleToken = new GreedyOperator ("<=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
-                        currPos += 1;
                         break;
                     } else {
                         NonGreedyOperator possibleToken = new NonGreedyOperator ("<",lineNumber,startPos,currPos);
@@ -90,11 +90,10 @@ class LineInput {
 
                 } else if (currChar == '>') {
 
-                    if ( currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                    if ( currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
                         GreedyOperator possibleToken = new GreedyOperator (">=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
-                        currPos += 1;
                         break;
                     } else {
                         NonGreedyOperator possibleToken = new NonGreedyOperator (">",lineNumber,startPos,currPos);
@@ -105,11 +104,10 @@ class LineInput {
 
                 } else if (currChar == '=') {
 
-                    if (currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
                         GreedyOperator possibleToken = new GreedyOperator ("==",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
-                        currPos ++;
                         break;
                     } else {
                         NonGreedyOperator possibleToken = new NonGreedyOperator ("=",lineNumber,startPos,currPos);
@@ -120,11 +118,10 @@ class LineInput {
 
                 } else if (currChar == '.') {
 
-                    if (currPos < currLine.length() && currLine.charAt(currPos)=='.') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos++)=='.') {
                         GreedyOperator possibleToken = new GreedyOperator ("..",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
-                        currPos ++;
                         break;
                     } else {
                         NonGreedyOperator possibleToken = new NonGreedyOperator (".",lineNumber,startPos,currPos);
@@ -138,7 +135,6 @@ class LineInput {
                     System.out.println("sth wrong with greedy op");
                 }
 
-
             } else {
                 //number or letter
                 TokenContext lastContext = currContext;
@@ -146,6 +142,7 @@ class LineInput {
                 while (currPos < currLine.length() && currContext==lastContext) {
                     currContext = getContextType(currLine.charAt(currPos++));
                 }
+                
                 String possibleTokenString = currLine.substring(startPos, currPos);
                 if (lastContext == TokenContext.Number) {
                     Number possibleToken = new Number(possibleTokenString, lineNumber, startPos, currPos);
@@ -170,53 +167,7 @@ class LineInput {
                     }
 
                 }
-                startPos = currPos;
-
-                /*
-                if (currPos >= currLine.length() && lastContext == null) {
-                    lastContext = currContext;
-                }
-                if (lastContext != null && (lastContext != currContext|| currPos >= currLine.length())) {
-                    //switching or endline detected.
-                    String possibleTokenString = currLine.substring(startPos, currPos-1);
-                    //go back one slot.
-                    currPos--;
-                    //Number
-                    if (lastContext == TokenContext.Number) {
-                        Number possibleToken = new Number(possibleTokenString, lineNumber, startPos, currPos-1);
-                        if (possibleToken.validate(' ')) {
-                            possibleToken.setkwType(ReservedKeyWord.INT_LIT);
-                            currToken = possibleToken;
-                            break;
-                        }
-                    }
-
-                    //Word
-                    else if (lastContext == TokenContext.Word) {
-                        //rule out keywords first
-                        if (isKeyWord(possibleTokenString)) {
-                            KeyWord possibleToken = new KeyWord(possibleTokenString, lineNumber, startPos, currPos-1);
-                            possibleToken.setkwType(possibleToken.getTokenType());
-                            currToken = possibleToken;
-                            break;
-                        }
-                        //id
-                        else {
-                            Identifier possibleToken = new Identifier(possibleTokenString, lineNumber, startPos, currPos-1);
-                            if (possibleToken.validate(' ')) {
-                                possibleToken.setkwType(ReservedKeyWord.ID);
-                                currToken = possibleToken;
-                                break;
-                            }
-                        }
-                    }
-                    else {
-                        System.out.println("sth wrong with number and word");
-                    }
-                }*/
             }
-
-
             startPos = currPos;
         }
         return currToken;

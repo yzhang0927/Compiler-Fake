@@ -11,7 +11,6 @@ public abstract class KeyList{
         add("=");
         add("!");
         add(".");
-
     }};
 
     public static final HashSet<String> NonGreedyOperatorList = new HashSet<String>() {{

@@ -23,6 +23,9 @@ public abstract class Token {
 		return token; 
 	}
 	public ReservedKeyWord getKwType() { return kwType; }
+
+	public int getStartCharPos() { return startCharPos; }
+	public int getFinishCharPos() { return finishCharPos; }
 	public void setkwType(ReservedKeyWord kw){
 		this.kwType = kw;
 	}
