@@ -63,7 +63,7 @@ class FakeCompilerScanner {
 
 	public Token peek(){
 		if (currentLine.endOfLine() || currentLine.isFlagComment()) {
-			currentLine = new LineInput(input.nextLine(), lineNumber++,out);
+			currentLine = new LineInput(input.nextLine(), ++lineNumber,out);
 			currentLine.clearComment();
 		}
 		return currentLine.peek();
