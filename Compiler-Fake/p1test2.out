@@ -1,0 +1,77 @@
+unidentified character # at line: 1, col: 1
+
+unidentified character # at line: 1, col: 2
+
+unidentified character # at line: 1, col: 3
+
+unidentified character # at line: 1, col: 4
+
+unidentified character ! at line: 1, col: 5
+
+unidentified character @ at line: 1, col: 6
+
+unidentified character # at line: 1, col: 7
+
+unidentified character % at line: 1, col: 8
+
+unidentified character ^ at line: 1, col: 9
+
+unidentified character } at line: 1, col: 10
+
+unidentified character } at line: 1, col: 11
+
+unidentified character { at line: 1, col: 12
+
+comment: "** scanner test 2" from char 0 to 1 on line: 2
+
+comment: "** this comment contains something that looks like legal code: a=1; b=a+b;" from char 0 to 1 on line: 3
+
+comment: "** but it's still just a comment!!!!" from char 0 to 1 on line: 4
+
+comment: "** this is just garbage..." from char 0 to 1 on line: 6
+
+unidentified character # at line: 7, col: 1
+
+unidentified character # at line: 7, col: 2
+
+unidentified character # at line: 7, col: 3
+
+unidentified character # at line: 7, col: 4
+
+unidentified character ! at line: 7, col: 5
+
+unidentified character @ at line: 7, col: 6
+
+unidentified character # at line: 7, col: 7
+
+unidentified character % at line: 7, col: 8
+
+unidentified character ^ at line: 7, col: 9
+
+unidentified character } at line: 7, col: 10
+
+unidentified character } at line: 7, col: 11
+
+unidentified character { at line: 7, col: 12
+
+unidentified character \ at line: 8, col: 1
+
+unidentified character \ at line: 9, col: 1
+
+unidentified character \ at line: 9, col: 2
+
+unidentified character ! at line: 9, col: 3
+
+unidentified character # at line: 9, col: 4
+
+unidentified character @ at line: 9, col: 5
+
+unidentified character ! at line: 9, col: 6
+
+unidentified character $ at line: 9, col: 7
+
+comment: "** end of garbage" from char 0 to 1 on line: 10
+
+RPAR on line 11, from char 0 to 1
+INT_LIT on line 11, from char 1 to 2
+ID on line 12, from char 0 to 3

@@ -1,0 +1,19 @@
+**
+ever = 42;
+thind = 432;
+ever <-> thind ;
+if ever > thind:
+return thind-fatd;
+
+tuple trial_tuple
+foreach i in trial_tuple:
+print i
+
+asd(sodas =
+
+else
+
+***aa = "sb"
+return fatd-thind;
+变量 = 3 *(4+2)
+**
