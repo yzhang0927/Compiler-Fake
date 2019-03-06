@@ -2,6 +2,7 @@ package edu.nyu.compiler.scanner;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 import java.io.InputStream;
 
@@ -23,14 +24,25 @@ class FakeCompilerScanner {
 
 	public FakeCompilerScanner(String inFileAddr) {
 		File inFile = new File(inFileAddr);
+
 		String encoding = "utf-8";
 		try {
 			input = new Scanner(inFile,encoding);
+		} catch (FileNotFoundException e) {
+			System.out.println("no such file: "+ inFileAddr +" EXITING");
+			System.exit(0);
+		}
+
+
+		try {
 			lineNumber = 1;
 			currentLine = new LineInput(input.nextLine(),lineNumber);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
+		} catch (NoSuchElementException e) {
+			System.out.println(inFileAddr+" is an empty file, EXITING");
+			System.exit(0);
 		}
+
+
 	}
 
 	public Token next() {

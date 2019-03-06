@@ -8,8 +8,8 @@ tuple trial_tuple
 foreach i in trial_tuple:
 print i
 
-asd(sodas = 
-	 
+asd(sodas =
+
 else
 
 ***aa = "sb"

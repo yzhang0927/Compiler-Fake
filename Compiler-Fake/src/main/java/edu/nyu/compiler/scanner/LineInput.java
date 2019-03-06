@@ -96,7 +96,6 @@ class LineInput {
                     }
 
                 } else if (currChar == '>') {
-
                     if ( currPos < currLine.length() && currLine.charAt(currPos)=='=') {
                         currPos ++;
                         GreedyOperator possibleToken = new GreedyOperator (">=",lineNumber,startPos,currPos);
@@ -139,9 +138,25 @@ class LineInput {
                         currToken =  possibleToken;
                         break;
                     }
-                }
 
-                else {
+                } else if (currChar == '-') {
+                    if (currPos == 0 || currLine.charAt(currPos-1) == '(' ||
+                            currLine.charAt(currPos-1) == '[' || currLine.charAt(currPos-1) == '+' ||
+                            currLine.charAt(currPos-1) == '-' || currLine.charAt(currPos-1) == '<' ||
+                            currLine.charAt(currPos-1) == '>' || currLine.charAt(currPos-1) == '=' ||
+                            currLine.charAt(currPos-1) == '*' || currLine.charAt(currPos-1) == '/') {
+                        NonGreedyOperator possibleToken = new NonGreedyOperator ("-",lineNumber,startPos,currPos);
+                        possibleToken.setkwType(ReservedKeyWord.OP_UMINUS);
+                        currToken =  possibleToken;
+                        break;
+                    } else {
+                        NonGreedyOperator possibleToken = new NonGreedyOperator ("-",lineNumber,startPos,currPos);
+                        possibleToken.setkwType(ReservedKeyWord.OP_MINUS);
+                        currToken =  possibleToken;
+                        break;
+                    }
+
+                } else {
                     System.out.println("sth wrong with greedy op");
                 }
 
@@ -154,6 +169,9 @@ class LineInput {
                 }
                 String possibleTokenString;
                 if (currPos < currLine.length()) {
+                    currPos--;
+                }
+                if (currPos >= currLine.length() && currContext != lastContext) {
                     currPos--;
                 }
                 possibleTokenString = currLine.substring(startPos, currPos);
