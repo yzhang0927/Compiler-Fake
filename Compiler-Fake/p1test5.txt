@@ -1,3 +1,4 @@
+**
 ever = 42;
 thind = 432;
 ever <-> thind ;

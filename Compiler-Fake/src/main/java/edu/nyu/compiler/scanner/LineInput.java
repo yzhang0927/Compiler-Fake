@@ -1,5 +1,6 @@
 package edu.nyu.compiler.scanner;
 
+import java.io.PrintWriter;
 import java.util.Scanner;
 import java.util.List;
 
@@ -11,14 +12,17 @@ class LineInput {
     private boolean flagComment;
     private final String currLine;
 
+    private PrintWriter outFile;
     private int currPos = 0;
     private int startPos = 0;
     private TokenContext currContext = null; // This is the context switch
     private List<Token> tokenStorage;
 
-    public LineInput(String currLine, int lineNumber) {
+    public LineInput(String currLine, int lineNumber, PrintWriter outFile) {
         this.currLine = currLine;
         this.lineNumber = lineNumber;
+        this.outFile = outFile;
+
         System.out.println("~~~~~~>Line content<~~~~~~");
         System.out.println(currLine);
         System.out.println("~~~~~~^Line content^~~~~~~");
@@ -29,6 +33,7 @@ class LineInput {
         while(!endOfLine()) {
 
             char currChar = currLine.charAt(currPos++);
+
             currContext = getContextType(currChar);
             if (currContext == TokenContext.Space) {
                 startPos = currPos;
@@ -36,7 +41,10 @@ class LineInput {
             }
 
             if (currContext == TokenContext.Unidentified) {
-                //System.out.println(String.format("unidentified character scanned at line: %d, col: %d",lineNumber,currPos));
+                startPos = currPos;
+                outFile.println(String.format("unidentified character %c at line: %d, col: %d\n",currChar,lineNumber,currPos));
+                System.out.println(String.format("unidentified character %c at line: %d, col: %d\n",currChar,lineNumber,currPos));
+                continue;
             } else if (currContext == TokenContext.NonGreedyOperator) {
                 NonGreedyOperator possibleToken = new NonGreedyOperator(String.valueOf(currChar),lineNumber,startPos,currPos);
                 //already checked
@@ -49,7 +57,9 @@ class LineInput {
                 if (currChar == '*') {
                     if ( currPos+1 < currLine.length() && currLine.charAt(currPos) == '*' && currLine.charAt(currPos+1)=='*') {
                         //comment encountered, break loop.
-                        System.out.println("comment on line: " + lineNumber);
+                        String comment = currLine.substring(currPos-1,currLine.length()) ;
+                        outFile.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
+                        System.out.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
                         this.flagComment = true;
                         break;
 
@@ -70,8 +80,10 @@ class LineInput {
                         break;
                     }
                     else {
-                        //System.out.println("solo ! is illegal");
-                        System.out.println(String.format("unidentified character ! at line: %d, col: %d",lineNumber,currPos-1));
+                        System.out.println(String.format("unidentified character ! at line: %d, col: %d\n",lineNumber,currPos));
+                        outFile.println(String.format("unidentified character ! at line: %d, col: %d\n",lineNumber,currPos));
+                        startPos = currPos;
+                        continue;
                     }
 
                 } else if (currChar == '<') {
@@ -202,6 +214,7 @@ class LineInput {
             }
         }
         startPos = currPos;
+        printTokenInfo(currToken);
         return currToken;
 
     }
@@ -230,6 +243,15 @@ class LineInput {
             context = TokenContext.Unidentified;
         }
         return context;
+    }
+
+    public void printTokenInfo(Token token) {
+        if (token != null){
+            System.out.println(token.getKwType());
+            System.out.println(String.valueOf(token.getStartCharPos())+' '+ String.valueOf(token.getFinishCharPos()));
+            outFile.println(String.format("%s on line %d, from char %d to %d",token.getKwType().name(),lineNumber,token.getStartCharPos(),token.getFinishCharPos()));
+        }
+        System.out.println("\n");
     }
 
     private boolean isNumber(char possibleNum) {

@@ -1,0 +1,69 @@
+comment: "*** this test file contains all the legal tokens in the language, I believe" from char 0 to 1 on line: 1
+
+comment: "*** this is a comment" from char 0 to 1 on line: 2
+
+comment: "*** all keywords" from char 0 to 1 on line: 3
+
+KW_ARRAY on line 4, from char 0 to 5
+KW_DEFUN on line 5, from char 0 to 5
+KW_DO on line 6, from char 0 to 2
+KW_ELSE on line 7, from char 0 to 4
+ID on line 8, from char 0 to 5
+KW_END on line 9, from char 0 to 3
+KW_FOREACH on line 10, from char 0 to 7
+KW_GLOBAL on line 11, from char 0 to 6
+KW_IF on line 12, from char 0 to 2
+KW_IN on line 13, from char 0 to 2
+KW_LOCAL on line 14, from char 0 to 5
+PRINT on line 15, from char 0 to 5
+RETURN on line 16, from char 0 to 6
+KW_THEN on line 17, from char 0 to 4
+KW_TUPLE on line 18, from char 0 to 5
+KW_WHILE on line 19, from char 0 to 5
+comment: "*** all operators and other punctuation" from char 0 to 1 on line: 20
+
+OP_NOTEQUA on line 21, from char 0 to 2
+LPAR on line 22, from char 0 to 1
+RPAR on line 23, from char 0 to 1
+OP_MULT on line 24, from char 0 to 1
+OP_PLUS on line 25, from char 0 to 1
+OP_COMMA on line 26, from char 0 to 1
+OP_UMINUS on line 27, from char 0 to 1
+OP_DOT on line 28, from char 0 to 1
+OP_DOTDOT on line 29, from char 0 to 2
+OP_DIV on line 30, from char 0 to 1
+SEMI on line 31, from char 0 to 1
+OP_LESS on line 32, from char 0 to 1
+EXCHANGE on line 33, from char 0 to 3
+OP_LESSEQUAL on line 34, from char 0 to 2
+ASSIGN on line 35, from char 0 to 1
+OP_EQUAL on line 36, from char 0 to 2
+OP_GREATER on line 37, from char 0 to 1
+OP_GREATEREQUAL on line 38, from char 0 to 2
+LBRAK on line 39, from char 0 to 1
+RBRAK on line 40, from char 0 to 1
+comment: "*** numbers" from char 0 to 1 on line: 41
+
+INT_LIT on line 42, from char 0 to 1
+INT_LIT on line 43, from char 0 to 3
+INT_LIT on line 44, from char 0 to 2
+INT_LIT on line 45, from char 0 to 2
+comment: "*** too large a value" from char 0 to 1 on line: 46
+
+comment: "*** you decide what to do with this: the number is long but not large" from char 0 to 1 on line: 48
+
+INT_LIT on line 49, from char 0 to 22
+comment: "*** ID" from char 0 to 1 on line: 50
+
+ID on line 51, from char 0 to 1
+ID on line 52, from char 0 to 1
+ID on line 53, from char 0 to 2
+ID on line 54, from char 0 to 3
+ID on line 55, from char 0 to 5
+ID on line 56, from char 0 to 8
+ID on line 57, from char 0 to 31
+comment: "*** OK to produce a warning here, or not to" from char 32 to 33 on line: 57
+
+ID on line 57, from char 0 to 31
+comment: "*** the ID below is DEFINITELY too long" from char 0 to 1 on line: 58
+

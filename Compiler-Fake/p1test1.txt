@@ -1,4 +1,3 @@
-caonimadeshijie sdasdsad
 *** this test file contains all the legal tokens in the language, I believe
 *** this is a comment
 *** all keywords

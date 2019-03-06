@@ -5,6 +5,7 @@ import java.util.regex.Matcher;
 
 public class KeyWord extends Word {
     private enum ReservedKey {
+
         KW_ARRAY("array"),
         KW_TUPLE("tuple"),
         KW_LOCAL("local"),
