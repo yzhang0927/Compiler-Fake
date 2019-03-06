@@ -18,9 +18,6 @@ class FakeCompilerScanner {
 	public PrintWriter out;
 	private Scanner input;
 	private int lineNumber;
-	public FakeCompilerScanner() {
-
-	}
 
 	public FakeCompilerScanner(String inFileAddr) {
 
@@ -28,24 +25,25 @@ class FakeCompilerScanner {
 		String encoding = "utf-8";
 
 		try {
-			out = new PrintWriter(inFileAddr+".out");
+			out = new PrintWriter(inFileAddr + ".out");
 		} catch (IOException ioe) {
 			System.err.println("IOException: " + ioe.getMessage());
+			throw new RuntimeException("IOException: " + ioe.getMessage(), ioe); 
 		}
 
 		try {
-			input = new Scanner(in,encoding);
+			input = new Scanner(in, encoding);
 		} catch (FileNotFoundException e) {
-			System.out.println("no such file: "+ inFileAddr +" EXITING");
-			System.exit(0);
+			System.err.println("no such file: "+ inFileAddr);
+			throw new RuntimeException("no such file: " + inFileAddr, e); 
 		}
 
 		try {
 			lineNumber = 1;
-			currentLine = new LineInput(input.nextLine(),lineNumber,out);
+			currentLine = new LineInput(input.nextLine(), lineNumber, out);
 		} catch (NoSuchElementException e) {
-			System.out.println(inFileAddr+" is an empty file, EXITING");
-			System.exit(0);
+			System.err.println(inFileAddr + " is an empty file, EXITING");
+			throw new RuntimeException(inFileAddr + " is an empty file, EXITING", e); 
 		}
 	}
 

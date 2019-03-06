@@ -169,7 +169,8 @@ class LineInput {
                     }
 
                 } else {
-                    System.out.println("sth wrong with greedy op");
+                    System.err.println("something wrong with greedy op");
+                    throw new RuntimeException("GreedyOperator is failing somehow"); 
                 }
 
             } else {
