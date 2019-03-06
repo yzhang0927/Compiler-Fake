@@ -13,6 +13,7 @@ public abstract class Token {
 		this.startCharPos = startCharPos; 
 		this.finishCharPos = finishCharPos; 
 		this.kwType = null;
+		System.out.println("!!!!!token:"+this.token);
 	}
 
 	public String beautify() {

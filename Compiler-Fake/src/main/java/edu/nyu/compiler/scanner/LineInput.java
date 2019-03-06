@@ -19,6 +19,9 @@ class LineInput {
     public LineInput(String currLine, int lineNumber) {
         this.currLine = currLine;
         this.lineNumber = lineNumber;
+        System.out.println("~~~~~~>Line content<~~~~~~");
+        System.out.println(currLine);
+        System.out.println("~~~~~~^Line content^~~~~~~");
     }
 
     public Token next() {
@@ -27,10 +30,10 @@ class LineInput {
 
             char currChar = currLine.charAt(currPos++);
 
-            if (currChar == ' ') {
-                continue; }
-
             currContext = getContextType(currChar);
+            if (currContext == TokenContext.Space) {
+                continue;
+            }
 
             if (currContext == TokenContext.Unidentified) {
                 //System.out.println(String.format("unidentified character scanned at line: %d, col: %d",lineNumber,currPos));
@@ -44,7 +47,7 @@ class LineInput {
             } else if (currContext == TokenContext.GreedyOperator) {
                 //*
                 if (currChar == '*') {
-                    if ( currPos+1 < currLine.length() && currLine.charAt(currPos)=='*' && currLine.charAt(currPos+1)=='*') {
+                    if ( currPos+1 < currLine.length() && currLine.charAt(currPos) == '*' && currLine.charAt(currPos+1)=='*') {
                         //comment encountered, break loop.
                         System.out.println("comment on line: " + lineNumber);
                         this.flagComment = true;
@@ -56,7 +59,7 @@ class LineInput {
                         break;
                     }
                 } else if (currChar == '!') {
-                    if (currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos++) =='=') {
                         GreedyOperator possibleToken = new GreedyOperator ("!=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -118,7 +121,7 @@ class LineInput {
 
                 } else if (currChar == '.') {
 
-                    if (currPos < currLine.length() && currLine.charAt(currPos++)=='.') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos++) == '.') {
                         GreedyOperator possibleToken = new GreedyOperator ("..",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -139,11 +142,16 @@ class LineInput {
                 //number or letter
                 TokenContext lastContext = currContext;
 
-                while (currPos < currLine.length() && currContext==lastContext) {
+                while (currPos < currLine.length() && currContext == lastContext) {
                     currContext = getContextType(currLine.charAt(currPos++));
                 }
-                
-                String possibleTokenString = currLine.substring(startPos, currPos);
+                String possibleTokenString;
+                if(currPos == currLine.length()) {
+                    possibleTokenString = currLine.substring(startPos, currPos);
+                } else {
+                    possibleTokenString = currLine.substring(startPos, --currPos);
+                }
+
                 if (lastContext == TokenContext.Number) {
                     Number possibleToken = new Number(possibleTokenString, lineNumber, startPos, currPos);
                     if (possibleToken.validate(' ')) {
@@ -168,8 +176,8 @@ class LineInput {
 
                 }
             }
-            startPos = currPos;
         }
+        startPos = currPos;
         return currToken;
 
     }
@@ -183,7 +191,9 @@ class LineInput {
 
     private TokenContext getContextType(char c) {
         TokenContext context;
-        if (isNonGreedyOperator(c)) {
+        if (c==' ') {
+            context = TokenContext.Space;
+        } else if (isNonGreedyOperator(c)) {
             context = TokenContext.NonGreedyOperator;
         } else if (isGreedyOperator(c)) {
             context = TokenContext.GreedyOperator;
@@ -192,9 +202,8 @@ class LineInput {
         } else if (isNumber(c)) {
             context = TokenContext.Number;
             //currKWType = ReservedKeyWord.INT_LIT;
-        } else{
+        } else {
             context = TokenContext.Unidentified;
-            System.out.println(String.format("unidentified character %c at line: %d, col: %d",c,lineNumber,currPos-1));
         }
         return context;
     }

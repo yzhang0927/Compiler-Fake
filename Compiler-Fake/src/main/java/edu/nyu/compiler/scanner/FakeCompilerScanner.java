@@ -35,7 +35,7 @@ class FakeCompilerScanner {
 
 	public Token next() {
 		if (currentLine.endOfLine() || currentLine.isFlagComment()) {
-			currentLine = new LineInput(input.nextLine(), lineNumber++);
+			currentLine = new LineInput(input.nextLine(), ++lineNumber);
 			currentLine.clearComment();
 		}
 		return currentLine.next();

@@ -1,0 +1,8 @@
+****
+
+[sda]=//
+array s[10];
+return s
+/////\\\\\\
+/(\)
+asddsadadas=tuple(2,qeq)

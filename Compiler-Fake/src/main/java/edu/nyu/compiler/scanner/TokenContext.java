@@ -5,5 +5,6 @@ public enum TokenContext {
 	GreedyOperator,
 	NonGreedyOperator,
 	Word,
+	Space,
 	Unidentified
 }
