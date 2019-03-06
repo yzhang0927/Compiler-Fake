@@ -29,9 +29,9 @@ class LineInput {
         while(!endOfLine()) {
 
             char currChar = currLine.charAt(currPos++);
-
             currContext = getContextType(currChar);
             if (currContext == TokenContext.Space) {
+                startPos = currPos;
                 continue;
             }
 
@@ -52,14 +52,17 @@ class LineInput {
                         System.out.println("comment on line: " + lineNumber);
                         this.flagComment = true;
                         break;
+
                     } else {
                         NonGreedyOperator possibleToken = new NonGreedyOperator ("*",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
                     }
+
                 } else if (currChar == '!') {
-                    if (currPos < currLine.length() && currLine.charAt(currPos++) =='=') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos) =='=') {
+                        currPos ++;
                         GreedyOperator possibleToken = new GreedyOperator ("!=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -67,19 +70,20 @@ class LineInput {
                         break;
                     }
                     else {
-                        System.out.println("solo ! is illegal");
+                        //System.out.println("solo ! is illegal");
                         System.out.println(String.format("unidentified character ! at line: %d, col: %d",lineNumber,currPos-1));
                     }
 
                 } else if (currChar == '<') {
 
-                    if (currPos+1 < currLine.length() && currLine.charAt(currPos)=='=' && currLine.charAt(currPos+1)=='>') {
+                    if (currPos+1 < currLine.length() && currLine.charAt(currPos)=='-' && currLine.charAt(currPos+1)=='>') {
                         currPos += 2;
-                        GreedyOperator possibleToken = new GreedyOperator ("<=>",lineNumber,startPos,currPos);
+                        GreedyOperator possibleToken = new GreedyOperator ("<->",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
-                    } else if (currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
+                    } else if (currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                        currPos ++;
                         GreedyOperator possibleToken = new GreedyOperator ("<=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -93,7 +97,8 @@ class LineInput {
 
                 } else if (currChar == '>') {
 
-                    if ( currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
+                    if ( currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                        currPos ++;
                         GreedyOperator possibleToken = new GreedyOperator (">=",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -107,7 +112,8 @@ class LineInput {
 
                 } else if (currChar == '=') {
 
-                    if (currPos < currLine.length() && currLine.charAt(currPos++)=='=') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos)=='=') {
+                        currPos ++;
                         GreedyOperator possibleToken = new GreedyOperator ("==",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -121,7 +127,8 @@ class LineInput {
 
                 } else if (currChar == '.') {
 
-                    if (currPos < currLine.length() && currLine.charAt(currPos++) == '.') {
+                    if (currPos < currLine.length() && currLine.charAt(currPos) == '.') {
+                        currPos ++;
                         GreedyOperator possibleToken = new GreedyOperator ("..",lineNumber,startPos,currPos);
                         possibleToken.setkwType(possibleToken.getTokenType());
                         currToken =  possibleToken;
@@ -146,11 +153,10 @@ class LineInput {
                     currContext = getContextType(currLine.charAt(currPos++));
                 }
                 String possibleTokenString;
-                if(currPos == currLine.length()) {
-                    possibleTokenString = currLine.substring(startPos, currPos);
-                } else {
-                    possibleTokenString = currLine.substring(startPos, --currPos);
+                if (currPos < currLine.length()) {
+                    currPos--;
                 }
+                possibleTokenString = currLine.substring(startPos, currPos);
 
                 if (lastContext == TokenContext.Number) {
                     Number possibleToken = new Number(possibleTokenString, lineNumber, startPos, currPos);
