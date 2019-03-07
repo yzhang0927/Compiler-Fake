@@ -8,16 +8,27 @@ class Test {
     private static final String TESTCASE_DIR = "testcases/p1test";
     private static final int TESTCASE_FIRST = 1; 
     private static final int TESTCASE_LAST = 5; 
+    private static FakeCompilerScanner testScanner; 
 
     public static void main(String[] args){
-        for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
-            testOneCase(TESTCASE_DIR + Integer.toString(i)); 
+        if (args == null || args.length < 1 || args[0] == null) {
+            throw new IllegalArgumentException("Null Input"); 
+        }
+
+        if ("txt".equals(args[0])) {
+            for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
+                testScanner = new FakeCompilerScanner(TESTCASE_DIR + Integer.toString(i)); 
+                testOneCase(); 
+            }
+        } else if ("command".equals(args[0])) {
+            testScanner = new FakeCompilerScanner();
+            testOneCase(); 
+        } else {
+            throw new IllegalArgumentException("first arg should be either 'txt' or 'command'"); 
         }
     }
 
-    private static void testOneCase(String testCaseDirectory) {
-        FakeCompilerScanner testScanner = new FakeCompilerScanner(testCaseDirectory);
-
+    private static void testOneCase() {
         try {
             testScanner.next();
         } catch (NoSuchElementException e) {}

@@ -18,11 +18,19 @@ class FakeCompilerScanner {
 	public PrintWriter out;
 	private Scanner input;
 	private int lineNumber;
+	private static final String ENCODING = "utf-8";
+
+	public FakeCompilerScanner() {
+		lineNumber = 1;
+		input = new Scanner(System.in, ENCODING); 
+		out = new PrintWriter(System.out, true); 
+		currentLine = new LineInput(input.nextLine(), lineNumber, out);
+	}
 
 	public FakeCompilerScanner(String inFileAddr) {
 
 		File in = new File(inFileAddr+".txt");
-		String encoding = "utf-8";
+		
 
 		try {
 			out = new PrintWriter(inFileAddr + ".out");
@@ -32,7 +40,7 @@ class FakeCompilerScanner {
 		}
 
 		try {
-			input = new Scanner(in, encoding);
+			input = new Scanner(in, ENCODING);
 		} catch (FileNotFoundException e) {
 			System.err.println("no such file: "+ inFileAddr);
 			throw new RuntimeException("no such file: " + inFileAddr, e); 
