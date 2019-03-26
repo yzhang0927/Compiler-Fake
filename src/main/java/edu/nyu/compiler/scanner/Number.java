@@ -10,7 +10,7 @@ public class Number extends Token {
             Integer.parseInt(getToken()); 
             return true; 
         } catch (NumberFormatException exp) {
-            System.err.println("integer too large");
+            System.out.println("integer too large");
             return false; 
         }
     }
