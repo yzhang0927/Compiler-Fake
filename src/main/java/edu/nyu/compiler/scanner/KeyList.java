@@ -42,6 +42,4 @@ public abstract class KeyList{
         add("global");
         add("defun");
     }};
-
-
 }

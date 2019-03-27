@@ -1,7 +1,5 @@
 package edu.nyu.compiler.scanner; 
 
-import java.util.HashMap; 
-
 public enum ReservedKeyWord {
 
     KW_ARRAY("array"),
@@ -47,9 +45,9 @@ public enum ReservedKeyWord {
     ID("INPUT_DEPENDENT_KEYWORD"),
     INT_LIT("INPUT_DEPENDENT_KEYWORD");
 
-    private final String keywordString; 
+    private final String keywordString;
 
-    private ReservedKeyWord(String keywordString) {
+    ReservedKeyWord(String keywordString) {
         this.keywordString = keywordString; 
     }
 

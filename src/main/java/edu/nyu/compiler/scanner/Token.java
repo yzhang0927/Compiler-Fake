@@ -20,6 +20,15 @@ public abstract class Token {
 		return String.format("%s in line %d from char no. %d to %d", token, lineNum, startCharPos, finishCharPos);
 	}
 
+	public ReservedKeyWord getTokenType(){
+		for (ReservedKeyWord me : ReservedKeyWord.values()) {
+			if (me.getKeywordString().equals(this.getToken()))
+				return me;
+		}
+		System.out.println("not found");
+		return null;
+	}
+
 	public String getToken() {
 		return token; 
 	}
@@ -27,7 +36,7 @@ public abstract class Token {
 
 	public int getStartCharPos() { return startCharPos; }
 	public int getFinishCharPos() { return finishCharPos; }
-	public void setkwType(ReservedKeyWord kw){
+	public void setKWType(ReservedKeyWord kw){
 		this.kwType = kw;
 	}
 	public abstract boolean validate(char prevChar);

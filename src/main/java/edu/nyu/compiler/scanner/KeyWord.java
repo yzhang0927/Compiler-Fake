@@ -52,10 +52,7 @@ public class KeyWord extends Word {
             if (me.getKeywordString().equals(this.getToken()))
                 return me;
         }
-        System.out.println("key word not found");
+        System.err.println("key word not found");
         return null;
     }
-
-
-
 }

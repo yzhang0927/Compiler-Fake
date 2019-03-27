@@ -17,7 +17,7 @@ public class Identifier extends Word {
             return true;
         }
         else{
-            System.out.println("ID not vaild, too long");
+            System.err.println("ID is not valid, too long");
             return false;
         }
     }

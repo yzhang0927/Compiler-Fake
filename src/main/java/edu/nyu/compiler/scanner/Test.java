@@ -17,7 +17,7 @@ class Test {
 
         if ("txt".equals(args[0])) {
             for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
-                testScanner = new FakeCompilerScanner(TESTCASE_DIR + Integer.toString(i)); 
+                testScanner = new FakeCompilerScanner(TESTCASE_DIR + i);
                 testOneCase(); 
             }
         } else if ("command".equals(args[0])) {
