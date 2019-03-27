@@ -12,7 +12,7 @@ ID on line 5, from char 1 to 2
 SEMI on line 6, from char 0 to 1
 INT_LIT on line 6, from char 1 to 2
 ID on line 6, from char 2 to 3
-comment: "****" from char 0 to 1 on line: 8
+comment: "****" from char 0 to 4 on line: 8
 
 OP_LESSEQUAL on line 9, from char 0 to 2
 OP_EQUAL on line 9, from char 2 to 4
