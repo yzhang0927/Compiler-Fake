@@ -1,8 +1,8 @@
-comment: "*** this test file contains all the legal tokens in the language, I believe" from char 0 to 1 on line: 1
+comment: "*** this test file contains all the legal tokens in the language, I believe" from char 0 to 75 on line: 1
 
-comment: "*** this is a comment" from char 0 to 1 on line: 2
+comment: "*** this is a comment" from char 0 to 21 on line: 2
 
-comment: "*** all keywords" from char 0 to 1 on line: 3
+comment: "*** all keywords" from char 0 to 16 on line: 3
 
 KW_ARRAY on line 4, from char 0 to 5
 KW_DEFUN on line 5, from char 0 to 5
@@ -20,7 +20,7 @@ RETURN on line 16, from char 0 to 6
 KW_THEN on line 17, from char 0 to 4
 KW_TUPLE on line 18, from char 0 to 5
 KW_WHILE on line 19, from char 0 to 5
-comment: "*** all operators and other punctuation" from char 0 to 1 on line: 20
+comment: "*** all operators and other punctuation" from char 0 to 39 on line: 20
 
 OP_NOTEQUA on line 21, from char 0 to 2
 LPAR on line 22, from char 0 to 1
@@ -42,18 +42,18 @@ OP_GREATER on line 37, from char 0 to 1
 OP_GREATEREQUAL on line 38, from char 0 to 2
 LBRAK on line 39, from char 0 to 1
 RBRAK on line 40, from char 0 to 1
-comment: "*** numbers" from char 0 to 1 on line: 41
+comment: "*** numbers" from char 0 to 11 on line: 41
 
 INT_LIT on line 42, from char 0 to 1
 INT_LIT on line 43, from char 0 to 3
 INT_LIT on line 44, from char 0 to 2
 INT_LIT on line 45, from char 0 to 2
-comment: "*** too large a value" from char 0 to 1 on line: 46
+comment: "*** too large a value" from char 0 to 21 on line: 46
 
-comment: "*** you decide what to do with this: the number is long but not large" from char 0 to 1 on line: 48
+comment: "*** you decide what to do with this: the number is long but not large" from char 0 to 69 on line: 48
 
 INT_LIT on line 49, from char 0 to 22
-comment: "*** ID" from char 0 to 1 on line: 50
+comment: "*** ID" from char 0 to 6 on line: 50
 
 ID on line 51, from char 0 to 1
 ID on line 52, from char 0 to 1
@@ -62,8 +62,8 @@ ID on line 54, from char 0 to 3
 ID on line 55, from char 0 to 5
 ID on line 56, from char 0 to 8
 ID on line 57, from char 0 to 31
-comment: "*** OK to produce a warning here, or not to" from char 32 to 33 on line: 57
+comment: "*** OK to produce a warning here, or not to" from char 32 to 75 on line: 57
 
 ID on line 57, from char 0 to 31
-comment: "*** the ID below is DEFINITELY too long" from char 0 to 1 on line: 58
+comment: "*** the ID below is DEFINITELY too long" from char 0 to 39 on line: 58
 

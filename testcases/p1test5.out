@@ -40,7 +40,7 @@ LPAR on line 12, from char 3 to 4
 ID on line 12, from char 4 to 9
 ASSIGN on line 12, from char 10 to 11
 KW_ELSE on line 14, from char 0 to 4
-comment: "***aa = "sb"" from char 0 to 1 on line: 16
+comment: "***aa = "sb"" from char 0 to 12 on line: 16
 
 RETURN on line 17, from char 0 to 6
 ID on line 17, from char 7 to 11
