@@ -35,7 +35,6 @@ KW_ELSIF: 'KW_ELSIF';
 KW_ELSE: 'KW_ELSE';
 KW_FOREACH: 'KW_FOREACH';
 KW_IN: 'KW_IN';
-KW_FOR: 'KW_FOR';
 PRINT: 'PRINT';
 RETURN: 'RETURN';
 ASSIGN: 'ASSIGN';
@@ -49,14 +48,9 @@ OP_LESSEQUAL: 'OP_LESSEQUAL';
 OP_GREATEREQUAL: 'OP_GREATEREQUAL';
 
 
-input : (( statement | decl | def )NEWLINE)* ;
+input : ( statement | decl | def )* ;
 
-NEWLINE
-    :   (   '\r' '\n'?
-        |   '\n'
-        )
-        -> skip
-    ;
+
 WS  : [ \t\r\n\u000C]+ -> skip ;
 
 decl : KW_ARRAY ID LBRAK expr OP_DOTDOT expr RBRAK ( ASSIGN expr )? SEMI
@@ -69,13 +63,15 @@ def : KW_DEFUN ID LPAR ID ( OP_COMMA ID )* RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 
+
 statement : lhs ASSIGN expr SEMI  // assignment
           | lhs EXCHANGE lhs SEMI // exchange
 	  | KW_WHILE bool_expr  KW_DO statement* KW_END KW_WHILE
 	  | KW_IF bool_expr KW_THEN statement*
 	    (KW_ELSIF bool_expr KW_THEN statement)*
 	    (KW_ELSE statement)? KW_END KW_IF
-	  | KW_FOREACH expr KW_IN (range | ID) KW_DO statement* KW_END ID //I think the professor has not give us KW_FOR
+	  | KW_FOREACH expr KW_IN (range | ID) KW_DO statement* KW_END KW_FOREACH //I think the professor has not give us KW_FOR
+	  | FOR expr KW_IN (range | ID) KW_DO statement* KW_END FOR
 	  //we keep array id as an ID
 	  | RETURN expr SEMI
 	  | PRINT expr SEMI
