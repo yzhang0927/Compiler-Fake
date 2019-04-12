@@ -1,0 +1,6 @@
+comment: "*** Hello, world!" from char 0 to 17 on line: 1
+
+comment: "*** Except we have no way to print strings." from char 0 to 43 on line: 2
+
+PRINT on line 3, from char 0 to 5
+INT_LIT on line 3, from char 6 to 12

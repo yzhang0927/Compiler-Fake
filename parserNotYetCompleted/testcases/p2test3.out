@@ -1,0 +1,63 @@
+comment: "*** simple calc with variables and control structures" from char 0 to 53 on line: 1
+
+KW_GLOBAL on line 2, from char 0 to 6
+ID on line 2, from char 7 to 8
+ASSIGN on line 2, from char 8 to 9
+INT_LIT on line 2, from char 9 to 10
+SEMI on line 2, from char 10 to 11
+KW_GLOBAL on line 3, from char 0 to 6
+ID on line 3, from char 7 to 8
+ASSIGN on line 3, from char 8 to 9
+INT_LIT on line 3, from char 9 to 10
+SEMI on line 3, from char 10 to 11
+comment: "*** simplest foreach I can think of" from char 0 to 35 on line: 5
+
+KW_FOREACH on line 6, from char 0 to 7
+ID on line 6, from char 8 to 9
+KW_IN on line 6, from char 10 to 12
+INT_LIT on line 6, from char 13 to 14
+OP_DOTDOT on line 6, from char 15 to 17
+INT_LIT on line 6, from char 18 to 20
+KW_DO on line 6, from char 21 to 23
+PRINT on line 6, from char 24 to 29
+ID on line 6, from char 30 to 31
+SEMI on line 6, from char 31 to 32
+KW_END on line 6, from char 33 to 36
+ID on line 6, from char 37 to 40
+comment: "*** more complicated stuff" from char 0 to 26 on line: 8
+
+KW_FOREACH on line 9, from char 0 to 7
+ID on line 9, from char 8 to 9
+KW_IN on line 9, from char 10 to 12
+INT_LIT on line 9, from char 13 to 14
+OP_DOTDOT on line 9, from char 15 to 17
+INT_LIT on line 9, from char 18 to 20
+KW_DO on line 9, from char 21 to 23
+KW_IF on line 10, from char 2 to 4
+ID on line 10, from char 5 to 6
+OP_EQUAL on line 10, from char 6 to 8
+LPAR on line 10, from char 8 to 9
+ID on line 10, from char 9 to 10
+OP_DIV on line 10, from char 10 to 11
+INT_LIT on line 10, from char 11 to 12
+RPAR on line 10, from char 12 to 13
+OP_MULT on line 10, from char 13 to 14
+INT_LIT on line 10, from char 14 to 15
+KW_THEN on line 10, from char 16 to 20
+comment: "*** even c" from char 21 to 31 on line: 10
+
+KW_THEN on line 10, from char 16 to 20
+PRINT on line 11, from char 5 to 10
+INT_LIT on line 11, from char 11 to 12
+SEMI on line 11, from char 12 to 13
+KW_ELSE on line 12, from char 2 to 6
+comment: "*** odd" from char 7 to 14 on line: 12
+
+KW_ELSE on line 12, from char 2 to 6
+PRINT on line 13, from char 5 to 10
+INT_LIT on line 13, from char 11 to 12
+SEMI on line 13, from char 12 to 13
+KW_END on line 14, from char 2 to 5
+KW_IF on line 14, from char 6 to 8
+KW_END on line 15, from char 0 to 3
+ID on line 15, from char 4 to 7
