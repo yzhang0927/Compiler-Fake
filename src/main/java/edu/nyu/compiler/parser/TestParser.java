@@ -23,7 +23,7 @@ public class TestParser extends Parser {
 		KW_END=21, KW_IF=22, KW_THEN=23, KW_DO=24, KW_WHILE=25, KW_ELSIF=26, KW_ELSE=27, 
 		KW_FOREACH=28, KW_IN=29, KW_FOR=30, PRINT=31, RETURN=32, ASSIGN=33, FOR=34, 
 		EXCHANGE=35, OP_LESS=36, OP_EQUAL=37, OP_GREATER=38, OP_NOTEQUA=39, OP_LESSEQUAL=40, 
-		OP_GREATEREQUAL=41, NEWLINE=42;
+		OP_GREATEREQUAL=41, NEWLINE=42, WS=43;
 	public static final int
 		RULE_start_symbol = 0, RULE_input = 1, RULE_decl = 2, RULE_def = 3, RULE_body = 4, 
 		RULE_statement = 5, RULE_array_id = 6, RULE_range = 7, RULE_bool_expr = 8, 
@@ -56,7 +56,7 @@ public class TestParser extends Parser {
 			"KW_IF", "KW_THEN", "KW_DO", "KW_WHILE", "KW_ELSIF", "KW_ELSE", "KW_FOREACH", 
 			"KW_IN", "KW_FOR", "PRINT", "RETURN", "ASSIGN", "FOR", "EXCHANGE", "OP_LESS", 
 			"OP_EQUAL", "OP_GREATER", "OP_NOTEQUA", "OP_LESSEQUAL", "OP_GREATEREQUAL", 
-			"NEWLINE"
+			"NEWLINE", "WS"
 		};
 	}
 	private static final String[] _SYMBOLIC_NAMES = makeSymbolicNames();
@@ -1349,7 +1349,7 @@ public class TestParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3,\u00f0\4\2\t\2\4"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3-\u00f0\4\2\t\2\4"+
 		"\3\t\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\4\13\t"+
 		"\13\4\f\t\f\4\r\t\r\4\16\t\16\3\2\3\2\3\3\3\3\3\3\5\3\"\n\3\3\3\3\3\7"+
 		"\3&\n\3\f\3\16\3)\13\3\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\3\4\5\4\64\n\4"+

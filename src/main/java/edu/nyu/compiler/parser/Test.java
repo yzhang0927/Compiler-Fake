@@ -11,7 +11,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 public class Test {
 
-    private static final String addr = "testcases/p1test4.out2";
+    private static final String addr = "testcases/p1test3.out2";
 
 
     public static void main(String[] args) {

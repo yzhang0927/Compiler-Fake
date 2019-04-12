@@ -57,7 +57,7 @@ NEWLINE
         )
         -> skip
     ;
-
+WS  : [ \t\r\n\u000C]+ -> skip ;
 
 decl : KW_ARRAY ID LBRAK expr OP_DOTDOT expr RBRAK ( ASSIGN expr )? SEMI
      | KW_TUPLE ID ASSIGN expr ( OP_COMMA expr)+ SEMI
@@ -108,6 +108,3 @@ expr :
     |  ID OP_DOT INT_LIT// tuple reference
     |  ID LBRAK expr RBRAK // array element refe\rence
     ;
-
-
-
