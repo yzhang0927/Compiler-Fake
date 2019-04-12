@@ -219,7 +219,6 @@ class LineInput {
         startPos = currPos;
         printTokenInfo(currToken);
         return currToken;
-
     }
 
     public Token peek() {
@@ -254,7 +253,7 @@ class LineInput {
             System.out.println(String.valueOf(token.getStartCharPos())+' '+ String.valueOf(token.getFinishCharPos()));
             outStream.println(String.format("%s on line %d, from char %d to %d",token.getKwType().name(),lineNumber,token.getStartCharPos(),token.getFinishCharPos()));
         }
-        System.out.println("\n");
+//        System.out.println("\n");
     }
 
     private boolean isNumber(char possibleNum) {

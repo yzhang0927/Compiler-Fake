@@ -25,7 +25,7 @@ public class KeyWord extends Word {
 
         String keywordString;
 
-        private ReservedKey(String keywordString) {
+        ReservedKey(String keywordString) {
             this.keywordString = keywordString;
         }
 

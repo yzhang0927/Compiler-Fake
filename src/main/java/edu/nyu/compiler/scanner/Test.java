@@ -6,8 +6,10 @@ import java.util.NoSuchElementException;
 
 class Test {
     private static final String TESTCASE_DIR = "testcases/p1test";
-    private static final int TESTCASE_FIRST = 1; 
-    private static final int TESTCASE_LAST = 5; 
+    private static final String TESTCASE_P2_DIR = "testcases/p2test";
+    private static final int TESTCASE_FIRST = 1;
+    private static final int TESTCASE_LAST = 5;
+    private static final int TESTCASE_P2_LAST = 6;
     private static FakeCompilerScanner testScanner; 
 
     public static void main(String[] args){
@@ -19,6 +21,11 @@ class Test {
             for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
                 testScanner = new FakeCompilerScanner(TESTCASE_DIR + i);
                 testOneCase(); 
+            }
+            /* Testcase p2 */
+            for (int i = TESTCASE_FIRST; i <= TESTCASE_P2_LAST; ++i) {
+                testScanner = new FakeCompilerScanner(TESTCASE_P2_DIR + i);
+                testOneCase();
             }
         } else if ("command".equals(args[0])) {
             testScanner = new FakeCompilerScanner();
