@@ -4,7 +4,7 @@ public abstract class Token {
 	private final int startCharPos; 
 	private final int finishCharPos; 
 	private final int lineNum; 
-	private final String token; 
+	private String token;
 	private ReservedKeyWord kwType;
 
 	public Token(String token, int lineNum, int startCharPos, int finishCharPos) {
@@ -29,10 +29,18 @@ public abstract class Token {
 		return null;
 	}
 
+	protected void setToken(String newToken) {
+		this.token = newToken;
+	}
+
 	public String getToken() {
 		return token; 
 	}
 	public ReservedKeyWord getKwType() { return kwType; }
+
+	protected int getLineNum() {
+		return lineNum;
+	}
 
 	public int getStartCharPos() { return startCharPos; }
 	public int getFinishCharPos() { return finishCharPos; }

@@ -47,7 +47,7 @@ class FakeCompilerScanner {
 			lineNumber = 1;
 			currentLine = new LineInput(inputScanner.nextLine(), lineNumber, printWriterOutPut);
 		} catch (NoSuchElementException e) {
-			throw new RuntimeException(inFileAddr + " is an empty file, EXITING", e);
+			throw new RuntimeException(inFileAddr + " is an empty file", e);
 		}
 	}
 

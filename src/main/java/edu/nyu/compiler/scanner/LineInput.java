@@ -22,7 +22,7 @@ class LineInput {
 
         System.out.println("~~~~~~>Line content<~~~~~~");
         System.out.println(currLine);
-        System.out.println("~~~~~~^Line content^~~~~~~");
+        System.out.println("~~~~~~^Scanner Output^~~~~~~");
     }
 
     public Token next() {
@@ -54,10 +54,14 @@ class LineInput {
                     if ( currPos + 1 < currLine.length()
                             && currLine.charAt(currPos) == '*'
                             && currLine.charAt(currPos+1)=='*') {
-                        //comment encountered, break loop.
-                        String comment = currLine.substring(currPos-1,currLine.length()) ;
-                        outStream.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
-                        System.out.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
+                        /**
+                         *  comment encountered, break loop.
+                         *  change behavior to ignore comment
+                         */
+//
+//                        String comment = currLine.substring(currPos-1,currLine.length()) ;
+//                        outStream.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
+//                        System.out.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
                         this.flagComment = true;
                         break;
 
@@ -78,8 +82,8 @@ class LineInput {
                         break;
                     }
                     else {
-                        System.out.println(String.format("unidentified character ! at line: %d, col: %d\n",lineNumber,currPos));
-                        outStream.println(String.format("unidentified character ! at line: %d, col: %d\n",lineNumber,currPos));
+                        System.out.println(String.format("unidentified character ! at line: %d, col: %d\n", lineNumber, currPos));
+                        outStream.println(String.format("unidentified character ! at line: %d, col: %d\n", lineNumber, currPos));
                         startPos = currPos;
                         continue;
                     }
@@ -88,18 +92,18 @@ class LineInput {
 
                     if (currPos+1 < currLine.length() && currLine.charAt(currPos)=='-' && currLine.charAt(currPos+1)=='>') {
                         currPos += 2;
-                        GreedyOperator possibleToken = new GreedyOperator ("<->",lineNumber,startPos,currPos);
+                        GreedyOperator possibleToken = new GreedyOperator ("<->", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
                     } else if (currPos < currLine.length() && currLine.charAt(currPos)=='=') {
                         currPos ++;
-                        GreedyOperator possibleToken = new GreedyOperator ("<=",lineNumber,startPos,currPos);
+                        GreedyOperator possibleToken = new GreedyOperator ("<=", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
                     } else {
-                        NonGreedyOperator possibleToken = new NonGreedyOperator ("<",lineNumber,startPos,currPos);
+                        NonGreedyOperator possibleToken = new NonGreedyOperator ("<", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
@@ -108,12 +112,12 @@ class LineInput {
                 } else if (currChar == '>') {
                     if ( currPos < currLine.length() && currLine.charAt(currPos)=='=') {
                         currPos ++;
-                        GreedyOperator possibleToken = new GreedyOperator (">=",lineNumber,startPos,currPos);
+                        GreedyOperator possibleToken = new GreedyOperator (">=", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
                     } else {
-                        NonGreedyOperator possibleToken = new NonGreedyOperator (">",lineNumber,startPos,currPos);
+                        NonGreedyOperator possibleToken = new NonGreedyOperator (">", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
@@ -128,7 +132,7 @@ class LineInput {
                         currToken =  possibleToken;
                         break;
                     } else {
-                        NonGreedyOperator possibleToken = new NonGreedyOperator ("=",lineNumber,startPos,currPos);
+                        NonGreedyOperator possibleToken = new NonGreedyOperator ("=", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
@@ -138,12 +142,12 @@ class LineInput {
 
                     if (currPos < currLine.length() && currLine.charAt(currPos) == '.') {
                         currPos ++;
-                        GreedyOperator possibleToken = new GreedyOperator ("..",lineNumber,startPos,currPos);
+                        GreedyOperator possibleToken = new GreedyOperator ("..", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
                     } else {
-                        NonGreedyOperator possibleToken = new NonGreedyOperator (".",lineNumber,startPos,currPos);
+                        NonGreedyOperator possibleToken = new NonGreedyOperator (".", lineNumber, startPos, currPos);
                         possibleToken.setKWType(possibleToken.getTokenType());
                         currToken =  possibleToken;
                         break;
@@ -155,12 +159,12 @@ class LineInput {
                             currLine.charAt(currPos-1) == '-' || currLine.charAt(currPos-1) == '<' ||
                             currLine.charAt(currPos-1) == '>' || currLine.charAt(currPos-1) == '=' ||
                             currLine.charAt(currPos-1) == '*' || currLine.charAt(currPos-1) == '/') {
-                        NonGreedyOperator possibleToken = new NonGreedyOperator ("-",lineNumber,startPos,currPos);
+                        NonGreedyOperator possibleToken = new NonGreedyOperator ("-", lineNumber, startPos, currPos);
                         possibleToken.setKWType(ReservedKeyWord.OP_UMINUS);
                         currToken =  possibleToken;
                         break;
                     } else {
-                        NonGreedyOperator possibleToken = new NonGreedyOperator ("-",lineNumber,startPos,currPos);
+                        NonGreedyOperator possibleToken = new NonGreedyOperator ("-", lineNumber, startPos, currPos);
                         possibleToken.setKWType(ReservedKeyWord.OP_MINUS);
                         currToken =  possibleToken;
                         break;
@@ -227,7 +231,7 @@ class LineInput {
 
     private TokenContext getContextType(char c) {
         TokenContext context;
-        if (c==' ') {
+        if (c == ' ') {
             context = TokenContext.Space;
         } else if (isNonGreedyOperator(c)) {
             context = TokenContext.NonGreedyOperator;

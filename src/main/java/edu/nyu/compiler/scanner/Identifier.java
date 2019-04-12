@@ -13,12 +13,12 @@ public class Identifier extends Word {
         Pattern pattern = Pattern.compile(patternString);
         Matcher matcher = pattern.matcher(getToken());
 
-        if (matcher.matches()){
-            return true;
+        if (!matcher.matches()){
+            System.err.printf("ID on line %d, from char %d to %d, is not valid, Id should be less than 80 char",
+                    getLineNum(), getStartCharPos(), getFinishCharPos());
+            setToken("$too$long$ID");
         }
-        else{
-            System.err.println("ID is not valid, too long");
-            return false;
-        }
+
+        return true;
     }
 }

@@ -1,7 +1,3 @@
-comment: "*** From outline.txt file" from char 0 to 25 on line: 1
-
-comment: "*** Calculator only" from char 0 to 19 on line: 3
-
 PRINT on line 4, from char 0 to 5
 INT_LIT on line 4, from char 6 to 9
 OP_MULT on line 4, from char 9 to 10
@@ -12,8 +8,6 @@ INT_LIT on line 4, from char 15 to 18
 OP_DIV on line 4, from char 18 to 19
 INT_LIT on line 4, from char 19 to 21
 RPAR on line 4, from char 21 to 22
-comment: "*** some variables and calculator" from char 0 to 33 on line: 5
-
 KW_GLOBAL on line 6, from char 0 to 6
 ID on line 6, from char 7 to 8
 ASSIGN on line 6, from char 8 to 9
@@ -22,8 +16,6 @@ PRINT on line 7, from char 0 to 5
 ID on line 7, from char 6 to 7
 OP_MULT on line 7, from char 7 to 8
 ID on line 7, from char 8 to 9
-comment: "*** a function" from char 0 to 14 on line: 8
-
 KW_DEFUN on line 9, from char 0 to 5
 ID on line 9, from char 6 to 12
 LPAR on line 9, from char 13 to 14
@@ -50,16 +42,12 @@ ID on line 11, from char 16 to 22
 LPAR on line 11, from char 22 to 23
 ID on line 11, from char 23 to 24
 RPAR on line 11, from char 24 to 25
-comment: "*** actually, the following is also legal" from char 0 to 41 on line: 12
-
 PRINT on line 13, from char 0 to 5
 ID on line 13, from char 6 to 12
 ID on line 13, from char 13 to 14
 OP_PLUS on line 13, from char 15 to 16
 ID on line 13, from char 17 to 23
 ID on line 13, from char 24 to 25
-comment: "*** bubblesort? ***" from char 0 to 19 on line: 16
-
 KW_ARRAY on line 17, from char 0 to 5
 ID on line 17, from char 6 to 9
 LBRAK on line 17, from char 9 to 10
@@ -194,8 +182,6 @@ RBRAK on line 38, from char 14 to 15
 KW_END on line 39, from char 0 to 3
 ID on line 39, from char 4 to 7
 ID on line 39, from char 4 to 7
-comment: "*** now weird stuff... tuples" from char 0 to 29 on line: 41
-
 KW_TUPLE on line 43, from char 0 to 5
 ID on line 43, from char 6 to 7
 ASSIGN on line 43, from char 7 to 8
@@ -231,14 +217,10 @@ ASSIGN on line 47, from char 4 to 5
 ID on line 47, from char 6 to 7
 OP_COMMA on line 47, from char 7 to 8
 ID on line 47, from char 8 to 10
-comment: "*** now ttt contains 0,1,3,3,2,1" from char 11 to 43 on line: 47
-
 ID on line 47, from char 8 to 10
 ID on line 49, from char 0 to 2
 ASSIGN on line 49, from char 2 to 3
 ID on line 49, from char 3 to 4
-comment: "*** now tt contains 0,1,3" from char 5 to 30 on line: 49
-
 ID on line 49, from char 3 to 4
 ID on line 51, from char 0 to 1
 LBRAK on line 51, from char 1 to 2
@@ -259,8 +241,4 @@ ID on line 51, from char 15 to 16
 LBRAK on line 51, from char 16 to 17
 INT_LIT on line 51, from char 17 to 18
 RBRAK on line 51, from char 18 to 19
-comment: "*** exchanged; same as a[1]<->a[2]" from char 20 to 54 on line: 51
-
 RBRAK on line 51, from char 18 to 19
-comment: "*** I am sure we will construct many more interesting examples eventually" from char 0 to 73 on line: 53
-
