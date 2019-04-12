@@ -21,7 +21,8 @@ public class KeyWord extends Word {
         KW_FOREACH("foreach"),
         KW_IN("in"),
         RETURN("return"),
-        PRINT("print");
+        PRINT("print"),
+        FOR("for");
 
         String keywordString;
 

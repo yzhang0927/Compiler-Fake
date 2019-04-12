@@ -12,10 +12,11 @@ import java.util.Scanner;
 
 class FakeCompilerScanner {
 
-	private Token currentToken; 
+	private Token currentToken;
 
 	private LineInput currentLine;
 	public PrintWriter printWriterOutPut;
+	public PrintWriter printTokenForParser;
 	private Scanner inputScanner;
 	private int lineNumber;
 	private static final String ENCODING = "utf-8";
@@ -24,14 +25,15 @@ class FakeCompilerScanner {
 		lineNumber = 1;
 		inputScanner = new Scanner(System.in, ENCODING);
 		printWriterOutPut = new PrintWriter(System.out, true);
-		currentLine = new LineInput(inputScanner.nextLine(), lineNumber, printWriterOutPut);
+		printTokenForParser = new PrintWriter(System.out, true);
+		currentLine = new LineInput(inputScanner.nextLine(), lineNumber, printWriterOutPut,printTokenForParser);
 	}
 
 	public FakeCompilerScanner(String inFileAddr) {
 
 		File inputFile = new File(inFileAddr+".txt");
-
 		try {
+			printTokenForParser = new PrintWriter(inFileAddr + ".out2");
 			printWriterOutPut = new PrintWriter(inFileAddr + ".out");
 		} catch (IOException ioe) {
 			throw new RuntimeException("IOException: " + ioe.getMessage(), ioe);
@@ -45,9 +47,9 @@ class FakeCompilerScanner {
 
 		try {
 			lineNumber = 1;
-			currentLine = new LineInput(inputScanner.nextLine(), lineNumber, printWriterOutPut);
+			currentLine = new LineInput(inputScanner.nextLine(), lineNumber, printWriterOutPut, printTokenForParser);
 		} catch (NoSuchElementException e) {
-			throw new RuntimeException(inFileAddr + " is an empty file", e);
+			throw new RuntimeException(inFileAddr + " is an empty file, EXITING", e);
 		}
 	}
 
@@ -56,7 +58,8 @@ class FakeCompilerScanner {
 
 		}
 		if (currentLine.endOfLine() || currentLine.isFlagComment()) {
-			currentLine = new LineInput(inputScanner.nextLine(), ++lineNumber, printWriterOutPut);
+			currentLine.printTokenForParser();
+			currentLine = new LineInput(inputScanner.nextLine(), ++lineNumber, printWriterOutPut,printTokenForParser);
 			currentLine.clearComment();
 		}
 
@@ -69,5 +72,7 @@ class FakeCompilerScanner {
 
 	public void finishOutput() {
 		printWriterOutPut.close();
+		printTokenForParser.close();
+
 	}
 }

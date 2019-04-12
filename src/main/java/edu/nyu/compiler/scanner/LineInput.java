@@ -1,24 +1,29 @@
 package edu.nyu.compiler.scanner;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 
 class LineInput {
 
     private final int lineNumber;
 
-    private Token currToken; 
+    private Token currToken;
     private boolean flagComment;
     private final String currLine;
 
     private PrintWriter outStream;
+    private PrintWriter outStreamForPar;
     private int currPos = 0;
     private int startPos = 0;
     private TokenContext currContext = null; // This is the context switch
+    ArrayList<String> tokenStorage;
 
-    public LineInput(String currLine, int lineNumber, PrintWriter outStream) {
+    public LineInput(String currLine, int lineNumber, PrintWriter outStream, PrintWriter outStreamForPar) {
         this.currLine = currLine;
         this.lineNumber = lineNumber;
         this.outStream = outStream;
+        this.outStreamForPar = outStreamForPar;
+        this.tokenStorage= new ArrayList<String>();
 
         System.out.println("~~~~~~>Line content<~~~~~~");
         System.out.println(currLine);
@@ -172,7 +177,7 @@ class LineInput {
 
                 } else {
                     System.err.println("something wrong with greedy op");
-                    throw new RuntimeException("GreedyOperator is failing somehow"); 
+                    throw new RuntimeException("GreedyOperator is failing somehow");
                 }
 
             } else {
@@ -218,6 +223,7 @@ class LineInput {
         }
         startPos = currPos;
         printTokenInfo(currToken);
+        addTokenToStorage(currToken);
         return currToken;
     }
 
@@ -245,6 +251,22 @@ class LineInput {
             context = TokenContext.Unidentified;
         }
         return context;
+    }
+
+    public void addTokenToStorage(Token token){
+        if (token!=null){ this.tokenStorage.add(token.getKwType().name());}
+    }
+
+    public void printTokenForParser(){
+        if (this.tokenStorage.size()>0) {
+            String outLinePar = this.tokenStorage.get(0);
+            for (int i = 1; i < this.tokenStorage.size(); i++) {
+                outLinePar += ' ';
+                outLinePar += this.tokenStorage.get(i);
+            }
+            outStreamForPar.println(outLinePar);
+            System.out.println(outLinePar);
+        }
     }
 
     public void printTokenInfo(Token token) {
@@ -281,7 +303,7 @@ class LineInput {
     }
 
     public int getLineNumber() {
-        return lineNumber; 
+        return lineNumber;
     }
 
     public String getLine() {

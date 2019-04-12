@@ -75,7 +75,7 @@ RBRAK on line 13, from char 35 to 36
 RBRAK on line 13, from char 36 to 37
 SEMI on line 13, from char 37 to 38
 KW_END on line 14, from char 0 to 3
-ID on line 14, from char 4 to 7
+FOR on line 14, from char 4 to 7
 KW_IF on line 16, from char 0 to 2
 ID on line 16, from char 3 to 4
 LBRAK on line 16, from char 4 to 5

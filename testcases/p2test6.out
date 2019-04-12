@@ -174,9 +174,9 @@ SEMI on line 33, from char 27 to 28
 KW_END on line 34, from char 5 to 8
 KW_IF on line 34, from char 9 to 11
 KW_END on line 35, from char 2 to 5
-ID on line 35, from char 6 to 9
+FOR on line 35, from char 6 to 9
 KW_END on line 36, from char 0 to 3
-ID on line 36, from char 4 to 7
+FOR on line 36, from char 4 to 7
 KW_FOREACH on line 38, from char 0 to 7
 ID on line 38, from char 8 to 9
 KW_IN on line 38, from char 10 to 12
@@ -191,8 +191,8 @@ ID on line 39, from char 13 to 14
 RBRAK on line 39, from char 14 to 15
 SEMI on line 39, from char 15 to 16
 KW_END on line 40, from char 0 to 3
-ID on line 40, from char 4 to 7
-ID on line 40, from char 4 to 7
+FOR on line 40, from char 4 to 7
+FOR on line 40, from char 4 to 7
 ID on line 45, from char 0 to 1
 ASSIGN on line 45, from char 1 to 2
 INT_LIT on line 45, from char 2 to 3

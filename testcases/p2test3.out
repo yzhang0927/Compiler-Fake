@@ -19,7 +19,7 @@ PRINT on line 6, from char 24 to 29
 ID on line 6, from char 30 to 31
 SEMI on line 6, from char 31 to 32
 KW_END on line 6, from char 33 to 36
-ID on line 6, from char 37 to 40
+FOR on line 6, from char 37 to 40
 KW_FOREACH on line 9, from char 0 to 7
 ID on line 9, from char 8 to 9
 KW_IN on line 9, from char 10 to 12
@@ -50,4 +50,4 @@ SEMI on line 13, from char 12 to 13
 KW_END on line 14, from char 2 to 5
 KW_IF on line 14, from char 6 to 8
 KW_END on line 15, from char 0 to 3
-ID on line 15, from char 4 to 7
+FOR on line 15, from char 4 to 7

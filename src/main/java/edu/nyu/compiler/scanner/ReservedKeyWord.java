@@ -19,6 +19,7 @@ public enum ReservedKeyWord {
     KW_IN("in"),
     RETURN("return"),
     PRINT("print"),
+    FOR("for"),
 
     LBRAK("["),
     RBRAK("]"),

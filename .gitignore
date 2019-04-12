@@ -6,6 +6,7 @@
 target/
 out/
 TODO/
+gen/
 
 # IDE Artifacts
 *.iml
