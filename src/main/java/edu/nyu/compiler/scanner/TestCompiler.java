@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-class Test {
+public class TestCompiler {
     private static final String TESTCASE_DIR = "testcases/p1test";
     private static final String TESTCASE_P2_DIR = "testcases/p2test";
     private static final int TESTCASE_FIRST = 1;

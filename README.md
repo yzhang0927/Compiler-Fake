@@ -1,3 +1,9 @@
+# Compiler Design Second Phase Parser
+
+- It would be best for you to use IntelliJ to run this project
+  - Go to project structure, and select dependency, and add new, and add ./lib/antlr-4.7.2-complete.jar as a dependency
+  - invoke the main method in the TestMain class, and you will be able to see how we generated parsetrees for the testcases input.  
+
 # Compiler Design First Phase Scanner
 
 - To Compile
@@ -16,7 +22,7 @@
     - Then you have to `ctrl + c` to exit the program. Sorry that I didn't build a graceful way out.. 
 
 - Now to look at the code from the Entry Point
-  - The program's entry point is [Test](src/main/java/edu/nyu/compiler/scanner/Test.java)
+  - The program's entry point is [Test](src/main/java/edu/nyu/compiler/scanner/TestCompiler.java)
   - Then it instantiates a Scanner at [FakeCompilerScanner](src/main/java/edu/nyu/compiler/scanner/FakeCompilerScanner.java)
   - Then the scanner reads each line and delegates the task of figuring out each line's input to [LineInput](src/main/java/edu/nyu/compiler/scanner/LineInput.java)
 

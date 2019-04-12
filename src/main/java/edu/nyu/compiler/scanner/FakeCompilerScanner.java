@@ -10,7 +10,7 @@ import java.util.Scanner;
  * @version 1.0.0
  */
 
-class FakeCompilerScanner {
+public class FakeCompilerScanner {
 
 	private Token currentToken;
 

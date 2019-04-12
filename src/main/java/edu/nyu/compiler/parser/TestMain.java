@@ -2,19 +2,40 @@ package edu.nyu.compiler.parser;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.NoSuchElementException;
 
 import org.antlr.v4.runtime.ANTLRInputStream;
-import org.antlr.v4.runtime.CharStream;
-import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 
-public class Test {
+import edu.nyu.compiler.scanner.FakeCompilerScanner;
+import edu.nyu.compiler.scanner.TestCompiler;
 
-    private static final String addr = "testcases/p1test3.out2";
+public class TestMain {
+    private static final String TESTCASE_DIR = "testcases/p1test";
+    private static final String TESTCASE_P2_DIR = "testcases/p2test";
+    private static final int TESTCASE_FIRST = 1;
+    private static final int TESTCASE_LAST = 5;
+    private static final int TESTCASE_P2_LAST = 6;
+    private static FakeCompilerScanner testScanner;
+
+    private static final String SCANNER_OUT_ADDR = "testcases/p1test";
+    private static final String SCANNER_OUT2 = ".out2";
 
 
     public static void main(String[] args) {
+        String[] arguments = new String[]{"txt"};
+        TestCompiler.main(arguments);
+
+        for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
+            String effectiveAddr = SCANNER_OUT_ADDR + i + SCANNER_OUT2;
+            parseFile(effectiveAddr);
+        }
+
+
+    }
+
+    private static void parseFile(String addr) {
         //File file = new File(fileName);
         FileInputStream fis = null;
 
@@ -34,7 +55,8 @@ public class Test {
             // Close the input file
             fis.close();
             // Close the input file
-            System.out.println(tree.toStringTree(parser));
+
+            System.out.print(OutputParser.parse(tree.toStringTree(parser)));
 
 
         } catch (IOException e) {
