@@ -8,7 +8,14 @@
     <artifactId>sy</artifactId>
     <version>1.0-SNAPSHOT</version>
     <dependencies>
-    <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-maven-plugin -->
+        <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-runtime -->
+        <dependency>
+            <groupId>org.antlr</groupId>
+            <artifactId>antlr4-runtime</artifactId>
+            <version>4.7.2</version>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.antlr/antlr4-maven-plugin -->
     <dependency>
         <groupId>org.antlr</groupId>
         <artifactId>antlr4-maven-plugin</artifactId>
