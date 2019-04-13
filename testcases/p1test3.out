@@ -182,7 +182,7 @@ RBRAK on line 38, from char 14 to 15
 KW_END on line 39, from char 0 to 3
 FOR on line 39, from char 4 to 7
 FOR on line 39, from char 4 to 7
-KW_TUPLE on line 43, from char 0 to 5
+ID on line 43, from char 0 to 5
 ID on line 43, from char 6 to 7
 ASSIGN on line 43, from char 7 to 8
 INT_LIT on line 43, from char 8 to 9
@@ -190,7 +190,7 @@ OP_COMMA on line 43, from char 9 to 10
 INT_LIT on line 43, from char 10 to 11
 OP_COMMA on line 43, from char 11 to 12
 INT_LIT on line 43, from char 12 to 13
-KW_TUPLE on line 44, from char 0 to 5
+ID on line 44, from char 0 to 5
 ID on line 44, from char 6 to 8
 ASSIGN on line 44, from char 8 to 9
 INT_LIT on line 44, from char 9 to 10
@@ -198,7 +198,7 @@ OP_COMMA on line 44, from char 10 to 11
 INT_LIT on line 44, from char 11 to 12
 OP_COMMA on line 44, from char 12 to 13
 INT_LIT on line 44, from char 13 to 14
-KW_TUPLE on line 45, from char 0 to 5
+ID on line 45, from char 0 to 5
 ID on line 45, from char 6 to 9
 ASSIGN on line 45, from char 9 to 10
 INT_LIT on line 45, from char 10 to 11

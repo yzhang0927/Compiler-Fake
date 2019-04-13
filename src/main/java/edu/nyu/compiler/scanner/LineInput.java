@@ -165,7 +165,9 @@ class LineInput {
                             currLine.charAt(currPos-1) == '>' || currLine.charAt(currPos-1) == '=' ||
                             currLine.charAt(currPos-1) == '*' || currLine.charAt(currPos-1) == '/') {
                         NonGreedyOperator possibleToken = new NonGreedyOperator ("-", lineNumber, startPos, currPos);
-                        possibleToken.setKWType(ReservedKeyWord.OP_UMINUS);
+                        // No UMinus any more, treating as Minus here
+                        // possibleToken.setKWType(ReservedKeyWord.OP_UMINUS);
+                        possibleToken.setKWType(ReservedKeyWord.OP_MINUS);
                         currToken =  possibleToken;
                         break;
                     } else {

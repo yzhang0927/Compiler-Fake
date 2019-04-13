@@ -12,7 +12,7 @@ OP_MULT on line 6, from char 24 to 25
 ID on line 6, from char 25 to 26
 OP_MULT on line 6, from char 26 to 27
 ID on line 6, from char 27 to 28
-OP_UMINUS on line 6, from char 29 to 30
+OP_MINUS on line 6, from char 29 to 30
 INT_LIT on line 6, from char 31 to 32
 OP_MULT on line 6, from char 32 to 33
 ID on line 6, from char 33 to 34

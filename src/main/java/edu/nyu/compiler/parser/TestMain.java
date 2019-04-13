@@ -2,8 +2,12 @@ package edu.nyu.compiler.parser;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.NoSuchElementException;
 
+import javax.swing.*;
+
+import org.antlr.v4.gui.TreeViewer;
 import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -59,6 +63,7 @@ public class TestMain {
             //show AST in GUI
             JFrame frame = new JFrame("Antlr AST");
             JPanel panel = new JPanel();
+
             TreeViewer viewr = new TreeViewer(Arrays.asList(
                     parser.getRuleNames()),tree);
             viewr.setScale(1.5);//scale a little

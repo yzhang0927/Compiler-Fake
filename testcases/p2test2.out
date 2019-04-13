@@ -14,7 +14,7 @@ LPAR on line 4, from char 2 to 3
 INT_LIT on line 4, from char 3 to 6
 OP_MULT on line 4, from char 6 to 7
 ID on line 4, from char 7 to 8
-OP_UMINUS on line 4, from char 8 to 9
+OP_MINUS on line 4, from char 8 to 9
 INT_LIT on line 4, from char 9 to 12
 OP_MULT on line 4, from char 12 to 13
 ID on line 4, from char 13 to 14
@@ -38,7 +38,7 @@ LPAR on line 8, from char 2 to 3
 INT_LIT on line 8, from char 3 to 6
 OP_MULT on line 8, from char 6 to 7
 ID on line 8, from char 7 to 8
-OP_UMINUS on line 8, from char 8 to 9
+OP_MINUS on line 8, from char 8 to 9
 INT_LIT on line 8, from char 9 to 12
 OP_MULT on line 8, from char 12 to 13
 ID on line 8, from char 13 to 14

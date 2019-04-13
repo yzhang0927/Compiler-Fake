@@ -21,10 +21,10 @@ unidentified character : at line: 5, col: 16
 ID on line 5, from char 10 to 15
 RETURN on line 6, from char 0 to 6
 ID on line 6, from char 7 to 12
-OP_UMINUS on line 6, from char 12 to 13
+OP_MINUS on line 6, from char 12 to 13
 ID on line 6, from char 13 to 17
 SEMI on line 6, from char 17 to 18
-KW_TUPLE on line 8, from char 0 to 5
+ID on line 8, from char 0 to 5
 ID on line 8, from char 6 to 17
 KW_FOREACH on line 9, from char 0 to 7
 ID on line 9, from char 8 to 9
@@ -42,7 +42,7 @@ ASSIGN on line 12, from char 10 to 11
 KW_ELSE on line 14, from char 0 to 4
 RETURN on line 17, from char 0 to 6
 ID on line 17, from char 7 to 11
-OP_UMINUS on line 17, from char 11 to 12
+OP_MINUS on line 17, from char 11 to 12
 ID on line 17, from char 12 to 17
 SEMI on line 17, from char 17 to 18
 unidentified character 变 at line: 18, col: 1

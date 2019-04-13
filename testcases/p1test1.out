@@ -12,7 +12,7 @@ KW_LOCAL on line 14, from char 0 to 5
 PRINT on line 15, from char 0 to 5
 RETURN on line 16, from char 0 to 6
 KW_THEN on line 17, from char 0 to 4
-KW_TUPLE on line 18, from char 0 to 5
+ID on line 18, from char 0 to 5
 KW_WHILE on line 19, from char 0 to 5
 OP_NOTEQUA on line 21, from char 0 to 2
 LPAR on line 22, from char 0 to 1
@@ -20,7 +20,7 @@ RPAR on line 23, from char 0 to 1
 OP_MULT on line 24, from char 0 to 1
 OP_PLUS on line 25, from char 0 to 1
 OP_COMMA on line 26, from char 0 to 1
-OP_UMINUS on line 27, from char 0 to 1
+OP_MINUS on line 27, from char 0 to 1
 OP_DOT on line 28, from char 0 to 1
 OP_DOTDOT on line 29, from char 0 to 2
 OP_DIV on line 30, from char 0 to 1

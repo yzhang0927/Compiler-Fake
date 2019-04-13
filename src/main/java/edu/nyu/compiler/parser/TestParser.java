@@ -1,4 +1,5 @@
-// Generated from /Users/syd/Desktop/scala_proj/javaproj/Compiler-Fake/grammar/Test.g4 by ANTLR 4.7.2
+// Generated from /Users/ZhangYu/workspaces/java_workspace/Compiler-Fake/grammar/Test.g4 by ANTLR 4.7.2
+package edu.nyu.compiler.parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
