@@ -3,7 +3,6 @@ package edu.nyu.compiler.scanner;
 public enum ReservedKeyWord {
 
     KW_ARRAY("array"),
-    KW_TUPLE("tuple"),
     KW_LOCAL("local"),
     KW_GLOBAL("global"),
     KW_DEFUN("defun"), 
@@ -42,7 +41,6 @@ public enum ReservedKeyWord {
     OP_MINUS("-"),
     OP_MULT("*"),
     OP_DIV("/"),
-    OP_UMINUS("-"),
     ID("INPUT_DEPENDENT_KEYWORD"),
     INT_LIT("INPUT_DEPENDENT_KEYWORD");
 

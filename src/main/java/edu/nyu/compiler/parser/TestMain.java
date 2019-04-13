@@ -32,7 +32,6 @@ public class TestMain {
             parseFile(effectiveAddr);
         }
 
-
     }
 
     private static void parseFile(String addr) {
@@ -55,9 +54,19 @@ public class TestMain {
             // Close the input file
             fis.close();
             // Close the input file
-
             System.out.print(OutputParser.parse(tree.toStringTree(parser)));
 
+            //show AST in GUI
+            JFrame frame = new JFrame("Antlr AST");
+            JPanel panel = new JPanel();
+            TreeViewer viewr = new TreeViewer(Arrays.asList(
+                    parser.getRuleNames()),tree);
+            viewr.setScale(1.5);//scale a little
+            panel.add(viewr);
+            frame.add(panel);
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setSize(200,200);
+            frame.setVisible(true);
 
         } catch (IOException e) {
             e.printStackTrace();
