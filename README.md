@@ -1,7 +1,11 @@
 # Compiler Design Second Phase Parser
 
 - It would be best for you to use IntelliJ to run this project
+  - If you are using intelliJ, idea should be able to recognize the main.iml file and generate all the dependency for you
+ 
+- If it's not working for you, you can manually add all the dependencies
   - Go to project structure, and select dependency, and add new, and add ./lib/antlr-4.7.2-complete.jar as a dependency
+  - Inside project structure, select src/main/java as the source folder
   - invoke the main method in the TestMain class, and you will be able to see how we generated parsetrees for the testcases input.  
 
 # Compiler Design First Phase Scanner
