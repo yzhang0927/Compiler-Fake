@@ -9,7 +9,6 @@ TODO/
 gen/
 
 # IDE Artifacts
-*.iml
 *.xml
 
 # Compiled class file
