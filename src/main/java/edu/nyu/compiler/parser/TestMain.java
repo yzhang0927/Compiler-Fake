@@ -23,7 +23,7 @@ public class TestMain {
     private static final int TESTCASE_P2_LAST = 6;
     private static FakeCompilerScanner testScanner;
 
-    private static final String SCANNER_OUT_ADDR = "testcases/p1test";
+//    private static final String SCANNER_OUT_ADDR = "testcases/p1test";
     private static final String SCANNER_OUT2 = ".out2";
 
 
@@ -32,7 +32,7 @@ public class TestMain {
         TestCompiler.main(arguments);
 
         for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
-            String effectiveAddr = SCANNER_OUT_ADDR + i + SCANNER_OUT2;
+            String effectiveAddr = TESTCASE_P2_DIR + i + SCANNER_OUT2;
             parseFile(effectiveAddr);
         }
 

@@ -18,10 +18,10 @@ public class TestCompiler {
         }
 
         if ("txt".equals(args[0])) {
-            for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
-                testScanner = new FakeCompilerScanner(TESTCASE_DIR + i);
-                testOneCase(); 
-            }
+//            for (int i = TESTCASE_FIRST; i <= TESTCASE_LAST; ++i) {
+//                testScanner = new FakeCompilerScanner(TESTCASE_DIR + i);
+//                testOneCase();
+//            }
             /* Testcase p2 */
             for (int i = TESTCASE_FIRST; i <= TESTCASE_P2_LAST; ++i) {
                 testScanner = new FakeCompilerScanner(TESTCASE_P2_DIR + i);
