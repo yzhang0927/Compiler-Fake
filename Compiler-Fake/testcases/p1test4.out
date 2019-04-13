@@ -1,0 +1,56 @@
+ID on line 1, from char 0 to 1
+INT_LIT on line 1, from char 1 to 2
+ID on line 2, from char 0 to 1
+INT_LIT on line 2, from char 1 to 2
+SEMI on line 2, from char 2 to 3
+INT_LIT on line 3, from char 0 to 1
+SEMI on line 3, from char 1 to 2
+INT_LIT on line 4, from char 0 to 1
+ID on line 4, from char 1 to 2
+SEMI on line 5, from char 0 to 1
+ID on line 5, from char 1 to 2
+SEMI on line 6, from char 0 to 1
+INT_LIT on line 6, from char 1 to 2
+ID on line 6, from char 2 to 3
+OP_LESSEQUAL on line 9, from char 0 to 2
+OP_EQUAL on line 9, from char 2 to 4
+ASSIGN on line 9, from char 4 to 5
+LBRAK on line 10, from char 0 to 1
+ID on line 10, from char 1 to 4
+RBRAK on line 10, from char 4 to 5
+ASSIGN on line 10, from char 5 to 6
+OP_DIV on line 10, from char 6 to 7
+OP_DIV on line 10, from char 7 to 8
+KW_ARRAY on line 11, from char 0 to 5
+ID on line 11, from char 6 to 7
+LBRAK on line 11, from char 7 to 8
+INT_LIT on line 11, from char 8 to 10
+RBRAK on line 11, from char 10 to 11
+SEMI on line 11, from char 11 to 12
+RETURN on line 12, from char 0 to 6
+ID on line 12, from char 7 to 8
+OP_DIV on line 13, from char 0 to 1
+OP_DIV on line 13, from char 1 to 2
+OP_DIV on line 13, from char 2 to 3
+OP_DIV on line 13, from char 3 to 4
+OP_DIV on line 13, from char 4 to 5
+unidentified character \ at line: 13, col: 6
+
+unidentified character \ at line: 13, col: 7
+
+unidentified character \ at line: 13, col: 8
+
+unidentified character \ at line: 13, col: 9
+
+unidentified character \ at line: 13, col: 10
+
+unidentified character \ at line: 13, col: 11
+
+OP_DIV on line 13, from char 4 to 5
+OP_DIV on line 14, from char 0 to 1
+LPAR on line 14, from char 1 to 2
+unidentified character \ at line: 14, col: 3
+
+RPAR on line 14, from char 3 to 4
+ID on line 15, from char 0 to 11
+ASSIGN on line 15, from char 11 to 12
