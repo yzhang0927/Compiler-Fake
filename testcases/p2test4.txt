@@ -1,3 +1,0 @@
-*** Hello, world!
-*** Except we have no way to print strings.
-print 131313;
