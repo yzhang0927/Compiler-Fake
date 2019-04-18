@@ -2,11 +2,10 @@ grammar Calc;
 
 start_symbol: input;
 
-ID : 'ID'; //TBI
 OP_DOT: '.';
 OP_COMMA: ',';
 OP_PLUS: '+';
-INT_LIT: 'INT_LIT'; //TBI
+
 OP_MINUS: '-';
 OP_DIV: '/';
 OP_MULT: '*';
@@ -41,16 +40,23 @@ OP_NOTEQUA: '!=';
 OP_LESSEQUAL: '<=';
 OP_GREATEREQUAL: '>=';
 
+INT_LIT: [0-9]+;
+int_lit: INT_LIT;
+ID: [a-zA-Z_]+;
+id : ID;
+
 
 WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
+LINE_COMMENT: '***' ~[\r\n]* -> skip;
+
 input : ( statement | decl | def )* ;
 
-decl : KW_ARRAY ID LBRAK expr OP_DOTDOT expr RBRAK ( ASSIGN expr )? SEMI
-     | KW_LOCAL ID ASSIGN expr SEMI
-     | KW_GLOBAL ID (ASSIGN expr)? SEMI ; //NEW CHANGES
+decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
+     | KW_LOCAL id (ASSIGN expr)? SEMI
+     | KW_GLOBAL id (ASSIGN expr)? SEMI ; //NEW CHANGES
 
 // function definition; no way to specify types of parameters (yet?)
-def : KW_DEFUN ID LPAR ID ( OP_COMMA ID )* RPAR body KW_END KW_DEFUN ;
+def : KW_DEFUN id LPAR id ( OP_COMMA id )* RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 
@@ -58,16 +64,16 @@ statement : lhs ASSIGN expr SEMI  // assignment
           | lhs EXCHANGE lhs SEMI // exchange
 	  | KW_WHILE bool_expr  KW_DO statement* KW_END KW_WHILE
 	  | KW_IF bool_expr KW_THEN statement*
-	    (KW_ELSIF bool_expr KW_THEN statement)*
-	    (KW_ELSE statement)? KW_END KW_IF
-	  | KW_FOREACH expr KW_IN (range | ID) KW_DO statement* KW_END FOR //I think the professor has not give us KW_FOr
+	    (KW_ELSIF bool_expr KW_THEN statement*)*
+	    (KW_ELSE statement*)? KW_END KW_IF
+	  | KW_FOREACH expr KW_IN (range | array_id) KW_DO statement* KW_END FOR //I think the professor has not give us KW_FOr
 	  //we keep array id as an ID
 	  | RETURN expr SEMI
 	  | PRINT expr SEMI
        ;
 
 
-array_id: ID;
+array_id: id;
 range : expr OP_DOTDOT expr ;
 bool_expr : expr bool_op expr ; // can make it more complicated by adding logical operators such as NOT, AND, OR, XOR
 
@@ -77,9 +83,9 @@ lhs : lhs_item ( OP_COMMA lhs_item )* ;
 
 lhs_item :
     // variable
-    ID
-    | ID OP_DOT INT_LIT  // tuple component reference
-    | ID LBRAK expr RBRAK  ; // array element reference
+    id
+    | id OP_DOT int_lit  // tuple component reference
+    | id LBRAK expr RBRAK  ; // array element reference
 
 expr :
     // *ascending* order of precedence: from least important to most important
@@ -88,9 +94,9 @@ expr :
     | expr ( OP_PLUS | OP_MINUS) expr
     // there is no more unary minus!!
     |  LPAR expr RPAR
-    |  ID
-    |  INT_LIT
-    |  ID expr // function call, right-associative
-    |  ID OP_DOT INT_LIT// tuple reference
-    |  ID LBRAK expr RBRAK // array element refe\rence
+    |  id
+    |  int_lit
+    |  id expr // function call, right-associative
+    |  id OP_DOT int_lit// tuple reference
+    |  id LBRAK expr RBRAK // array element refe\rence
     ;
