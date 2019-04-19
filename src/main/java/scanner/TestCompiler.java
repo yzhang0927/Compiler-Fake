@@ -46,7 +46,7 @@ public class TestCompiler {
         
         //try to get last context switch
         try { 
-            testScanner.next();
+            testScanner.nextLast();
         } catch (NoSuchElementException e) {}
 
         testScanner.finishOutput();

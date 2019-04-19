@@ -54,14 +54,20 @@ public class FakeCompilerScanner {
 	}
 
 	public String next(){
-		if (currentLine.endOfLine()){
-		}
 		if (currentLine.endOfLine() || currentLine.isFlagComment()) {
 			currentLine.printTokenForParser();
 			currentLine = new LineInputLight(inputScanner.nextLine(), ++lineNumber, printWriterOutPut,printTokenForParser);
 			currentLine.clearComment();
 		}
 		return currentLine.next();
+	}
+
+	public void nextLast(){
+
+		while (!currentLine.endOfLine() && !currentLine.isFlagComment()) {
+			currentLine.next();
+		}
+		currentLine.printTokenForParser();
 	}
 
 	public boolean endOfFile() {

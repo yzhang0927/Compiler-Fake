@@ -1,5 +1,5 @@
 *** simple calc with variables and control structures
-global aseeeesesssxdxdfasd213123=0;
+global a=0;
 global b=1;
 
 *** simplest foreach I can think of
@@ -8,7 +8,7 @@ foreach c in 1 .. 10 do print c; end for
 *** more complicated stuff
 foreach c in 1 .. 10 do ***hhh
   if c==(c/2)*2 then *** even c
-     print 212345678909876543245678;
+     print 2;
   else *** odd
      print 1;
   end if

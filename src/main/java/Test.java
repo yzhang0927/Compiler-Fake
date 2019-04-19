@@ -18,7 +18,7 @@ import static scanner.TestCompiler.testOneCase;
 public class Test {
 
     public static void main(String[] args) {
-        String addr = "testcases/p2test1";
+        String addr = "testcases/p2test5";
         FakeCompilerScanner testScanner;
         testScanner = new FakeCompilerScanner(addr);
         testOneCase(testScanner);

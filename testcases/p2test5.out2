@@ -10,7 +10,7 @@ print 999 ;
 else
 print 777 ;
 end if
-defun a ( a , aa , aaa , a ) )
+defun a ( a , aa , aaa , a )
 local a = aa ;
 global aaa = aa ;
 if a [ aa [ aaa ] ] == aaa [ a . 7 ] then
@@ -22,3 +22,4 @@ end if
 end defun
 while a != a . 7 do
 a <-> a , a ;
+end while

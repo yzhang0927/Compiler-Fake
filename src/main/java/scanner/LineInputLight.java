@@ -173,7 +173,10 @@ public class LineInputLight {
         }
         startPos = currPos;
         //printTokenInfo(currToken);
-        if (!this.isFlagComment()) {addTokenToStorage(currToken);}
+        if (!this.isFlagComment()) {
+            addTokenToStorage(currToken);
+            currToken = null;
+        }
         return currToken;
     }
 
@@ -217,7 +220,7 @@ public class LineInputLight {
                 outLinePar += this.tokenStorage.get(i);
             }
             outStreamForPar.println(outLinePar);
-            System.out.println(outLinePar);
+            //System.out.println(outLinePar);
         }
     }
 
