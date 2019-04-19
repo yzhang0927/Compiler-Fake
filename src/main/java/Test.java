@@ -1,34 +1,27 @@
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
+
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import org.antlr.v4.gui.TreeViewer;
-import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
-import org.antlr.v4.runtime.tree.ParseTreeWalker;
+
 import parser.lingBorLexer;
 import parser.lingBorParser;
 import scanner.*;
 import static scanner.TestCompiler.testOneCase;
 
-// You're going to need to implement these based on the grammar you've created
-
-
 public class Test {
+
     public static void main(String[] args) {
-
         String addr = "testcases/p2test1";
-
         FakeCompilerScanner testScanner;
         testScanner = new FakeCompilerScanner(addr);
         testOneCase(testScanner);
-
         try {
             // Create a CharStream that reads from standard input
             CharStream input = CharStreams.fromFileName(addr+".out2");
@@ -50,11 +43,11 @@ public class Test {
             panel.add(viewr);
             frame.add(panel);
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setSize(200,200);
+            frame.setSize(2000,1000);
             frame.setVisible(true);
 
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new RuntimeException(e);
         }
     }
 }
