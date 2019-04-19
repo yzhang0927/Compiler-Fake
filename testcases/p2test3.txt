@@ -1,6 +1,6 @@
 *** simple calc with variables and control structures
 global a=0;
-global b=1;
+global b=3;
 
 *** simplest foreach I can think of
 foreach c in 1 .. 10 do print c; end for

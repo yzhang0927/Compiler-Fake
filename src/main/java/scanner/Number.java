@@ -11,15 +11,28 @@ public class Number extends Token {
         return value;
     }
 
+    public String modify() {
+        try {
+            value = Integer.parseInt(getToken());
+            this.setToken(String.valueOf(value));
+
+        } catch (NumberFormatException exp) {
+            System.err.println("integer too large");
+            this.setToken("-1");
+        }
+        return this.getToken();
+    }
+
     @Override public boolean validate(char prevChar) {
         try {
             value = Integer.parseInt(getToken());
             this.setToken(String.valueOf(value));
-            return true; 
+            return true;
+
         } catch (NumberFormatException exp) {
             System.err.println("integer too large");
             this.setToken("-1");
-            return false; 
+            return false;
         }
     }
 }

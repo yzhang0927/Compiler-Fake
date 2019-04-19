@@ -1,9 +1,9 @@
-global aseeeesesssxdxdfasd 213123 = 0 ;
-global b = 1 ;
+global a = 0 ;
+global b = 3 ;
 foreach c in 1 .. 10 do print c ; end for
 foreach c in 1 .. 10 do
 if c == ( c / 2 ) * 2 then
-print ;
+print 2 ;
 else
 print 1 ;
 end if

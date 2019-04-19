@@ -152,10 +152,8 @@ public class LineInputLight {
 
                 if (lastContext == TokenContext.Number) {
                     Number possibleToken = new Number(possibleTokenString, lineNumber, startPos, currPos);
-                    if (possibleToken.validate(' ')) {
-                        currToken = possibleToken.getToken();
-                        break;
-                    }
+                    currToken = possibleToken.modify();
+                    break;
                 } else {
                     if (isKeyWord(possibleTokenString)) {
                         currToken = possibleTokenString;
