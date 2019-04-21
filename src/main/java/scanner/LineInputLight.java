@@ -5,7 +5,6 @@ import java.util.ArrayList;
 
 public class LineInputLight {
 
-
     private String currToken;
     private boolean flagComment;
 
@@ -48,27 +47,8 @@ public class LineInputLight {
                 break;
             } else if (currContext == TokenContext.GreedyOperator) {
                 //*
-                if (currChar == '*') {
-                    if (currPos + 1 < currLine.length()
-                            && currLine.charAt(currPos) == '*'
-                            && currLine.charAt(currPos + 1) == '*') {
-                        /**
-                         *  comment encountered, break loop.
-                         *  change behavior to ignore comment
-                         */
-//
-//                        String comment = currLine.substring(currPos-1,currLine.length()) ;
-//                        outStream.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
-//                        System.out.println(String.format("comment: \"%s\" from char %d to %d on line: %d\n",comment,startPos,currPos,lineNumber));
-                        this.flagComment = true;
-                        break;
 
-                    } else {
-                        currToken = "*";
-                        break;
-                    }
-
-                } else if (currChar == '!') {
+               if (currChar == '!') {
                     if (currPos < currLine.length() && currLine.charAt(currPos) == '=') {
                         currPos++;
                         currToken = "!=";

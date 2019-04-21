@@ -1,4 +1,5 @@
-package parser;// Generated from /Users/syd/Desktop/scala_proj/javaproj/parserNotYetCompleted/grammar/lingBor.g4 by ANTLR 4.7.2
+// Generated from /Users/syd/Desktop/scala_proj/javaproj/Compiler-Fake/grammar/lingBor.g4 by ANTLR 4.7.2
+package parser;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.Token;

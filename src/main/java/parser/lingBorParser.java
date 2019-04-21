@@ -1,4 +1,5 @@
-package parser;// Generated from /Users/syd/Desktop/scala_proj/javaproj/parserNotYetCompleted/grammar/lingBor.g4 by ANTLR 4.7.2
+// Generated from /Users/syd/Desktop/scala_proj/javaproj/Compiler-Fake/grammar/lingBor.g4 by ANTLR 4.7.2
+package parser;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -123,6 +124,11 @@ public class lingBorParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitStart_symbol(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitStart_symbol(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final Start_symbolContext start_symbol() throws RecognitionException {
@@ -160,6 +166,11 @@ public class lingBorParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitInt_lit(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitInt_lit(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final Int_litContext int_lit() throws RecognitionException {
@@ -196,6 +207,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitId(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitId(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -250,6 +266,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitInput(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitInput(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -346,6 +367,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitDecl(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitDecl(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -486,6 +512,11 @@ public class lingBorParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitDef(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitDef(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final DefContext def() throws RecognitionException {
@@ -564,6 +595,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitBody(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitBody(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -688,6 +724,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitStatement(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitStatement(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -937,6 +978,11 @@ public class lingBorParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitArray_id(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitArray_id(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final Array_idContext array_id() throws RecognitionException {
@@ -979,6 +1025,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitRange(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitRange(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1029,6 +1080,11 @@ public class lingBorParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitBool_expr(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitBool_expr(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final Bool_exprContext bool_expr() throws RecognitionException {
@@ -1074,6 +1130,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitBool_op(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitBool_op(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1129,6 +1190,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitLhs(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitLhs(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1194,6 +1260,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitLhs_item(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitLhs_item(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1282,6 +1353,11 @@ public class lingBorParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof lingBorListener ) ((lingBorListener)listener).exitExpr(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof lingBorVisitor ) return ((lingBorVisitor<? extends T>)visitor).visitExpr(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
