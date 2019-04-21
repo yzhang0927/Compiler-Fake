@@ -13,12 +13,12 @@ public class Intlit extends Symbol{
         super(isLocal);
     }
 
-    public void ini (String name, int line, int startPos, int stopPos ){
+    public void ini (String name, int line){
         this.name = name;
         this.line = line;
-        this.startPos = startPos;
-        this.stopPos = stopPos;
+
     }
+
 
 
 

@@ -1,6 +1,6 @@
 package typenscope;
 
-public abstract class Symbol {
+public class Symbol {
     private int line;
     private int start_pos;
     private int end_pos;

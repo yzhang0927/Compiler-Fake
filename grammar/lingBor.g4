@@ -53,15 +53,15 @@ input : ( statement | decl | def )* ;
 
 decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
      | KW_LOCAL id (ASSIGN expr)? SEMI
-     | KW_GLOBAL id (ASSIGN expr)? SEMI ; //NEW CHANGES
+     | KW_GLOBAL id (ASSIGN expr)? SEMI ;
 
-// function definition; no way to specify types of parameters (yet?)
+// function definition;
 def : KW_DEFUN id LPAR id ( OP_COMMA id )* RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 
-statement : lhs ASSIGN expr SEMI  // assignment
-          | lhs EXCHANGE lhs SEMI // exchange
+statement : lhs ASSIGN expr SEMI
+          | lhs EXCHANGE lhs SEMI
 	  | KW_WHILE bool_expr  KW_DO statement* KW_END KW_WHILE
 	  | KW_IF bool_expr KW_THEN statement*
 	    (KW_ELSIF bool_expr KW_THEN statement*)*
@@ -74,7 +74,9 @@ statement : lhs ASSIGN expr SEMI  // assignment
 
 
 array_id: id;
+
 range : expr OP_DOTDOT expr ;
+
 bool_expr : expr bool_op expr ; // can make it more complicated by adding logical operators such as NOT, AND, OR, XOR
 
 bool_op : OP_LESS | OP_GREATER | OP_EQUAL | OP_NOTEQUA | OP_LESSEQUAL | OP_GREATEREQUAL ;
