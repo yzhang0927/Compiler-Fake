@@ -1,6 +1,6 @@
 package typenscope;
 
-public class Intlit extends Symbol{
+public class Intlit extends Symbol {
 
     private int line;
     private int startPos;
@@ -18,8 +18,5 @@ public class Intlit extends Symbol{
         this.line = line;
 
     }
-
-
-
 
 }

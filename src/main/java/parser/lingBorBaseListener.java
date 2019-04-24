@@ -29,15 +29,15 @@ public class lingBorBaseListener implements lingBorListener {
 		scopes.push(new Scope(null));
 	}
 
-	public String typeOfSymbol(Symbol s){
-		if (s instanceof Intlit){
+	public String typeOfSymbol(Symbol s) {
+		if (s.getClass() == Intlit.class){
 			return "INT_LIT";
-		} else if (s instanceof Arr){
+		} else if (s.getClass() == Arr.class) {
 			return "ARRAY";
-		} else if (s instanceof Tuple){
+		} else if (s.getClass() == Tuple.class) {
 			return "Tuple";
 		} else {
-			return "wtf";
+			throw new AssertionError();
 		}
 	}
 
@@ -46,24 +46,24 @@ public class lingBorBaseListener implements lingBorListener {
 	}
 
 
-	public void dclrHandle(lingBorParser.DeclContext ctx, boolean isLocal, Token symbolToken){
+	public void dclrHandle(lingBorParser.DeclContext declContext, boolean isLocal, Token symbolToken){
 		Symbol symbolTemp = new Symbol(isLocal);
-		if (ctx.ASSIGN()!=null){
-			if(ctx.expr(0)!=null){
+		if (declContext.ASSIGN() != null) {
+			if (declContext.expr(0) != null) {
 				//global/local a = 10
-				if(ctx.expr(0).int_lit()!=null){
-					Token tokenTemp = ctx.expr(0).int_lit().INT_LIT().getSymbol();
+				if (declContext.expr(0).int_lit() != null) {
+					Token tokenTemp = declContext.expr(0).int_lit().INT_LIT().getSymbol();
 					symbolTemp = new Intlit(isLocal);
-					symbolTemp.ini(tokenTemp.getText(),tokenTemp.getLine());
+					symbolTemp.ini(tokenTemp.getText(), tokenTemp.getLine());
 
 				//global/local a = b
 
-				} else if (ctx.expr(0).id()!=null){
-					String potentialIdName = ctx.expr(0).id().ID().getSymbol().getText();
+				} else if (declContext.expr(0).id() != null) {
+					String potentialIdName = declContext.expr(0).id().ID().getSymbol().getText();
 					if (isInSymbolMap(potentialIdName)) {
 						symbolTemp = getSymbol(potentialIdName);
 					} else {
-						System.out.println("Error! You are trying to assigning a Id:"+ potentialIdName +" that was not defined");
+						System.err.println("Error! You are trying to assigning a Id:"+ potentialIdName +" that was not defined");
 					}
 
 				// global/local k = a*b+12
@@ -74,7 +74,7 @@ public class lingBorBaseListener implements lingBorListener {
 				}
 
 			} else {
-				System.out.println("Error! You are trying to assigning withoud a rhs item after =");
+				System.err.println("Error! You are trying to assigning without a rhs item after =");
 			}
 		} else {
 			symbolTemp.ini(symbolToken.getText(),symbolToken.getLine());
