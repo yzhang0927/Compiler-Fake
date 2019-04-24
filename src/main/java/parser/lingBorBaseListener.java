@@ -29,20 +29,20 @@ public class lingBorBaseListener implements lingBorListener {
 		scopes.push(new Scope(null));
 	}
 
-	public String typeOfSymbol(Symbol s){
-		if (s instanceof Intlit){
+	public String typeOfSymbol(Symbol s) {
+		if (s.getClass() == Intlit.class){
 			return "INT_LIT";
-		} else if (s instanceof Arr){
+		} else if (s.getClass() == Arr.class) {
 			return "ARRAY";
-		} else if (s instanceof Tuple){
+		} else if (s.getClass() == Tuple.class) {
 			return "Tuple";
 		} else {
-			return "wtf";
+			throw new AssertionError();
 		}
 	}
 
 	public void declarAssignHandle(lingBorParser.DeclContext ctx, boolean isLocal, Token symbolToken){
-		Symbol symbolTemp; // = new Symbol(isLocal,symbolToken.getText(),symbolToken.getLine());
+		Symbol symbolTemp = new Symbol(); // = new Symbol(isLocal,symbolToken.getText(),symbolToken.getLine());
 		if (ctx.ASSIGN()!=null){
 			if(ctx.expr(0)!=null){
 				//global/local a = 10
@@ -57,7 +57,7 @@ public class lingBorBaseListener implements lingBorListener {
 					if (isInSymbolMap(potentialIdName)) {
 						symbolTemp = getSymbol(potentialIdName);
 					} else {
-						System.out.println("Error! You are trying to assigning a Id:"+ potentialIdName +" that was not defined");
+						System.err.println("Error! You are trying to assigning a Id:"+ potentialIdName +" that was not defined");
 					}
 
 				// global/local k = a*b+12
@@ -171,7 +171,7 @@ public class lingBorBaseListener implements lingBorListener {
 			//this means the existance of a local declaration
 			//let's make sure there is an id following the 'local' token
 			if (ctx.id(0) != null) {
-				dclrHandle(ctx, true, ctx.id(0).ID().getSymbol());
+                declarAssignHandle(ctx, true, ctx.id(0).ID().getSymbol());
 			} else {
 				// parser itself will raise an error message if it find a 'local' without id name
 				// we should not do anything here
@@ -182,17 +182,14 @@ public class lingBorBaseListener implements lingBorListener {
 			System.out.println("Array: " + ctx.KW_ARRAY().getSymbol().getText());
 			//this means the existance of a array declaration
 			if (ctx.id(0) != null) {
-
 				if(ctx.expr(0)!=null){
 					//TBI
 					//check if it belongs to int_lit
 				}
 				if(ctx.expr(1)!=null){
 					//TBI
-
-
 				}
-
+				
 			}
 		} else if (ctx.KW_GLOBAL() != null) {
 			System.out.println("global: " + ctx.KW_GLOBAL().getSymbol().getText());
@@ -207,7 +204,7 @@ public class lingBorBaseListener implements lingBorListener {
 					return;
 				}
 
-				dclrHandle(ctx, false, ctx.id(0).ID().getSymbol());
+                declarAssignHandle(ctx, false, ctx.id(0).ID().getSymbol());
 
 			} else {
 				System.out.println("global cannot be written alone");
@@ -224,8 +221,6 @@ public class lingBorBaseListener implements lingBorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDecl(lingBorParser.DeclContext ctx) {
-
-
 	}
 	/**
 	 * {@inheritDoc}
