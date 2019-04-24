@@ -41,20 +41,14 @@ public class lingBorBaseListener implements lingBorListener {
 		}
 	}
 
-	public void arithHandle(){
-
-	}
-
-
-	public void dclrHandle(lingBorParser.DeclContext ctx, boolean isLocal, Token symbolToken){
-		Symbol symbolTemp = new Symbol(isLocal);
+	public void declarAssignHandle(lingBorParser.DeclContext ctx, boolean isLocal, Token symbolToken){
+		Symbol symbolTemp; // = new Symbol(isLocal,symbolToken.getText(),symbolToken.getLine());
 		if (ctx.ASSIGN()!=null){
 			if(ctx.expr(0)!=null){
 				//global/local a = 10
 				if(ctx.expr(0).int_lit()!=null){
 					Token tokenTemp = ctx.expr(0).int_lit().INT_LIT().getSymbol();
-					symbolTemp = new Intlit(isLocal);
-					symbolTemp.ini(tokenTemp.getText(),tokenTemp.getLine());
+					symbolTemp = new Intlit(isLocal,symbolToken.getText(),symbolToken.getLine());
 
 				//global/local a = b
 
@@ -70,14 +64,13 @@ public class lingBorBaseListener implements lingBorListener {
 				// We need to go deep to see if there is a id in there not representing an int_lit
 
 				} else {
-					arithHandle();
+
+
 				}
 
 			} else {
 				System.out.println("Error! You are trying to assigning withoud a rhs item after =");
 			}
-		} else {
-			symbolTemp.ini(symbolToken.getText(),symbolToken.getLine());
 		}
 		Stack<Symbol> idStackByName = new Stack<>();
 		idStackByName.push(symbolTemp);
@@ -85,6 +78,28 @@ public class lingBorBaseListener implements lingBorListener {
 	}
 
 	public void assignHandle(lingBorParser.StatementContext ctx){
+
+	}
+
+
+	public void pollFromDict(String idName){
+		if (isInSymbolMap(idName)){
+			symbolMap.get(idName).pop();
+			if (symbolMap.get(idName).isEmpty()){
+				symbolMap.remove(idName);
+			}
+		}
+
+	}
+
+	public void pushInDict(Symbol s){
+		if (isInSymbolMap(s.getName())){
+			symbolMap.get(s.getName()).push(s);
+		} else {
+			Stack<Symbol> stackTmp = new Stack<>();
+			stackTmp.push(s);
+			symbolMap.put(s.getName(),stackTmp);
+		}
 
 	}
 
@@ -167,14 +182,17 @@ public class lingBorBaseListener implements lingBorListener {
 			System.out.println("Array: " + ctx.KW_ARRAY().getSymbol().getText());
 			//this means the existance of a array declaration
 			if (ctx.id(0) != null) {
+
 				if(ctx.expr(0)!=null){
 					//TBI
 					//check if it belongs to int_lit
 				}
 				if(ctx.expr(1)!=null){
 					//TBI
+
+
 				}
-				
+
 			}
 		} else if (ctx.KW_GLOBAL() != null) {
 			System.out.println("global: " + ctx.KW_GLOBAL().getSymbol().getText());
@@ -206,6 +224,8 @@ public class lingBorBaseListener implements lingBorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDecl(lingBorParser.DeclContext ctx) {
+
+
 	}
 	/**
 	 * {@inheritDoc}

@@ -56,7 +56,7 @@ decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
      | KW_GLOBAL id (ASSIGN expr)? SEMI ;
 
 // function definition;
-def : KW_DEFUN id LPAR id ( OP_COMMA id )* RPAR body KW_END KW_DEFUN ;
+def : KW_DEFUN id LPAR id RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 

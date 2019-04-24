@@ -8,15 +8,19 @@ public class Symbol {
     private boolean isLocal;
 
     // Initialization when you encounter global/local id;
-    public Symbol(boolean isLocal){
+    public Symbol(boolean isLocal,String name, int line){
         this.isLocal = isLocal;
-    }
-
-    // Set attributes when you see id = int_lit/array
-    public void ini(String name, int line){
-        this.name = name;
         this.line = line;
+        this.name = name;
     }
 
+    public String getName(){
+        return this.name;
+    }
+
+    public int getLine(){
+        return this.line;
+    }
+    // Set attributes when you see id = int_lit/array
 
 }

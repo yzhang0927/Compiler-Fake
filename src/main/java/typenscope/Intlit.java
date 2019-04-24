@@ -9,16 +9,9 @@ public class Intlit extends Symbol{
     private boolean isLocal;
     private boolean isLegal;
 
-    public Intlit(boolean isLocal){
-        super(isLocal);
+    public Intlit(boolean isLocal, String name, int line){
+        super(isLocal,name,line);
     }
-
-    public void ini (String name, int line){
-        this.name = name;
-        this.line = line;
-
-    }
-
 
 
 
