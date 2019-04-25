@@ -53,6 +53,18 @@ public interface lingBorVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitBody(lingBorParser.BodyContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link lingBorParser#for_loop}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFor_loop(lingBorParser.For_loopContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#while_loop}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitWhile_loop(lingBorParser.While_loopContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link lingBorParser#statement}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

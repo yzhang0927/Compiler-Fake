@@ -2,10 +2,12 @@
 package parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
-import org.antlr.v4.runtime.Token;
 import org.antlr.v4.runtime.tree.ErrorNode;
 import org.antlr.v4.runtime.tree.TerminalNode;
-import typenscope.*;
+import typenscope.Arr;
+import typenscope.Intlit;
+import typenscope.Symbol;
+import typenscope.Tuple;
 
 import java.util.*;
 
@@ -15,18 +17,31 @@ import java.util.*;
  * of the available methods.
  */
 public class lingBorBaseListener implements lingBorListener {
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	private HashMap<String, Stack<Symbol>> symbolMap = new HashMap<>();
 
-	private Stack<Scope> scopes;
+	private HashMap<String, Stack<Symbol>> localMap = new HashMap<>();
+	private Stack<HashSet<String>> forLocalLocalVars = new Stack<HashSet<String>>();
+	private HashMap<String, Symbol> globalMap = new HashMap<>();
+	private HashMap<String, Symbol> funcMap = new HashMap<>();
+	private Stack<String> NonTouchableFor = new Stack<>();
+	private int statusForLoop = 0;
+	private int statusFunc = 0;
+	private HashSet<String> forLocalVar = new HashSet<>();
+	//Nested for loop by adding this var by one every time
 
-	public lingBorBaseListener() {
-		scopes = new Stack<Scope>();
-		scopes.push(new Scope(null));
+	private boolean isInGlobalSymbolMap(String idName){
+		if(globalMap.containsKey(idName)){
+			return true;
+		} else{
+			return false;
+		}
+	}
+
+	private boolean isInLocalSymbolMap(String idName){
+		if(localMap.containsKey(idName)){
+			return true;
+		} else{
+			return false;
+		}
 	}
 
 	public String typeOfSymbol(Symbol s) {
@@ -37,97 +52,41 @@ public class lingBorBaseListener implements lingBorListener {
 		} else if (s.getClass() == Tuple.class) {
 			return "Tuple";
 		} else {
-			throw new AssertionError();
+			return "NOT_INITILIZED";
 		}
 	}
 
-	public void declarAssignHandle(lingBorParser.DeclContext ctx, boolean isLocal, Token symbolToken){
-		Symbol symbolTemp = new Symbol(); // = new Symbol(isLocal,symbolToken.getText(),symbolToken.getLine());
-		if (ctx.ASSIGN()!=null){
-			if(ctx.expr(0)!=null){
-				//global/local a = 10
-				if(ctx.expr(0).int_lit()!=null){
-					Token tokenTemp = ctx.expr(0).int_lit().INT_LIT().getSymbol();
-					symbolTemp = new Intlit(isLocal,symbolToken.getText(),symbolToken.getLine());
 
-				//global/local a = b
-
-				} else if (ctx.expr(0).id()!=null){
-					String potentialIdName = ctx.expr(0).id().ID().getSymbol().getText();
-					if (isInSymbolMap(potentialIdName)) {
-						symbolTemp = getSymbol(potentialIdName);
-					} else {
-						System.err.println("Error! You are trying to assigning a Id:"+ potentialIdName +" that was not defined");
-					}
-
-				// global/local k = a*b+12
-				// We need to go deep to see if there is a id in there not representing an int_lit
-
-				} else {
-
-
-				}
-
-			} else {
-				System.out.println("Error! You are trying to assigning withoud a rhs item after =");
-			}
+	private String getType(String idName, HashMap<String, Symbol> symbolMap) {
+		try{
+			Symbol s = symbolMap.get(idName);
+			return typeOfSymbol(s);
+		} catch(NoSuchElementException en){
+		 	System.out.println("no such element in the symbolmap");
+		} catch(AssertionError ea){
+			System.out.println("this symbol has not been initialized");
 		}
-		Stack<Symbol> idStackByName = new Stack<>();
-		idStackByName.push(symbolTemp);
-		symbolMap.put(symbolToken.getText(),idStackByName);
+		return "-1";
 	}
 
-	public void assignHandle(lingBorParser.StatementContext ctx){
-
-	}
-
-
-	public void pollFromDict(String idName){
-		if (isInSymbolMap(idName)){
-			symbolMap.get(idName).pop();
-			if (symbolMap.get(idName).isEmpty()){
-				symbolMap.remove(idName);
-			}
-		}
-
-	}
-
-	public void pushInDict(Symbol s){
-		if (isInSymbolMap(s.getName())){
-			symbolMap.get(s.getName()).push(s);
-		} else {
-			Stack<Symbol> stackTmp = new Stack<>();
-			stackTmp.push(s);
-			symbolMap.put(s.getName(),stackTmp);
-		}
-
-	}
-
-	public boolean isInSymbolMap(String idName){
-		if (symbolMap.containsKey(idName) && !symbolMap.get(idName).isEmpty()){
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	public Symbol getSymbol(String idName){
-		return symbolMap.get(idName).peek();
-	}
-
-
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterStart_symbol(lingBorParser.Start_symbolContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void exitStart_symbol(lingBorParser.Start_symbolContext ctx) { }
-	@Override public void enterInt_lit(lingBorParser.Int_litContext ctx) {
-		try {
-			// character index in entire file
-			System.out.println(ctx.INT_LIT().getSymbol().getStartIndex()+ " " +ctx.INT_LIT().getSymbol().getStopIndex());
-			// line index in entire file
-			System.out.println(ctx.INT_LIT().getSymbol().getLine());
-		} catch (NumberFormatException exp){
-			//ctx.INT_LIT().getSymbol().getText() = "-1";
-		}
-	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterInt_lit(lingBorParser.Int_litContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -164,63 +123,60 @@ public class lingBorBaseListener implements lingBorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterDecl(lingBorParser.DeclContext ctx) {
-		// Every time you meet a declaration action.
-		// We will create a object, initialized with its property.
-		if (ctx.KW_LOCAL() != null) {
-			System.out.println("local: " + ctx.KW_LOCAL().getSymbol().getText());
-			//this means the existance of a local declaration
-			//let's make sure there is an id following the 'local' token
-			if (ctx.id(0) != null) {
-                declarAssignHandle(ctx, true, ctx.id(0).ID().getSymbol());
-			} else {
-				// parser itself will raise an error message if it find a 'local' without id name
-				// we should not do anything here
-			}
 
+	    String idName;
+	    int line;
+		if (ctx.id()!=null) {
+			idName = ctx.id(0).ID().getSymbol().getText();
+			line = ctx.id(0).ID().getSymbol().getLine();
 
-		} else if (ctx.KW_ARRAY() != null) {
-			System.out.println("Array: " + ctx.KW_ARRAY().getSymbol().getText());
-			//this means the existance of a array declaration
-			if (ctx.id(0) != null) {
-				if(ctx.expr(0)!=null){
-					//TBI
-					//check if it belongs to int_lit
-				}
-				if(ctx.expr(1)!=null){
-					//TBI
-				}
-				
-			}
-		} else if (ctx.KW_GLOBAL() != null) {
-			System.out.println("global: " + ctx.KW_GLOBAL().getSymbol().getText());
-
-			if (ctx.id(0) != null) {
-				String idName = ctx.id(0).ID().getSymbol().getText();
-				if (symbolMap.containsKey(idName)) {
-					// a previous declr has already occupy this idname, unlike local case, global
-					// declr uncder any predefined var is not allowed
-					// we should prob make it an exception
-					System.out.println("Error! global var: " + idName + " has been declared before");
-					return;
-				}
-
-                declarAssignHandle(ctx, false, ctx.id(0).ID().getSymbol());
-
-			} else {
-				System.out.println("global cannot be written alone");
-			}
 		} else{
-			System.out.println("not gonna happen");
+			System.out.println("error in declaration format");
+			return;
 		}
+		// otherwise leave it to parser
+		if (statusForLoop == 0 && statusFunc == 0) {
+			if (ctx.KW_LOCAL() != null) {
+				System.out.println("local only exists in code block and function, it is not support here");
+			} else if (ctx.KW_ARRAY() != null) {
+				if(globalMap.containsKey(idName)){
+					if(typeOfSymbol(globalMap.get(idName))=="NOT_INITIALIZED"){
+						boolean isLocal = globalMap.get(idName).isLocal();
+						globalMap.remove(idName);
+						globalMap.put(idName,new Arr(isLocal));
+					} else{
+						System.out.println(String.format("The array:%s has been initialized before",idName));
+					}
+				}else {
+					System.out.println(String.format("The array:%s has not been declared before", idName));
+				}
 
+			} else if (ctx.KW_GLOBAL() != null) {
+				if(!globalMap.containsKey(idName)) {
+					globalMap.put(idName, new Symbol(false, idName, line));
+				} else {
+					System.out.println(String.format("The global var:%s has been declared before", idName));
+				}
+			} else {
+				System.out.println("not gonna happen");
+			}
+		} else if (statusForLoop != 0 && statusFunc == 0 ) {
+
+		} else if (statusForLoop == 0 && statusFunc!= 0 ) {
+
+		} else {
+
+		}
 	}
-
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitDecl(lingBorParser.DeclContext ctx) {
+
+
+
 	}
 	/**
 	 * {@inheritDoc}
@@ -228,9 +184,29 @@ public class lingBorBaseListener implements lingBorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterDef(lingBorParser.DefContext ctx) {
-		//local hashmap for one function, everything need to be declared before using
-		//params are used as local inside the fucntion
-		HashMap<String, Stack<Symbol>> symbolMap = new HashMap<>();
+		this.statusFunc = 1;
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDef(lingBorParser.DefContext ctx) {
+		this.statusFunc = 0;
+
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterBody(lingBorParser.BodyContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitBody(lingBorParser.BodyContext ctx) {
 
 
 
@@ -240,34 +216,91 @@ public class lingBorBaseListener implements lingBorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDef(lingBorParser.DefContext ctx) { }
+	@Override public void enterFor_loop(lingBorParser.For_loopContext ctx) {
+
+		if(ctx.expr().id()!= null) {
+			String idOfIndex = ctx.expr().id().ID().getSymbol().getText();
+			if (!NonTouchableFor.contains(idOfIndex)){
+				NonTouchableFor.push(idOfIndex);
+				this.statusForLoop += 1;
+				if(this.statusForLoop > 1){
+					forLocalLocalVars.push(forLocalVar);
+				}
+				forLocalVar.clear();
+				//deal those var in statement and dclr listener
+			} else{
+				System.out.println("duplicate index var found, no duplicate index var in nested loop");
+			}
+		} else {
+			System.out.println("illegal expr found as foreach index var, id only!");
+		}
+
+	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterBody(lingBorParser.BodyContext ctx) {
+	@Override public void exitFor_loop(lingBorParser.For_loopContext ctx) {
+		this.statusForLoop -= 1;
+		NonTouchableFor.pop();
+		HashSet<String> varsToPop =  forLocalLocalVars.pop();
+		for(String e:varsToPop){
+			localMap.get(e).pop();
+		}
 
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterWhile_loop(lingBorParser.While_loopContext ctx) {
+		//desperate
+
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitWhile_loop(lingBorParser.While_loopContext ctx) {
+		this.statusForLoop -= 1;
+		NonTouchableFor.pop();
+		HashSet<String> varsToPop =  forLocalLocalVars.pop();
+		for(String e:varsToPop){
+			localMap.get(e).pop();
+		}
+	}
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStatement(lingBorParser.StatementContext ctx) {
+		if (statusForLoop == 0 && statusFunc == 0) {
+
+		} else if (statusForLoop != 0 && statusFunc == 0 ) {
+
+		} else if (statusForLoop == 0 && statusFunc!= 0 ) {
+
+		} else {
 
 		}
+
+
+	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitBody(lingBorParser.BodyContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterStatement(lingBorParser.StatementContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitStatement(lingBorParser.StatementContext ctx) { }
+	@Override public void exitStatement(lingBorParser.StatementContext ctx) {
+
+
+
+
+	}
 	/**
 	 * {@inheritDoc}
 	 *
@@ -291,10 +324,7 @@ public class lingBorBaseListener implements lingBorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitRange(lingBorParser.RangeContext ctx) {
-
-
-	}
+	@Override public void exitRange(lingBorParser.RangeContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -348,7 +378,16 @@ public class lingBorBaseListener implements lingBorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterExpr(lingBorParser.ExprContext ctx) { }
+	@Override public void enterExpr(lingBorParser.ExprContext ctx) {
+		// Once we find a expr during traversal sub tree of expr, we have to make sure it is defined beforehand
+		if(ctx.id()!=null){
+			String idName = ctx.id().ID().getSymbol().getText();
+			if(!isInGlobalSymbolMap(idName)&&!isInLocalSymbolMap(idName)){
+				System.out.println(String.format("ID: %s used without initilization",idName));
+			}
+		}
+
+	}
 	/**
 	 * {@inheritDoc}
 	 *

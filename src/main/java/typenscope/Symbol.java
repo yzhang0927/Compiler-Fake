@@ -7,6 +7,8 @@ public class Symbol {
     private String name;
     private boolean isLocal;
 
+    private int type;
+
     private static final boolean ISLOCAL = true;
     private static final String DEFAULT_NAME = "$DEFAULT$NAME";
     private static final int DEFAULT_LINE = -1;
@@ -30,5 +32,7 @@ public class Symbol {
         return this.line;
     }
     // Set attributes when you see id = int_lit/array
-
+    public boolean isLocal(){
+        return this.isLocal;
+    }
 }

@@ -60,18 +60,20 @@ def : KW_DEFUN id LPAR id RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 
+for_loop: KW_FOREACH expr KW_IN (range | array_id) KW_DO statement* KW_END FOR; //We should change expr to id
+
+while_loop: KW_WHILE bool_expr  KW_DO statement* KW_END KW_WHILE;
+
 statement : lhs ASSIGN expr SEMI
           | lhs EXCHANGE lhs SEMI
-	  | KW_WHILE bool_expr  KW_DO statement* KW_END KW_WHILE
 	  | KW_IF bool_expr KW_THEN statement*
 	    (KW_ELSIF bool_expr KW_THEN statement*)*
 	    (KW_ELSE statement*)? KW_END KW_IF
-	  | KW_FOREACH expr KW_IN (range | array_id) KW_DO statement* KW_END FOR //I think the professor has not give us KW_FOr
-	  //we keep array id as an ID
+	  | for_loop
+	  | while_loop
 	  | RETURN expr SEMI
 	  | PRINT expr SEMI
-       ;
-
+      ;
 
 array_id: id;
 
@@ -89,16 +91,18 @@ lhs_item :
     | id OP_DOT int_lit  // tuple component reference
     | id LBRAK expr RBRAK  ; // array element reference
 
-expr :
+
+expr:
     // *ascending* order of precedence: from least important to most important
-    expr OP_COMMA expr // tuple constuctor
+     // tuple constuctor
+    expr OP_COMMA expr
     | expr ( OP_MULT | OP_DIV)  expr
     | expr ( OP_PLUS | OP_MINUS) expr
     // there is no more unary minus!!
     |  LPAR expr RPAR
     |  id
     |  int_lit
-    |  id expr // function call, right-associative
+    |  id LPAR expr RPAR // function call, right-associative
     |  id OP_DOT int_lit// tuple reference
     |  id LBRAK expr RBRAK // array element refe\rence
     ;

@@ -78,6 +78,26 @@ public interface lingBorListener extends ParseTreeListener {
 	 */
 	void exitBody(lingBorParser.BodyContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link lingBorParser#for_loop}.
+	 * @param ctx the parse tree
+	 */
+	void enterFor_loop(lingBorParser.For_loopContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#for_loop}.
+	 * @param ctx the parse tree
+	 */
+	void exitFor_loop(lingBorParser.For_loopContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#while_loop}.
+	 * @param ctx the parse tree
+	 */
+	void enterWhile_loop(lingBorParser.While_loopContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#while_loop}.
+	 * @param ctx the parse tree
+	 */
+	void exitWhile_loop(lingBorParser.While_loopContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link lingBorParser#statement}.
 	 * @param ctx the parse tree
 	 */
