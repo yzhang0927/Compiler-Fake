@@ -3,14 +3,19 @@ package typenscope;
 public class Tuple extends Symbol{
 
     private int length;
-    private String memberType;
-    public Tuple(boolean isLocal){
-        super(isLocal);
+    private boolean isLocal;
+    private String name;
+    private int line;
+
+
+    public Tuple(boolean isLocal,String name,int line){
+        this.isLocal = isLocal;
+        this.name = name;
+        this.line = line;
     }
 
-    public void ini(String name,int line,int length, String memberType){
+    public void ini(int length){
         this.length = length;
-        this.memberType = memberType;
     }
 
     public int getLength(){

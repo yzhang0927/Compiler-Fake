@@ -14,8 +14,11 @@ public class Arr extends Symbol{
     private String memberType;
     private int length;
 
-    public Arr(boolean isLocal) {
-        super(isLocal);
+    public Arr(boolean isLocal,String name,int line)
+    {
+        this.isLocal = isLocal;
+        this.name = name;
+        this.line = line;
     }
 
     public void ini(String name, int startPos, int endPos, ArrayList<Symbol> members, String member,int length){

@@ -1,0 +1,25 @@
+global b
+array b [1 .. 100] j = j+1;
+
+global c
+array c [1 .. 100] j = j+2;
+
+global k = 1;
+
+defun f0(a0,a1)
+  return a0 + a1
+end defun
+
+defun f1(a1)
+  global k
+  return k+a1
+end defun
+
+defun f2(a0,a1)
+  a0<->a1
+  return a0
+end defun
+
+k = f0(2,3)
+k = f1(2)
+c = f2(b,c)
