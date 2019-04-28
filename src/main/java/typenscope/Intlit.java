@@ -13,4 +13,8 @@ public class Intlit extends Symbol {
         super(isLocal,name,line);
     }
 
+    @Override
+    public boolean isDefined() {
+        return true;
+    }
 }

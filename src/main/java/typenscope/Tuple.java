@@ -21,4 +21,11 @@ public class Tuple extends Symbol{
     public int getLength(){
         return this.length;
     }
+
+    @Override
+    public boolean isDefined(){
+        return true;
+    }
+
+
 }

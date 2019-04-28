@@ -22,10 +22,14 @@ public class lingBorBaseListener implements lingBorListener {
 	//private Stack<HashSet<String>> forLocalLocalVars = new Stack<HashSet<String>>();
 	//private HashSet<String> forLocalVar = new HashSet<>();
 
-	private Stack<HashMap<String, Symbol>> localMapStack = new Stack<>();
 	private HashMap<String, Symbol> globalMap = new HashMap<>();
-	private HashMap<String, Symbol> funcMap = new HashMap<>();
 	private HashMap<String, Symbol> funcVarMap = new HashMap<>();
+
+	private HashMap<String, Symbol> funcMap = new HashMap<>();
+
+	private Stack<HashMap<String, Symbol>> localMapStack = new Stack<>();
+	private Stack<HashMap<String,Symbol>> funcMapStack = new Stack<>();
+
 	private Stack<String> NonTouchableFor = new Stack<>();
 	private int statusForLoop = 0;
 	private int statusFunc = 0;
@@ -33,16 +37,31 @@ public class lingBorBaseListener implements lingBorListener {
 
 	//Nested for loop by adding this var by one every time
 	private boolean isInSymbolMap(String idName){
-
 		if(statusForLoop!=0 && statusFunc==0 && localMapStack.peek().containsKey(idName)){
 			return true;
-		} else if (statusForLoop ==0 && statusFunc==0 && globalMap.containsKey(idName)){
+		} else if (statusForLoop == 0 && statusFunc==0 && globalMap.containsKey(idName)){
 			return true;
 		} else if (statusFunc != 0 && statusForLoop ==0 && funcVarMap.containsKey(idName)){
 			return true;
-		} else {
+		} else {//loop inside a function
+			if(funcMapStack.peek().containsKey(idName)){
+				return true;
+			}
 			return false;
 		}
+	}
+
+	private boolean isDefinedInSymbolMap(String idName){
+		if(statusForLoop!=0 && statusFunc==0 && localMapStack.peek().containsKey(idName)){
+			if (localMapStack.peek().get(idName).isDefined()){ return true;}
+		} else if (statusForLoop ==0 && statusFunc==0 && globalMap.containsKey(idName)){
+			if (globalMap.get(idName).isDefined()){ return true;}
+		} else if (statusFunc != 0 && statusForLoop ==0 && funcVarMap.containsKey(idName)) {
+			if (funcVarMap.get(idName).isDefined()) { return true; }
+		} else {
+			if (funcMapStack.peek().get(idName).isDefined()) {return true;}
+		}
+		return false;
 	}
 
 	public String typeOfSymbol(Symbol s) {
@@ -53,32 +72,47 @@ public class lingBorBaseListener implements lingBorListener {
 		} else if (s.getClass() == Tuple.class) {
 			return "Tuple";
 		} else {
-			return "NOT_INITILIZED";
+			return "UNDEFINED";
 		}
 	}
 
 
 	private String getType(String idName, HashMap<String, Symbol> symbolMap) {
-		try{
+		try {
 			Symbol s = symbolMap.get(idName);
 			return typeOfSymbol(s);
-		} catch(NoSuchElementException en){
-		 	System.out.println("no such element in the symbolmap");
-		} catch(AssertionError ea){
-			System.out.println("this symbol has not been initialized");
+		} catch (NoSuchElementException en) {
+			System.out.println(String.format("no such element:%s in the symbolmap", idName));
+			return "-1";
 		}
-		return "-1";
+	}
+
+	private String getType(String idName) {
+		if (statusForLoop == 0 && statusFunc == 0) {
+			return getType(idName,globalMap);
+		} else if (statusForLoop != 0 && statusFunc == 0 ) {
+			return getType(idName,localMapStack.peek());
+		} else if (statusForLoop == 0 && statusFunc!= 0 ) {
+			return getType(idName, funcVarMap);
+		} else{
+			return getType(idName, funcMapStack.peek());
+		}
 	}
 
 	private boolean isSameType(String idName1,String idName2){
+		return getType(idName1)==getType(idName2);
+	}
+
+
+	private Symbol getSymbolByName(String idName){
 		if (statusForLoop == 0 && statusFunc == 0) {
-			return getType(idName1,globalMap)==getType(idName2,globalMap);
+			return globalMap.get(idName);
 		} else if (statusForLoop != 0 && statusFunc == 0 ) {
-			return getType(idName1,localMapStack.peek())==getType(idName2,localMapStack.peek());
+			return localMapStack.peek().get(idName);
 		} else if (statusForLoop == 0 && statusFunc!= 0 ) {
-			return getType(idName1,funcVarMap)==getType(idName2,funcVarMap);
+			return funcVarMap.get(idName);
 		} else {
-			return false;
+			return funcMapStack.peek().get(idName);
 		}
 	}
 	/**
@@ -148,9 +182,9 @@ public class lingBorBaseListener implements lingBorListener {
 			return;
 		}
 
-
 		// outside loop, outside function, only global allowed
 		if (statusForLoop == 0 && statusFunc == 0) {
+
 			if (ctx.KW_LOCAL() != null) {
 				System.out.println("local only exists in code block and function, it is not support here");
 			} else if (ctx.KW_ARRAY() != null) {
@@ -247,23 +281,19 @@ public class lingBorBaseListener implements lingBorListener {
 	@Override public void enterFor_loop(lingBorParser.For_loopContext ctx) {
 
 		if(ctx.expr().id()!= null) {
-			String idForIndex = ctx.expr().id().ID().getSymbol().getText();
-			/*
-				if (!NonTouchableFor.contains(idForIndex)){
-					NonTouchableFor.push(idForIndex);
-					this.statusForLoop += 1;
-					if(this.statusForLoop > 1){
-						forLocalLocalVars.push(forLocalVar);
-				}
-				forLocalVar.clear();
-
-			//deal those var in statement and dclr listener
-			} else{
-				System.out.println("duplicate index var found, no duplicate index var in nested loop");
+			String idForIndexName = ctx.expr().id().ID().getSymbol().getText();
+			int idForIndexLine = ctx.expr().id().ID().getSymbol().getLine();
+			Symbol idForIndexSymbol = new Symbol(true,idForIndexName,idForIndexLine);
+			HashMap<String,Symbol> tmp = new HashMap<>();
+			if(this.statusForLoop==0) {
+				tmp.putAll(globalMap);
+			} else {
+				tmp.putAll(localMapStack.peek());
 			}
-			*/
+			tmp.put(idForIndexName,idForIndexSymbol);
+			localMapStack.push(tmp);
+			this.statusForLoop += 1;
 
-			
 		} else {
 			System.out.println("illegal expr found as foreach index var, id only!");
 		}
@@ -276,15 +306,7 @@ public class lingBorBaseListener implements lingBorListener {
 	 */
 	@Override public void exitFor_loop(lingBorParser.For_loopContext ctx) {
 		this.statusForLoop -= 1;
-		/*
-		NonTouchableFor.pop();
-		HashSet<String> varsToPop =  forLocalLocalVars.pop();
-		for(String e:varsToPop){
-			localMap.get(e).pop();
-		}
-		*/
-
-
+		localMapStack.pop();
 
 	}
 	/**
@@ -293,8 +315,14 @@ public class lingBorBaseListener implements lingBorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void enterWhile_loop(lingBorParser.While_loopContext ctx) {
-		//desperate
-
+		HashMap<String,Symbol> tmp = new HashMap<>();
+		if(this.statusForLoop==0) {
+			tmp.putAll(globalMap);
+		} else {
+			tmp.putAll(localMapStack.peek());
+		}
+		localMapStack.push(tmp);
+		this.statusForLoop += 1;
 	}
 	/**
 	 * {@inheritDoc}
@@ -303,17 +331,40 @@ public class lingBorBaseListener implements lingBorListener {
 	 */
 	@Override public void exitWhile_loop(lingBorParser.While_loopContext ctx) {
 		this.statusForLoop -= 1;
+		localMapStack.pop();
 	}
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+
+
 	@Override public void enterStatement(lingBorParser.StatementContext ctx) {
+		String idName;
 
 		if (statusForLoop == 0 && statusFunc == 0) {
 			if (ctx.EXCHANGE()!=null){
+				if(ctx.lhs(0)!=null && ctx.lhs(1)!=null){
+					//this.IsSameCategory(ctx.lhs(0).lhs_item(0),ctx.lhs(1).lhs_item(0));
+				}
+			} else if (ctx.ASSIGN()!=null&&ctx.lhs(0)!=null) {
+				String idNameLeft = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
+				String typeLeft = this.getType(idNameLeft);
+				if (typeLeft == "-1") {
+					System.out.println("lefthand item not defined");
+					//return;
+				} else if (ctx.expr().id() != null) {
+					String idNameRight = this.getType(ctx.expr().id().ID().getSymbol().getText());
+					String typeRight = this.getType(idNameRight);
+					if (typeRight == "-1") {
+						System.out.println("righthand item not defined");
+					} else {
 
+					}
+				}
+			} else {
+				System.out.println("error"); // not gonna happen
 			}
 
 		} else if (statusForLoop != 0 && statusFunc == 0 ) {
@@ -419,13 +470,14 @@ public class lingBorBaseListener implements lingBorListener {
 		if(ctx.id()!=null){
 			String idName = ctx.id().ID().getSymbol().getText();
 			if(!isInSymbolMap(idName)){
+				System.out.println(String.format("ID: %s used without declaration",idName));
+			} else if(!isDefinedInSymbolMap(idName)){
 				System.out.println(String.format("ID: %s used without initilization",idName));
-			} else {
-				//we may replace the error
 			}
 		}
-
 	}
+
+
 	/**
 	 * {@inheritDoc}
 	 *

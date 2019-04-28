@@ -7,7 +7,7 @@ public class Symbol {
     private String name;
     private boolean isLocal;
 
-    private int type;
+    private boolean isDefined = false;
 
     private static final boolean ISLOCAL = true;
     private static final String DEFAULT_NAME = "$DEFAULT$NAME";
@@ -24,6 +24,11 @@ public class Symbol {
         this.name = name;
     }
 
+
+    public boolean isDefined(){
+        return this.isDefined;
+    }
+
     public String getName(){
         return this.name;
     }
@@ -35,4 +40,6 @@ public class Symbol {
     public boolean isLocal(){
         return this.isLocal;
     }
+
+
 }

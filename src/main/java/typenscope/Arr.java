@@ -10,8 +10,6 @@ public class Arr extends Symbol{
     private String name;
     private boolean isLocal;
 
-    private ArrayList<Symbol> members;
-    private String memberType;
     private int length;
 
     public Arr(boolean isLocal,String name,int line)
@@ -21,14 +19,10 @@ public class Arr extends Symbol{
         this.line = line;
     }
 
-    public void ini(String name, int startPos, int endPos, ArrayList<Symbol> members, String member,int length){
-        this.name  = name;
-        this.startPos = startPos;
-        this.endPos = endPos;
-        this.members = members;
-        this.length = length;
+    @Override
+    public boolean isDefined(){
+        return true;
     }
-
 
 
 }
