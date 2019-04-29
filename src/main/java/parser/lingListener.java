@@ -275,7 +275,7 @@ public class lingListener extends lingBorBaseListener{
             } else if(!isDefinedInSymbolMap(idName)){
                 System.out.println(String.format("ID: %s used without initilization",idName));
             }
-        } else if (){
+        } else if (ctx.){
 
         }
     }
