@@ -85,12 +85,17 @@ bool_op : OP_LESS | OP_GREATER | OP_EQUAL | OP_NOTEQUA | OP_LESSEQUAL | OP_GREAT
 
 lhs : lhs_item ( OP_COMMA lhs_item )* ;
 
+
+
 lhs_item :
     // variable
     id
     | id OP_DOT int_lit  // tuple component reference
     | id LBRAK expr RBRAK  ; // array element reference
 
+tuple_ele : id OP_DOT int_lit;
+array_ele : id LBRAK expr RBRAK;
+func_call : id LPAR expr RPAR;
 
 expr:
     // *ascending* order of precedence: from least important to most important
@@ -102,7 +107,7 @@ expr:
     |  LPAR expr RPAR
     |  id
     |  int_lit
-    |  id LPAR expr RPAR // function call, right-associative
-    |  id OP_DOT int_lit// tuple reference
-    |  id LBRAK expr RBRAK // array element refe\rence
+    |  func_call // function call, right-associative
+    |  tuple_ele //tuple reference
+    |  array_ele // array element refe\rence
     ;

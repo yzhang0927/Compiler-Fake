@@ -101,6 +101,12 @@ public interface lingBorVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitLhs(lingBorParser.LhsContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link lingBorParser#tuple}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTuple(lingBorParser.TupleContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link lingBorParser#lhs_item}.
 	 * @param ctx the parse tree
 	 * @return the visitor result

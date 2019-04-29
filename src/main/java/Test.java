@@ -35,7 +35,7 @@ public class Test {
             lingBorParser parser = new lingBorParser(tokens);
             // Begin parsing at rule prog
             ParseTree tree = parser.input();
-            ParseTreeWalker.DEFAULT.walk(new lingBorBaseListener(), tree);
+            ParseTreeWalker.DEFAULT.walk(new lingListener(), tree);
             System.out.println(tree.toStringTree(parser));
 
             /*

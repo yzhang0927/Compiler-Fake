@@ -158,6 +158,16 @@ public interface lingBorListener extends ParseTreeListener {
 	 */
 	void exitLhs(lingBorParser.LhsContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link lingBorParser#tuple}.
+	 * @param ctx the parse tree
+	 */
+	void enterTuple(lingBorParser.TupleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#tuple}.
+	 * @param ctx the parse tree
+	 */
+	void exitTuple(lingBorParser.TupleContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link lingBorParser#lhs_item}.
 	 * @param ctx the parse tree
 	 */
