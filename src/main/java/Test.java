@@ -18,12 +18,8 @@ import static scanner.TestCompiler.testOneCase;
 public class Test {
 
     public static void main(String[] args) {
-        String addr = "testcases/p2test4";
-        /*
-        FakeCompilerScanner testScanner;
-        testScanner = new FakeCompilerScanner(addr);
-        testOneCase(testScanner);
-        */
+        String addr = "testcases/p3test4";
+
         try {
             // Create a CharStream that reads from standard input
             CharStream input = CharStreams.fromFileName(addr+".txt");
@@ -38,7 +34,7 @@ public class Test {
             ParseTreeWalker.DEFAULT.walk(new lingListener(), tree);
             System.out.println(tree.toStringTree(parser));
 
-            /*
+
             JFrame frame = new JFrame("Antlr AST");
             JPanel panel = new JPanel();
             TreeViewer viewr = new TreeViewer(Arrays.asList(
@@ -49,8 +45,6 @@ public class Test {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(2000,1000);
             frame.setVisible(true);
-            */
-
 
         } catch (IOException e) {
             throw new RuntimeException(e);

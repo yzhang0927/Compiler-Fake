@@ -8,13 +8,11 @@ public class Arr extends Symbol{
     private int startPos;
     private int endPos;
     private String name;
-    private boolean isLocal;
 
     private int length;
 
-    public Arr(boolean isLocal,String name,int line)
+    public Arr(String name,int line)
     {
-        this.isLocal = isLocal;
         this.name = name;
         this.line = line;
     }

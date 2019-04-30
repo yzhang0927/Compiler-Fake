@@ -8,14 +8,19 @@ public class Tuple extends Symbol{
     private int line;
 
 
-    public Tuple(boolean isLocal,String name,int line){
-        this.isLocal = isLocal;
-        this.name = name;
-        this.line = line;
+    public Tuple(int length){
+        this.length = length;
     }
 
-    public void ini(int length){
-        this.length = length;
+    public Tuple(String name,int line,int length){
+       this.name = name;
+       this.length = length;
+       this.line = line;
+    }
+
+    public void setNameAndLine(String name,int line) {
+        this.name = name;
+        this.line = line;
     }
 
     public int getLength(){

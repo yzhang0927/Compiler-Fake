@@ -14,17 +14,19 @@ public class Symbol {
     private static final int DEFAULT_LINE = -1;
 
     public Symbol() {
-        this(ISLOCAL, DEFAULT_NAME, DEFAULT_LINE);
+    }
+
+    public Symbol(String name,int line){
+        this.name = name;
+        this.line = line;
     }
 
     // Initialization when you encounter global/local id;
-    public Symbol(boolean isLocal,String name, int line){
-        this.isLocal = isLocal;
-        this.line = line;
+
+    public void setNameAndLine (String name, int line){
         this.name = name;
+        this.line = line;
     }
-
-
     public boolean isDefined(){
         return this.isDefined;
     }

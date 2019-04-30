@@ -6,11 +6,19 @@ public class Intlit extends Symbol {
     private int startPos;
     private int stopPos;
     private String name;
-    private boolean isLocal;
     private boolean isLegal;
 
-    public Intlit(boolean isLocal, String name, int line){
-        super(isLocal,name,line);
+    public Intlit(){
+    }
+
+    public Intlit(String name,int line){
+        this.name = name;
+        this.line = line;
+    }
+
+    public void setNameAndLine(String name,int line) {
+        this.name = name;
+        this.line = line;
     }
 
     @Override
