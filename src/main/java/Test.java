@@ -34,7 +34,6 @@ public class Test {
             ParseTreeWalker.DEFAULT.walk(new lingListener(), tree);
             System.out.println(tree.toStringTree(parser));
 
-
             JFrame frame = new JFrame("Antlr AST");
             JPanel panel = new JPanel();
             TreeViewer viewr = new TreeViewer(Arrays.asList(

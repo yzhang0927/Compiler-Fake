@@ -196,18 +196,6 @@ public class lingBorBaseListener implements lingBorListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterLhs_item(lingBorParser.Lhs_itemContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitLhs_item(lingBorParser.Lhs_itemContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterTuple_ele(lingBorParser.Tuple_eleContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -239,6 +227,18 @@ public class lingBorBaseListener implements lingBorListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitFunc_call(lingBorParser.Func_callContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterLhs_item(lingBorParser.Lhs_itemContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitLhs_item(lingBorParser.Lhs_itemContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
