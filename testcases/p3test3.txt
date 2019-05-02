@@ -1,0 +1,54 @@
+
+*** BASIC STUFF; no type inference needed
+
+global i=0;
+global t=2,3,4;
+global a;
+array a[1..10];
+
+*** return: can only return an int or a tuple
+defun f(t)
+  global a; *** to be able to access the global array "a"; OK here
+  return a; *** can't return an array
+end defun
+
+*** very simple type inference
+
+*** can't return multiple different types
+defun ff(t)
+  if 0==1 then
+    return 0,1;
+  else
+    return 0,2,3; *** error
+  end if
+end defun
+
+*** can't use the same object as having different types in different places
+defun fff(t)
+  local j=0;
+  if 0==1 then
+    j=0;
+    t=0,0; *** t is a pair
+  elsif 0>=1 then
+    t=j; *** t is an int ERROR: conflict with previous infered type
+  else
+    t=0,0,0; *** t is a triple  ERROR: conflict with previous infered type
+  end if
+end defun
+
+
+*** OK; technically, this needs type inference to note that a,b, and return value are all ints.
+*** but it's the most basic version of type inference
+
+defun sum(a,b) *** params a and b are implicitly local
+  return a+b;
+end defun
+
+print sum(1,2); *** OK: can use THIS LINE to deduce that a,b and return value are ints
+print sum(i,i+2); *** OK
+print sum(a,1); *** error in comma
+print sum t; *** error size of tuple: t is a triple, sum wants a pair
+print sum (0,1,2); *** same here
+
+*** Checking that the function RESULT is used correctly
+t = sum(1,2); *** type mismatch on return

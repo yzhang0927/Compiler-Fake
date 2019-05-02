@@ -1,0 +1,85 @@
+global i=0;
+global t=2,3,4;
+global a;
+array a[1..10];
+global b;
+array b[1..10];
+
+*** addition
+print i+t; *** error, adding int and tuple
+print i+a; *** error, adding int and array
+print t+a; *** error, adding array and tuple
+print t+a[2]; *** error, adding tuple and int-valued expression
+print t+(23*a-45); *** error, adding tuple and int-valued expression
+print a[2]; *** OK
+print t.2; *** OK
+print a[2]+t.2; *** OK
+print 2*(a+t)+10; *** same error deeper in an expression
+
+*** every line below contains an error except where noted
+
+*** a selection of similar errors, but now with other operations; all errors except where noted
+print i*t;
+print a/t.2;
+print 2-a;
+print (3-a)*(t+5); *** two errors here
+
+*** comma operator
+print a,t;
+print a,1;
+
+*** extra parentheses do not change anything
+print (((i)))+((t));
+
+*** trouble with types of assigments
+t = a; *** error, using array without an index; also trying to assign and an (entire) array to a tuple
+t = 1,2; *** error assigning a pair to a triple
+a = 1; *** error, trying to assign to an entire array; not allowed
+a = b; *** same trouble
+
+print t.17; *** ERROR: tuple type includes tuple size, can determine statically that 17 is too large
+
+*** trouble with conditionals
+if a<t then print 1; else print 0; end if
+if a==t then print 1; else print 0; end if *** can't compare array to an tuple; but see below
+if a>2 then print 1; else print 0; end if
+if a<t.2 then print 1; else print 0; end if
+if a[3]>=t then print 1; else print 0; end if
+if a[3]>=t.2 then print 1; else print 0; end if  *** OK
+
+*** SIMPLIFICATION:
+*** ALL comparison operators (==,<=,>=,!=,>,<) are ONLY applied to ints
+*** in particular, we do NOT allow "array_one == array_two" or "tuple != tupletuple", so
+
+if t==0,0,0 *** can't compare tuples
+then print 1;
+else print 0;
+end if
+
+if a==b *** can't compare arrays
+then print 1;
+else print 0;
+end if
+
+if a!=b *** can't compare arrays
+then print 1;
+else print 0;
+end if
+
+*** other control structure tests
+foreach x in t do *** can't loop over a tuple
+  print x;
+end for;
+
+foreach x in i do *** can't loop over an integer
+  print x;
+end for;
+
+foreach x in a..10 do *** range: both limits have to be ints
+  print x;
+end for;
+
+foreach x in 1..t do *** range: both limits have to be ints
+  print x;
+end for;
+
