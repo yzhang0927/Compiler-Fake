@@ -1,10 +1,10 @@
 
-*** BASIC STUFF; no type inference needed
-
 global i=0;
 global t=2,3,4;
 global a;
 array a[1..10];
+
+*** BASIC STUFF; no type inference needed
 
 *** return: can only return an int or a tuple
 defun f(t)
@@ -40,15 +40,34 @@ end defun
 *** OK; technically, this needs type inference to note that a,b, and return value are all ints.
 *** but it's the most basic version of type inference
 
+*** OOPS: this is not allowed as we decided only one formal parameter
 defun sum(a,b) *** params a and b are implicitly local
   return a+b;
 end defun
 
-print sum(1,2); *** OK: can use THIS LINE to deduce that a,b and return value are ints
-print sum(i,i+2); *** OK
-print sum(a,1); *** error in comma
-print sum t; *** error size of tuple: t is a triple, sum wants a pair
-print sum (0,1,2); *** same here
+*** try 2: same with one formal parameter
+*** this should be correct
+defun sum_pair(t) *** params t is implicitly local
+  local a = 0;
+  local b = 0;
+  a, b = t; *** at this point you know that t is a pair
+  return a+b; *** at this point you know the return value is an int
+end defun
+
+*** try 3: this should be OK too, but...
+defun sum_pair_two_or_more(t)
+  return t.1+t.2; *** at this point you know the return value is an int
+  *** BUT you still do not know what length t is: has to have at least two components...
+end defun
+
+print sum_pair_two_or_more(1,2); *** OK: can use THIS LINE to deduce that t is a pair and return value is int
+print sum_pair_two_or_more(i,i+2); *** OK
+
+*** but annoyiningly, if the above two lines were NOT there, the following would be OK:
+print sum_pair_two_or_more(i,i+1,i+2); *** Not OK, but would be OK without the above two calls.
+print sum_pair_two_or_more(a,1); *** error in comma
+print sum_pair_two_or_more t; *** error size of tuple: t is a triple, sum wants a pair
+print sum_pair_two_or_more (0,1,2); *** same here
 
 *** Checking that the function RESULT is used correctly
-t = sum(1,2); *** type mismatch on return
+t = sum_pair_two_or_more(1,2); *** type mismatch on return

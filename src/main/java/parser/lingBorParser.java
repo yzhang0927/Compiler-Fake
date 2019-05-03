@@ -1599,11 +1599,11 @@ public class lingBorParser extends Parser {
 		public Array_eleContext array_ele() {
 			return getRuleContext(Array_eleContext.class,0);
 		}
-		public TerminalNode OP_COMMA() { return getToken(lingBorParser.OP_COMMA, 0); }
 		public TerminalNode OP_MULT() { return getToken(lingBorParser.OP_MULT, 0); }
 		public TerminalNode OP_DIV() { return getToken(lingBorParser.OP_DIV, 0); }
 		public TerminalNode OP_PLUS() { return getToken(lingBorParser.OP_PLUS, 0); }
 		public TerminalNode OP_MINUS() { return getToken(lingBorParser.OP_MINUS, 0); }
+		public TerminalNode OP_COMMA() { return getToken(lingBorParser.OP_COMMA, 0); }
 		public ExprContext(ParserRuleContext parent, int invokingState) {
 			super(parent, invokingState);
 		}
@@ -1702,7 +1702,15 @@ public class lingBorParser extends Parser {
 						setState(245);
 						if (!(precpred(_ctx, 9))) throw new FailedPredicateException(this, "precpred(_ctx, 9)");
 						setState(246);
-						match(OP_COMMA);
+						_la = _input.LA(1);
+						if ( !(_la==OP_DIV || _la==OP_MULT) ) {
+						_errHandler.recoverInline(this);
+						}
+						else {
+							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
+							_errHandler.reportMatch(this);
+							consume();
+						}
 						setState(247);
 						expr(10);
 						}
@@ -1715,7 +1723,7 @@ public class lingBorParser extends Parser {
 						if (!(precpred(_ctx, 8))) throw new FailedPredicateException(this, "precpred(_ctx, 8)");
 						setState(249);
 						_la = _input.LA(1);
-						if ( !(_la==OP_DIV || _la==OP_MULT) ) {
+						if ( !(_la==OP_PLUS || _la==OP_MINUS) ) {
 						_errHandler.recoverInline(this);
 						}
 						else {
@@ -1734,15 +1742,7 @@ public class lingBorParser extends Parser {
 						setState(251);
 						if (!(precpred(_ctx, 7))) throw new FailedPredicateException(this, "precpred(_ctx, 7)");
 						setState(252);
-						_la = _input.LA(1);
-						if ( !(_la==OP_PLUS || _la==OP_MINUS) ) {
-						_errHandler.recoverInline(this);
-						}
-						else {
-							if ( _input.LA(1)==Token.EOF ) matchedEOF = true;
-							_errHandler.reportMatch(this);
-							consume();
-						}
+						match(OP_COMMA);
 						setState(253);
 						expr(8);
 						}
@@ -1867,9 +1867,9 @@ public class lingBorParser extends Parser {
 		"\u00f6\5\4\3\2\u00f2\u00f6\5$\23\2\u00f3\u00f6\5 \21\2\u00f4\u00f6\5\""+
 		"\22\2\u00f5\u00eb\3\2\2\2\u00f5\u00f0\3\2\2\2\u00f5\u00f1\3\2\2\2\u00f5"+
 		"\u00f2\3\2\2\2\u00f5\u00f3\3\2\2\2\u00f5\u00f4\3\2\2\2\u00f6\u0102\3\2"+
-		"\2\2\u00f7\u00f8\f\13\2\2\u00f8\u00f9\7\4\2\2\u00f9\u0101\5(\25\f\u00fa"+
-		"\u00fb\f\n\2\2\u00fb\u00fc\t\3\2\2\u00fc\u0101\5(\25\13\u00fd\u00fe\f"+
-		"\t\2\2\u00fe\u00ff\t\4\2\2\u00ff\u0101\5(\25\n\u0100\u00f7\3\2\2\2\u0100"+
+		"\2\2\u00f7\u00f8\f\13\2\2\u00f8\u00f9\t\3\2\2\u00f9\u0101\5(\25\f\u00fa"+
+		"\u00fb\f\n\2\2\u00fb\u00fc\t\4\2\2\u00fc\u0101\5(\25\13\u00fd\u00fe\f"+
+		"\t\2\2\u00fe\u00ff\7\4\2\2\u00ff\u0101\5(\25\n\u0100\u00f7\3\2\2\2\u0100"+
 		"\u00fa\3\2\2\2\u0100\u00fd\3\2\2\2\u0101\u0104\3\2\2\2\u0102\u0100\3\2"+
 		"\2\2\u0102\u0103\3\2\2\2\u0103)\3\2\2\2\u0104\u0102\3\2\2\2\31\63\65C"+
 		"KSWdfnt\u0080\u0096\u009f\u00a4\u00ab\u00ae\u00bd\u00d0\u00e4\u00e9\u00f5"+

@@ -45,7 +45,6 @@ int_lit: INT_LIT;
 ID: [a-zA-Z_]+;
 id : ID;
 
-
 WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
 LINE_COMMENT: '***' ~[\r\n]* -> channel(HIDDEN);
 
@@ -56,7 +55,7 @@ decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
      | KW_GLOBAL id (ASSIGN expr)? SEMI ;
 
 // function definition;
-def : KW_DEFUN id LPAR id RPAR body KW_END KW_DEFUN ;
+def : KW_DEFUN id LPAR expr RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 
@@ -85,24 +84,24 @@ bool_op : OP_LESS | OP_GREATER | OP_EQUAL | OP_NOTEQUA | OP_LESSEQUAL | OP_GREAT
 
 lhs : lhs_item ( OP_COMMA lhs_item )* ;
 
-
+tuple_ele : id OP_DOT int_lit;
+array_ele : id LBRAK expr RBRAK;
+func_call : id LPAR expr RPAR
+          | id expr ;
 
 lhs_item :
     // variable
     id
-    | id OP_DOT int_lit  // tuple component reference
-    | id LBRAK expr RBRAK  ; // array element reference
-
-tuple_ele : id OP_DOT int_lit;
-array_ele : id LBRAK expr RBRAK;
-func_call : id LPAR expr RPAR;
+    | tuple_ele  // tuple component reference
+    | array_ele  ; // array element reference
 
 expr:
     // *ascending* order of precedence: from least important to most important
      // tuple constuctor
-    expr OP_COMMA expr
-    | expr ( OP_MULT | OP_DIV)  expr
+
+     expr ( OP_MULT | OP_DIV)  expr
     | expr ( OP_PLUS | OP_MINUS) expr
+    | expr OP_COMMA expr
     // there is no more unary minus!!
     |  LPAR expr RPAR
     |  id

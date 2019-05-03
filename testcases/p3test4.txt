@@ -66,20 +66,26 @@ then print 1;
 else print 0;
 end if
 
-*** other control structure tests
-foreach x in t do *** can't loop over a tuple
-  print x;
-end for;
 
-foreach x in i do *** can't loop over an integer
+foreach x in t do
   print x;
-end for;
+end for
 
-foreach x in a..10 do *** range: both limits have to be ints
+foreach x in i do
   print x;
-end for;
+end for
 
-foreach x in 1..t do *** range: both limits have to be ints
+foreach x in a..10 do
   print x;
-end for;
+end for
+
+foreach x in 1..t do
+  print x;
+end for
+
+
+
+
+
+
 
