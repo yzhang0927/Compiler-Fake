@@ -31,10 +31,15 @@ public class Test {
             lingBorParser parser = new lingBorParser(tokens);
             // Begin parsing at rule prog
             ParseTree tree = parser.input();
-            ParseTreeWalker.DEFAULT.walk(new lingListener(), tree);
-            System.out.println(tree.toStringTree(parser));
+            lingListener ll = new lingListener();
+            ParseTreeWalker.DEFAULT.walk(ll, tree);
 
+            System.out.println("\nFinal symbol and function map");
+            ll.printSymbolMap();
+            ll.printFuncMap();
+            //System.out.println(tree.toStringTree(parser));
 
+            /*
             JFrame frame = new JFrame("Antlr AST");
             JPanel panel = new JPanel();
             TreeViewer viewr = new TreeViewer(Arrays.asList(
@@ -45,7 +50,7 @@ public class Test {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(2000,1000);
             frame.setVisible(true);
-            
+            */
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

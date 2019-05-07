@@ -22,7 +22,8 @@ public class Intlit extends Symbol {
     }
 
     @Override
-    public boolean isDefined() {
-        return true;
-    }
+    public boolean isDefined() {return true;}
+    @Override
+    public String getType(){return "INT_LIT";}
+
 }

@@ -14,12 +14,13 @@ import java.util.regex.Pattern;
 public class lingListener extends lingBorBaseListener{
 
     private HashMap<String, Symbol> globalMap = new HashMap<>();
+    //private HashMap<String, String> globalNameMap = new HashMap<>();
     private HashMap<String, Symbol> funcVarMap = new HashMap<>();
+    //private HashMap<String, String> funcNameMap = new HashMap<>();
     private HashMap<String, Func> funcMap = new HashMap<>();
 
     private int statusForLoop = 0;
     private int statusFunc = 0;
-
 
     private boolean isDefinedInFuncMap(String funcName){
         return funcMap.containsKey(funcName);
@@ -69,6 +70,35 @@ public class lingListener extends lingBorBaseListener{
         } catch (Exception en) {
             //System.out.println(String.format("ERROR! %s not declared in the symbol map", idName));
             return "UNDEFINED";
+        }
+    }
+
+    private void printMap(HashMap<String, Symbol> mp){
+        System.out.println("<--------------Symbol__Table---------------->");
+        for (String name: mp.keySet()){
+            String key = name;
+            String value = mp.get(name).getType();
+            System.out.println(key + " : " + value);
+        }
+        System.out.println("<----------------Table__End----------------->\n");
+    }
+
+    public void printSymbolMap(){
+        if (statusFunc == 0){
+
+            printMap(globalMap);
+        } else {
+            System.out.println("\n<------------------------------------------->");
+            System.out.println("///>NOW WE ARE IN THE SCOPE OF AFUNCTION<///");
+            printMap(funcVarMap);
+        }
+    }
+
+    public void printFuncMap() {
+        for (String name: funcMap.keySet()){
+            String key = name;
+            Func value = funcMap.get(name);
+            System.out.println(key + " : " + String.format("input_type: %s, return type: %s",value.getInputType(),value.getReturnType()));
         }
     }
 
@@ -200,7 +230,6 @@ public class lingListener extends lingBorBaseListener{
         } else if (ctx.int_lit() != null) {
             return "INT_LIT";
         } else if (ctx.id() != null) {
-
             return getTypeByName(ctx.id().ID().getSymbol().getText());
         } else if (ctx.tuple_ele()!=null) {
             checkByContextTupleEle(ctx.tuple_ele());
@@ -336,8 +365,7 @@ public class lingListener extends lingBorBaseListener{
     }
 
     @Override public void enterDef(lingBorParser.DefContext ctx) {
-        System.out.println("");
-
+        System.out.println("\n<---Entering a function---->");
         String funcName = ctx.id().ID().getSymbol().getText();
         int line = ctx.id().ID().getSymbol().getLine();
 
@@ -353,11 +381,29 @@ public class lingListener extends lingBorBaseListener{
             }
 
             int flagReturnInvoked = 0;
-
-
+            if(ctx.body().statement()!=null && ctx.body().statement().size()>1){
+                for(lingBorParser.StatementContext st0:ctx.body().statement()) {
+                    if (st0.RETURN() != null) {
+                        if (flagReturnInvoked == 0) {
+                            String typeName = inferenceByContext(st0.expr());
+                            if (typeName != "UNDEFINED") {
+                                tmpFunc.setReturnType(typeName);
+                                System.out.println(String.format("Type Infered! The return type is %s for func:%s on line %d", typeName, funcName, line));
+                                flagReturnInvoked += 1;
+                            }
+                        } else if (flagReturnInvoked != 0) {
+                            String firstReturnType = tmpFunc.getReturnType();
+                            String secondReturnType = inferenceByContext(st0.expr());
+                            if (firstReturnType != secondReturnType) {
+                                System.out.println(String.format("ERROR ! return type of func %s on line %d should be %s instead of %s", funcName, line, firstReturnType, secondReturnType));
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
             for(lingBorParser.StatementContext st:ctx.body().statement(0).statement()) {
                 if(st.RETURN() != null) {
-
                     if (flagReturnInvoked == 0){
                         String typeName = inferenceByContext(st.expr());
                         if (typeName != "UNDEFINED") {
@@ -386,6 +432,7 @@ public class lingListener extends lingBorBaseListener{
     }
 
     @Override public void exitDef(lingBorParser.DefContext ctx) {
+        System.out.println("<---Exiting a function---->\n");
         funcVarMap.clear();
         this.statusFunc -= 1;
     }
@@ -397,6 +444,7 @@ public class lingListener extends lingBorBaseListener{
         if (ctx.KW_ARRAY()!=null){
             if(isInSymbolMap(idName)&&!isDefinedInSymbolMap(idName)){
                 putSymbolByName(idName,new Arr(idName,line));
+                printSymbolMap();
                 System.out.println(String.format("SUCCESS! The global array id:%s on line %d has been defined",idName,line));
             } else if(!isInSymbolMap(idName)){
                 System.out.println(String.format("ERROR! The array:%s line %d has not been defined its scope",idName,line));
@@ -418,6 +466,8 @@ public class lingListener extends lingBorBaseListener{
             } else {
                 if(ctx.ASSIGN()!=null){ //ASSIGN exists
                     putSymbolByName(idName,createByContext(idName,line,inferenceByContext(ctx.expr(0))));
+                    printSymbolMap();
+
                     System.out.println(String.format("SUCCESS ! The local var:%s, type:%s on line %d has been declared", idName,inferenceByContext(ctx.expr(0)),line));
                 } else { // no assign
                     putSymbolByName(idName, new Symbol(idName, line));
@@ -435,6 +485,7 @@ public class lingListener extends lingBorBaseListener{
                 } else {
                     if(globalMap.containsKey(idName) && globalMap.get(idName).isDefined()){
                         putSymbolByName(idName,globalMap.get(idName));
+                        printSymbolMap();
                         System.out.println(String.format("SUCCESS ! global var:%s on line %d is declared in function",idName, line));
                     } else {
                         System.out.println(String.format("ERROR ! global var:%s on line %d is not defined outside the function",idName, line));
@@ -509,10 +560,10 @@ public class lingListener extends lingBorBaseListener{
         this.statusForLoop += 1;
     }
 
+
     @Override public void exitWhile_loop(lingBorParser.While_loopContext ctx) {
         this.statusForLoop -= 1;
     }
-
 
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
 

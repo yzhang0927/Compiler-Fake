@@ -43,5 +43,7 @@ public class Symbol {
         return this.isLocal;
     }
 
-
+    public String getType(){
+        return "UNDEFINED";
+    }
 }

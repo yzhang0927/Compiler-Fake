@@ -32,5 +32,9 @@ public class Tuple extends Symbol{
         return true;
     }
 
+    @Override
+    public String getType(){
+        return String.format("TUPLE,%d",this.getLength());
+    }
 
 }

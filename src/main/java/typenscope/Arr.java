@@ -22,5 +22,8 @@ public class Arr extends Symbol{
         return true;
     }
 
-
+    @Override
+    public String getType(){
+        return "ARRAY";
+    }
 }
