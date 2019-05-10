@@ -449,9 +449,11 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
                 printSymbolMap();
                 System.out.println(String.format("SUCCESS! The global array id:%s on line %d has been defined",idName,line));
             } else if(!isInSymbolMap(idName)){
+                isFuncError = true;
                 System.out.println(String.format("ERROR! The array:%s line %d has not been defined its scope",idName,line));
 
             } else if(isDefinedInFuncMap(idName)){
+                isFuncError = true;
                 String type = getTypeByName(idName);
                 System.out.println(String.format("ERROR! The array:%s line %d has  been defined as a %s",idName,line,type));
             }
@@ -463,6 +465,7 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
                 System.out.println(String.format("ERROR ! var:%s line %d, local cannot exists outside func", idName, line));
                 return;
             } else if ( statusForLoop!=0){
+                isFuncError = true;
                 System.out.println(String.format("ERROR ! var:%s line %d, local cannot exists in loop", idName, line));
                 return;
             } else {
@@ -479,10 +482,12 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
         } else if (ctx.KW_GLOBAL() != null) {
             //error
             if (statusForLoop != 0) {
+                isFuncError = true;
                 System.out.println(String.format("ERROR ! var:%s line %d, global cannot exists in loop", idName, line));
                 return;
             } else if (statusFunc!= 0 ) {
                 if(ctx.ASSIGN()!=null) {
+                    isFuncError = true;
                     System.out.println(String.format("ERROR ! A new global var:%s on line %d cannot be initialized in function",idName, line));
                 } else {
                     if(globalMap.containsKey(idName) && globalMap.get(idName).isDefined()){
@@ -490,6 +495,7 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
                         printSymbolMap();
                         System.out.println(String.format("SUCCESS ! global var:%s on line %d is declared in function",idName, line));
                     } else {
+                        isFuncError = true;
                         System.out.println(String.format("ERROR ! global var:%s on line %d is not defined outside the function",idName, line));
                     }
                 }
@@ -497,6 +503,7 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
             }
 
             if (isInSymbolMap(idName)) {
+                isFuncError = true;
                 System.out.println(String.format("ERROR ! The global var:%s on line %d has been declared before", idName,line));
                 return;
             }
@@ -524,6 +531,7 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
             int line = ctx.array_id().id().ID().getSymbol().getLine();
 
             if(getTypeByName(idName)!="ARRAY"){
+                isFuncError = true;
                 System.out.println(String.format("ERROR ! In foreach %s on line %d must be ARRAY instead of %s",idName,line,getTypeByName(idName)));
             }
 
@@ -531,6 +539,7 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
             int line = ctx.range().OP_DOTDOT().getSymbol().getLine();
             if(inferenceByContext(ctx.range().expr(0))=="INT_LIT" && inferenceByContext(ctx.range().expr(1))=="INT_LIT"){
             }else{
+                isFuncError = true;
                 System.out.println(String.format("ERROR ! two expr in range on line %d must both be integers, now they are %s and %s",
                         line,inferenceByContext(ctx.range().expr(0)),inferenceByContext(ctx.range().expr(1))));
             }
@@ -543,7 +552,8 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
             putSymbolByName(idName,idSymbol);
             this.statusForLoop += 1;
         } else {
-            System.out.println("illegal expr found as foreach index var, id only!");
+            isFuncError = true;
+            System.out.println("ERROR ! illegal expr found as foreach index var, id only!");
         }
 
     }
@@ -580,7 +590,6 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
                     isFuncError = true;
                     System.out.println(String.format("ERROR ! We cannot return Array type on line in a function %d",ctx.RETURN().getSymbol().getLine()));
                 }
-
             }
 
         } else if (ctx.ASSIGN() != null) {
@@ -609,7 +618,6 @@ public class lingSyntaxCheckingListener extends lingBorBaseListener{
                 }
                 return;
             }
-
             if (leftType != rightType) {
                 isFuncError = true;
                 System.out.println(String.format("ERROR ! ASSIGN statement on line %d invalid! %s cannot be assigned with a %s", line,leftType, rightType));
