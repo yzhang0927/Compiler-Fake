@@ -31,7 +31,7 @@ public class Test {
             lingBorParser parser = new lingBorParser(tokens);
             // Begin parsing at rule prog
             ParseTree tree = parser.input();
-            lingListener ll = new lingListener();
+            lingSyntaxCheckingListener ll = new lingSyntaxCheckingListener();
             ParseTreeWalker.DEFAULT.walk(ll, tree);
 
             System.out.println("\nFinal symbol and function map");
