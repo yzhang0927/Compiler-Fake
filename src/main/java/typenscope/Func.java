@@ -1,8 +1,6 @@
 package typenscope;
 
 import parser.lingBorParser;
-import parser.lingListener;
-import parser.lingListener.*;
 import java.util.ArrayList;
 import java.util.List;
 

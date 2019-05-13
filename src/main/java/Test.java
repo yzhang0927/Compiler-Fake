@@ -18,7 +18,7 @@ import static scanner.TestCompiler.testOneCase;
 public class Test {
 
     public static void main(String[] args) {
-        String addr = "testcases/p3test4";
+        String addr = "testcases/p3test3";
 
         try {
             // Create a CharStream that reads from standard input
@@ -31,15 +31,29 @@ public class Test {
             lingBorParser parser = new lingBorParser(tokens);
             // Begin parsing at rule prog
             ParseTree tree = parser.input();
-            lingSyntaxCheckingListener ll = new lingSyntaxCheckingListener();
-            ParseTreeWalker.DEFAULT.walk(ll, tree);
 
+            System.out.println("-----Starting scanner and parser checking----");
+            lingScannerParserCheckListener lsp = new lingScannerParserCheckListener();
+            ParseTreeWalker.DEFAULT.walk(lsp, tree);
+            System.out.println("-----Finished scanner and parser checking----");
+
+            System.out.println("-----Starting syntax checking-----");
+            lingSyntaxCheckListener lstx = new lingSyntaxCheckListener();
+            ParseTreeWalker.DEFAULT.walk(lstx, tree);
             System.out.println("\nFinal symbol and function map");
-            ll.printSymbolMap();
-            ll.printFuncMap();
-            //System.out.println(tree.toStringTree(parser));
+            lstx.printSymbolMap();
+            lstx.printFuncMap();
+            System.out.println("Has input file passeed syntax check without error？: "+lstx.hasPassedSyntaxCheck());
+            System.out.println("Total Number of syntax error: "+lstx.numSyntaxError());
+            System.out.println("-----Finished syntax checking-----");
+
+            System.out.println("-----Starting code gen-----");
+            lingCodeGenListener lcg = new lingCodeGenListener();
+            ParseTreeWalker.DEFAULT.walk(lcg, tree);
+            System.out.println("-----Finished code gen-----");
 
             /*
+            System.out.println(tree.toStringTree(parser));
             JFrame frame = new JFrame("Antlr AST");
             JPanel panel = new JPanel();
             TreeViewer viewr = new TreeViewer(Arrays.asList(
@@ -51,6 +65,7 @@ public class Test {
             frame.setSize(2000,1000);
             frame.setVisible(true);
             */
+
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
