@@ -243,7 +243,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
 
     public String inferenceByContext(lingBorParser.ExprContext ctx) {
         if (ctx.OP_COMMA() != null) {
-
             int numOfTuple = checkByContextTuple(ctx);
             return String.format("TUPLE,%d", numOfTuple);
             //return "TUPLE";
@@ -684,7 +683,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
 
         } else if (ctx.EXCHANGE() != null) {
 
-            String rightType = inferenceByContext(ctx.expr());
+            String rightType = inferenceByContextLhs(ctx.lhs(1));
             String leftType = inferenceByContextLhs(ctx.lhs(0));
 
             if (leftType != rightType) {
