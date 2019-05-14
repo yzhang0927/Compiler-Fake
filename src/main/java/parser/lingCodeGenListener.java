@@ -65,7 +65,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         return Integer.MIN_VALUE;
     }
 
-    // if it's only arithmatic op between int_lit, get the answer, otherwise (id involved)
+    // if it's only arithmetic op between int_lit, get the answer, otherwise (id involved)
     // we may need to generate code on the run.
     private int evalExpr(lingBorParser.ExprContext ctx){
         if(ctx.int_lit() != null){
