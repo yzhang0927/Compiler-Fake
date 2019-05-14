@@ -1,5 +1,6 @@
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
@@ -13,13 +14,17 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import parser.*;
 import scanner.*;
+import typenscope.Func;
+import typenscope.Symbol;
+
 import static scanner.TestCompiler.testOneCase;
 
 public class Test {
 
     public static void main(String[] args) {
         String addr = "testcases/p4test1";
-
+        HashMap<String, Symbol> symbolMap;
+        HashMap<String, Func> funcMap;
 
         try {
             // Create a CharStream that reads from standard input
@@ -46,8 +51,12 @@ public class Test {
             lingSyntaxCheckListener lstx = new lingSyntaxCheckListener();
             ParseTreeWalker.DEFAULT.walk(lstx, tree);
             System.out.println("\nFinal symbol and function map");
+
             lstx.printSymbolMap();
+            symbolMap = lstx.getGlobalMap();
             lstx.printFuncMap();
+            funcMap = lstx.getFuncMap();
+
             System.out.println("Has input file passeed syntax check without error？: "+lstx.hasPassedSyntaxCheck());
             System.out.println("Total Number of syntax error: "+lstx.numSyntaxError());
             System.out.println("-----Finished syntax checking-----");
@@ -56,9 +65,9 @@ public class Test {
                 return;
             }
 
-
             System.out.println("-----Starting code gen-----");
             lingCodeGenListener lcg = new lingCodeGenListener();
+            lcg.importMaps(symbolMap,funcMap);
             ParseTreeWalker.DEFAULT.walk(lcg, tree);
             System.out.println("-----Finished code gen-----");
 

@@ -35,11 +35,8 @@ public class lingScannerParserCheckListener extends lingBorBaseListener {
             ctx.removeLastChild();
             ctx.addChild(ct);
             System.out.println(ctx.INT_LIT().getSymbol().getText());
-
         }
-
     }
-
 
     @Override public void enterId(lingBorParser.IdContext ctx) {
         String id = ctx.ID().getSymbol().getText();

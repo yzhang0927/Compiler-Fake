@@ -24,7 +24,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
     private String curFuncName = null;
     private Func curFunc = null;
 
-
     private boolean isFuncError = false;
     private int isSyntaxError = 0;
     private int statusForLoop = 0;
@@ -39,7 +38,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
     }
 
     private void printMap(HashMap<String, Symbol> mp){
-
         System.out.println(String.format("<--------------Symbol Table size:%d---------------->",mp.size()));
         for (String name: mp.keySet()){
             String key = name;
@@ -47,6 +45,14 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
             System.out.println(key + " : " + value);
         }
         System.out.println("<----------------Table__End--------------------->\n");
+    }
+
+    public HashMap<String,Func> getFuncMap(){
+        return this.funcMap;
+    }
+
+    public HashMap<String,Symbol> getGlobalMap(){
+        return this.globalMap;
     }
 
     public void printSymbolMap(){
@@ -58,7 +64,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
     }
 
     public void printFuncMap() {
-
         System.out.println(String.format("\n<------------Func table size:%d--------------->",funcMap.size()));
         for (String name: funcMap.keySet()){
             String key = name;
@@ -275,7 +280,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
         }
         return "UNDEFINED";
     }
-
 
     private String checkByContextFunction(lingBorParser.Func_callContext ctx) {
         if (ctx.id() != null) {

@@ -2,6 +2,7 @@ package typenscope;
 
 import parser.lingBorParser;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class Func extends Symbol {
@@ -13,12 +14,17 @@ public class Func extends Symbol {
     private String inputType;
     private boolean isCall = false;
     private lingBorParser.DefContext ctx;
+    private HashMap<String, Symbol> funcVarMap;
 
     public Func(String name, int line, String inputVarName, lingBorParser.DefContext ctx){
         this.line = line;
         this.name = name;
         this.ctx = ctx;
         this.inputVarName = inputVarName;
+    }
+
+    public void storeFuncVarMap(HashMap<String, Symbol> funcVarMap) {
+        this.funcVarMap = funcVarMap;
     }
 
     public boolean checkInputValid(String ls){
@@ -47,7 +53,5 @@ public class Func extends Symbol {
         this.inputType = ls;
         setCalled();
     }
-
-
 
 }

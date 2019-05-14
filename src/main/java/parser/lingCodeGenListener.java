@@ -1,14 +1,27 @@
 package parser;
 
+import typenscope.Func;
+import typenscope.Symbol;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
 
 public class lingCodeGenListener extends lingBorBaseListener {
     private String fileName = "src/main/java/codegen/output.ll";
     private int numPrintCall = 0;
     private int numCall = 0;
     private BufferedWriter writer;
+
+    HashMap<String, Symbol> symbolMap;
+    HashMap<String, Func> funcMap;
+
+    public void importMaps(HashMap<String, Symbol> symbolMap, HashMap<String, Func> funcMap){
+        this.symbolMap = symbolMap;
+        this.funcMap = funcMap;
+    }
+
     @Override
     public void enterInput(lingBorParser.InputContext ctx) {
         try {
@@ -16,6 +29,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
                     "align 1\ndefine i32 @main() #0 {\nentry:\n";
             writer = new BufferedWriter(new FileWriter(fileName));
             writer.write(header);
+
+            // declare all global var in advance
 
             System.out.println("SUCCESS ! codegen created output file: " + fileName);
         } catch (IOException e) {
@@ -48,7 +63,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             return left+right;
         }
         return Integer.MIN_VALUE;
-
     }
 
     // if it's only arithmatic op between int_lit, get the answer, otherwise (id involved)
@@ -57,6 +71,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         if(ctx.int_lit() != null){
             return Integer.parseInt(ctx.int_lit().INT_LIT().getSymbol().getText());
         } else if(ctx.id() != null){
+
             //action tbi
         } else if(ctx.OP_COMMA() != null){
 
@@ -83,7 +98,13 @@ public class lingCodeGenListener extends lingBorBaseListener {
     }
 
     @Override public void enterDecl(lingBorParser.DeclContext ctx) {
-
+        //KW_GLOBAL id (ASSIGN expr)? SEMI
+        if(ctx.KW_GLOBAL() != null){
+            if(ctx.ASSIGN() != null) {
+                // read from symbol table.
+              evalExpr(ctx.expr(0));
+            }
+        }
 
     }
 
