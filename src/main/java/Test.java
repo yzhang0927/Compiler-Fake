@@ -57,7 +57,7 @@ public class Test {
             lstx.printFuncMap();
             funcMap = lstx.getFuncMap();
 
-            System.out.println("Has input file passeed syntax check without error？: "+lstx.hasPassedSyntaxCheck());
+            System.out.println("Has input file passed syntax check without error？: "+lstx.hasPassedSyntaxCheck());
             System.out.println("Total Number of syntax error: "+lstx.numSyntaxError());
             System.out.println("-----Finished syntax checking-----");
             if (!lstx.hasPassedSyntaxCheck()) {
