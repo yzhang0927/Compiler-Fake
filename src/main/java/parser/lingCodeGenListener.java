@@ -17,10 +17,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
             writer = new BufferedWriter(new FileWriter(fileName));
             writer.write(header);
 
-
-            System.out.println("SUCCESS ! codegen created out file: " + fileName);
+            System.out.println("SUCCESS ! codegen created output file: " + fileName);
         } catch (IOException e) {
-            System.out.println("ERROR ! codegen cannot create out file: " + e);
+            System.out.println("ERROR ! codegen cannot create output file: " + e);
         }
     }
 
@@ -33,19 +32,60 @@ public class lingCodeGenListener extends lingBorBaseListener {
             }
             writer.close();
         } catch (IOException e){
-
+            System.out.println("ERROR ! codegen cannot close output file: " + e);
         }
     }
 
+
+    private int whichArithmaticOp(lingBorParser.ExprContext ctx,int left,int right){
+        if(ctx.OP_DIV()!=null){
+            return left/right;
+        } else if (ctx.OP_MULT()!=null){
+            return left*right;
+        } else if (ctx.OP_MINUS()!=null){
+            return left-right;
+        } else if (ctx.OP_PLUS()!=null){
+            return left+right;
+        }
+        return Integer.MIN_VALUE;
+
+    }
+
+    // if it's only arithmatic op between int_lit, get the answer, otherwise (id involved)
+    // we may need to generate code on the run.
     private int evalExpr(lingBorParser.ExprContext ctx){
-        if(ctx.int_lit()!=null){
+        if(ctx.int_lit() != null){
             return Integer.parseInt(ctx.int_lit().INT_LIT().getSymbol().getText());
-        }else if(ctx.id()!=null){
+        } else if(ctx.id() != null){
+            //action tbi
+        } else if(ctx.OP_COMMA() != null){
 
+        } else if(ctx.func_call() != null){
+
+        } else if(ctx.array_ele() != null){
+
+        } else if(ctx.tuple_ele() != null){
+
+        } else if(ctx.LPAR()!= null){
+            // it means it is in the form of LPAR expr RPAR
+            return evalExpr(ctx.expr(0));
+
+        } else if(ctx.OP_PLUS() != null || ctx.OP_MINUS() != null
+                || ctx.OP_MULT() != null ||ctx.OP_DIV() != null){
+            //we can do this since the tree structure already put */ in the lower tree
+            int left = evalExpr(ctx.expr(0));
+            int right = evalExpr(ctx.expr(1));
+            if (left!=Integer.MIN_VALUE && right!=Integer.MIN_VALUE){
+                return whichArithmaticOp(ctx,left,right);
+            }
         }
-        return 0;
+        return Integer.MIN_VALUE;
     }
 
+    @Override public void enterDecl(lingBorParser.DeclContext ctx) {
+
+
+    }
 
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
         if(ctx.ASSIGN()!=null){
@@ -53,16 +93,22 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
 
         if(ctx.PRINT()!=null){
-            numPrintCall += 1;
-            String outFunc = String.format("%call%d = call i32 (i8*, ...)"+
-                    " @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0),"+
-                    "i32 ",numCall);
 
-            if (ctx.expr()!=null){
-               int num = evalExpr(ctx.expr());
+            String outFunc = "%"+String.format("call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 ",numCall);
+            int num = evalExpr(ctx.expr());
+            if (num == Integer.MIN_VALUE){
 
+            } else {
+                outFunc = outFunc + String.valueOf(num)+")\n";
             }
 
+            numPrintCall += 1;
+            numCall += 1;
+            try {
+                writer.write(outFunc);
+            } catch (IOException e){
+                System.out.println("ERROR ! codegen cannot create output file: " + e);
+            }
         }
     }
 

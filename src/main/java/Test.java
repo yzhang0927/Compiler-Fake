@@ -18,7 +18,8 @@ import static scanner.TestCompiler.testOneCase;
 public class Test {
 
     public static void main(String[] args) {
-        String addr = "testcases/p3test2";
+        String addr = "testcases/p4test1";
+
 
         try {
             // Create a CharStream that reads from standard input

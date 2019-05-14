@@ -7,5 +7,9 @@
     - Entry point is [here](./src/main/java/edu/nyu/compiler/App.java)
 
 - Scanner
-    - first parsed the input and replaced ID and Integer
+    - First parsed the input and replaced ID and Integer
     - Antlr generated lexer handled the rest of the work
+
+- Code Gen
+    - First generate ouput.ll by running the entire program
+    - in terminal: lli output.ll 
