@@ -23,6 +23,15 @@ public class Symbol {
 
     // Initialization when you encounter global/local id;
 
+
+    public void setVal(int val) {
+        this.val = val;
+    }
+
+    public int getVal(){
+        return this.val;
+    }
+
     public void setNameAndLine (String name, int line){
         this.name = name;
         this.line = line;

@@ -1,18 +1,13 @@
 #include <stdio.h>
 
-int simpleAdd(int a){
-    return a+1;
-}
-
 int main(){
 
     int s = -1;
-    int v = s;
-    int k = simpleAdd(s);
-
-    printf("%d\n", k);
-    printf("%d\n", 16);
-    printf("%d\n", 3*11-5);
+    int k = 6;
+    int b = s + 4 * k;
+    s = s + 3;
+    //int k = s;
+    //int v = s+4;
     //printf("%d\n", s-1);
     //printf("%d\n", s-v);
     //printf("%d\n", s);
