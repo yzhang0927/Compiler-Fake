@@ -41,7 +41,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
 
     private void printMap(HashMap<String, Symbol> mp){
 
-        System.out.println(String.format("<--------------Symbol Table size: %d---------------->",mp.size()));
+        System.out.println(String.format("<--------------Symbol Table size:%d---------------->",mp.size()));
         for (String name: mp.keySet()){
             String key = name;
             String value = mp.get(name).getType();
@@ -411,9 +411,9 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
     }
 
     private void recursiveDefunStatement(lingBorParser.StatementContext ctx){
-        if (ctx.RETURN() != null) {
+        if(ctx.RETURN()!=null){
             String returnType = inferenceByContext(ctx.expr());
-            if (returnType != "UNDEFINED") {
+            if(returnType!="UNDEFINED"){
                 //my dangerous action on global var
                 if(curFunc.getReturnType()!=null && returnType!=curFunc.getReturnType()){
                     System.out.println(String.format("ERROR ! return type of func %s on line %d should be %s instead of %s", curFuncName, ctx.RETURN().getSymbol().getLine(), curFunc.getReturnType(), returnType));
@@ -425,7 +425,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
                 }
             }
         }
-        if (ctx.statement() != null) {
+        if(ctx.statement()!=null){
             for(lingBorParser.StatementContext st0:ctx.statement()){
                 recursiveDefunStatement(st0);
             }
@@ -484,21 +484,21 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
         String idName = ctx.id(0).ID().getSymbol().getText();
         int line = ctx.id(0).ID().getSymbol().getLine();
 
-        if (ctx.KW_ARRAY() != null) {
-            if (isInSymbolMap(idName) && !isDefinedInSymbolMap(idName)) {
+        if (ctx.KW_ARRAY()!=null){
+            if(isInSymbolMap(idName)&&!isDefinedInSymbolMap(idName)){
                 putSymbolByName(idName,new Arr(idName,line));
                 printSymbolMap();
-                System.out.printf("SUCCESS! The global array id:%s on line %d has been defined%n",idName,line);
-            } else if (!isInSymbolMap(idName)) {
+                System.out.println(String.format("SUCCESS! The global array id:%s on line %d has been defined",idName,line));
+            } else if(!isInSymbolMap(idName)){
                 isFuncError = true;
                 isSyntaxError += 1;
-                System.out.printf("ERROR ! The array:%s line %d has not been defined its scope%n", idName,line);
+                System.out.println(String.format("ERROR ! The array:%s line %d has not been defined its scope",idName,line));
 
             } else if(isDefinedInFuncMap(idName)){
                 isFuncError = true;
                 isSyntaxError += 1;
                 String type = getTypeByName(idName);
-                System.err.printf("ERROR ! The array:%s line %d has  been defined as a %s%n",idName,line,type);
+                System.out.println(String.format("ERROR ! The array:%s line %d has  been defined as a %s",idName,line,type));
             }
             return;
         }
