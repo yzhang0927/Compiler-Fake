@@ -1,18 +1,18 @@
 *** We will test function and loop
 
-global aa
+global aa;
 array aa [1 .. 100] j = j+3;
 
 foreach k in 1 .. 10 do
     local c;
-    c = 3
+    c = 3;
     local arr;
     array arr [1 .. 100] d = d+3;
 end for
 
 foreach k in aa do
     local c;
-    c = 3
+    c = 3;
     local arr;
     array arr [1 .. 100] d = d+3;
 end for

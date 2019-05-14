@@ -1,6 +1,5 @@
 package parser;
 
-import com.sun.deploy.security.ValidationState;
 import org.antlr.v4.runtime.Parser;
 import org.antlr.v4.runtime.ParserRuleContext;
 import org.antlr.v4.runtime.RuleContext;
@@ -401,7 +400,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
             String idName = ctx.id().ID().getSymbol().getText();
             int line = ctx.id().ID().getSymbol().getLine();
             System.out.println(String.format("SUCCESS! var:%s has been add as a local var in function on line %d",idName,line));
-            isSyntaxError += 1;
             putSymbolByName(idName,new Symbol(idName,line));
             return 1;
 

@@ -1,0 +1,8 @@
+***basic stuff
+print 23
+global i=17;
+global j=49;
+print 5;
+print i;
+print j;
+print i+1;
