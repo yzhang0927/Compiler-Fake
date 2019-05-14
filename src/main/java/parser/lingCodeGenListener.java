@@ -30,7 +30,18 @@ public class lingCodeGenListener extends lingBorBaseListener {
             writer = new BufferedWriter(new FileWriter(fileName));
             writer.write(header);
 
-            // declare all global var in advance
+            // declare all global var in advance just as Clang does
+            for (String name: symbolMap.keySet()){
+                String varName = name;
+                String varType = symbolMap.get(name).getType();
+                if (varType=="INT_LIT"){
+                    writer.write("  %"+varName+" = alloca i32, align 4\n");
+                } else if(varType=="ARRAY"){
+                    //ARRAY
+                } else {
+                    //TUPLE
+                }
+            }
 
             System.out.println("SUCCESS ! codegen created output file: " + fileName);
         } catch (IOException e) {
@@ -41,7 +52,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     @Override
     public void exitInput(lingBorParser.InputContext ctx) {
         try {
-            writer.write("ret i32 0\n}\n");
+            writer.write("  ret i32 0\n}\n");
             if (numPrintCall>0){
                 writer.write("declare i32 @printf(i8*, ...)\n");
             }
@@ -62,6 +73,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         } else if (ctx.OP_PLUS()!=null){
             return left+right;
         }
+        //maybe return null？
         return Integer.MIN_VALUE;
     }
 
@@ -87,7 +99,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         } else if(ctx.OP_PLUS() != null || ctx.OP_MINUS() != null
                 || ctx.OP_MULT() != null ||ctx.OP_DIV() != null){
-            //we can do this since the tree structure already put */ in the lower tree
+            //we can do this since the tree structure already put *,/ in the lower tree
             int left = evalExpr(ctx.expr(0));
             int right = evalExpr(ctx.expr(1));
             if (left!=Integer.MIN_VALUE && right!=Integer.MIN_VALUE){
@@ -105,7 +117,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
               evalExpr(ctx.expr(0));
             }
         }
-
     }
 
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
@@ -115,16 +126,17 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         if(ctx.PRINT()!=null){
 
-            String outFunc = "%"+String.format("call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 ",numCall);
+            String outFunc = "  %"+String.format("call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 ",numCall);
             int num = evalExpr(ctx.expr());
             if (num == Integer.MIN_VALUE){
 
             } else {
-                outFunc = outFunc + String.valueOf(num)+")\n";
+                outFunc = outFunc + num + ")\n";
             }
 
             numPrintCall += 1;
             numCall += 1;
+
             try {
                 writer.write(outFunc);
             } catch (IOException e){

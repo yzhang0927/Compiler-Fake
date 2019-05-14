@@ -6,7 +6,7 @@ public class Symbol {
     private int end_pos;
     private String name;
     private boolean isLocal;
-
+    private int val;
     private boolean isDefined = false;
 
     private static final boolean ISLOCAL = true;
@@ -27,6 +27,7 @@ public class Symbol {
         this.name = name;
         this.line = line;
     }
+
     public boolean isDefined(){
         return this.isDefined;
     }
