@@ -2,19 +2,21 @@ package typenscope;
 
 import java.util.ArrayList;
 
-public class Arr extends Symbol{
+public class Arr extends Symbol {
 
-    private int line;
     private int startPos;
+
     private int endPos;
-    private String name;
 
-    private int length;
+    private final int size;
 
-    public Arr(String name,int line)
-    {
-        this.name = name;
-        this.line = line;
+    public Arr(String name, int line) {
+        this(name, line, 0);
+    }
+
+    public Arr(String name, int line, int size) {
+        super(name, line);
+        this.size = size;
     }
 
     @Override

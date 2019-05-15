@@ -12,20 +12,21 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
     private static final String PATH_DIRECTORY = "src/main/java/codegen/";
 
-    private static final String LL_FILE_TYPE = "ll";
-
-    private final String inputFileName;
+    private static final String LL_FILE_TYPE = ".ll";
 
     private String fileName;
+
     private int numPrintCall = 0;
+
     private int numCall = 0;
+
     private BufferedWriter writer;
 
     HashMap<String, Symbol> symbolMap;
+
     HashMap<String, Func> funcMap;
 
     public lingCodeGenListener(String inputFileName) {
-        this.inputFileName = inputFileName;
         fileName = PATH_DIRECTORY + inputFileName + LL_FILE_TYPE;
     }
 
@@ -134,24 +135,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 evalExpr(ctx.expr(0));
             }
         } else if (ctx.KW_ARRAY() != null) {
-            System.err.printf("hit array declaration\n");
-            handleArrayDeclaration(ctx);
+            // TODO
         }
-    }
-
-    // decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
-    // the implementation disregards "( id ASSIGN expr )?"
-    private void handleArrayDeclaration(lingBorParser.DeclContext context) {
-        log(context.toString());
-        String currArrayName = context.id(0).ID().getSymbol().getText();
-        Symbol currSymbol = symbolMap.get(currArrayName);
-        log(currArrayName);
-        log(currSymbol.toString());
-
-    }
-
-    private void log(String string) {
-        System.err.println(string);
     }
 
     @Override
