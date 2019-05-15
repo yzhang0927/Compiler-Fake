@@ -78,6 +78,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         String mainHeader = "define i32 @main() #0 {\nentry:\n";
         write(mainHeader);
 
+
         // declare all global var in advance just as Clang does
         for (String name: symbolMap.keySet()){
             String varName = name;
@@ -222,17 +223,17 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
     private String whichBoolOp(lingBorParser.Bool_exprContext ctx){
         String op = ctx.bool_op().getText();
-        if(op=="OP_LESS"){
+        if(op.equals("<")){
             return "slt";
-        } else if(op=="OP_GREATER"){
+        } else if(op.equals(">")){
             return "sgt";
-        } else if(op=="OP_EQUAL") {
+        } else if(op.equals("==")) {
             return "eq";
-        } else if(op=="OP_NOTEQUA"){
+        } else if(op.equals("!=")){
             return "ne";
-        } else if(op=="OP_LESSEQUAL"){
+        } else if(op.equals("<=")){
             return "sle";
-        } else if(op=="OP_GREATEREQUAL"){
+        } else if(op.equals(">=")){
             return "sge";
         } else {
             //not gonna happen
@@ -247,7 +248,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             String outOp = evalExprRhs(ctx.expr());
             if(ctx.lhs(0).lhs_item().size()==1){
                 String target = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
-                write(String.format("  store i32 %s, i32* %s, align 4",outOp,"%"+target));
+                write(String.format("  store i32 %s, i32* %s, align 4\n",outOp,"%"+target));
                 regSymbolMap.clear();
             } else {
 
@@ -270,33 +271,34 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         } else if(ctx.bool_expr()!=null){
             for(int i=0; i<ctx.bool_expr().size(); i++) {
+
                 if(i>0){
-                    write(String.format("if.else%d:\n",numif));
+                    write(String.format("if.else%d:\n",numif-1));
                 }
-                String regLeft = evalExprRhs(ctx.bool_expr(0).expr(0));
-                String regRight = evalExprRhs(ctx.bool_expr(0).expr(1));
-                String op = whichBoolOp(ctx.bool_expr(0));
+
+                String regLeft = evalExprRhs(ctx.bool_expr(i).expr(0));
+                String regRight = evalExprRhs(ctx.bool_expr(i).expr(1));
+                String op = whichBoolOp(ctx.bool_expr(i));
                 write(String.format("  %s = icmp %s i32 %s, %s\n","%cmp"+i,op,regLeft,regRight));
                 write(String.format("  br i1 %s, label %s, label %s\n","%cmp"+numif,"%if.then"+numif,"%if.else"+numif));
-                write(String.format("if.then%d: ",i));
+                write(String.format("if.then%d: \n",i));
                 numif += 1;
                 enterStatement(ctx.statement(i));
                 write("  br label %if.end\n");
             }
 
             if(ctx.KW_ELSE()!=null){
-                write(String.format("if.else%d: \n",numif));
+                write(String.format("if.else%d: \n",numif-1));
                 enterStatement(ctx.statement(ctx.bool_expr().size()));
                 write("  br label %if.end\n");
                 write("if.end:\n");
-                write(String.format("  %s = load i32, i32* %retval, align 4","%"+numVar));
-                write(String.format("  ret i32 %s","%"+numVar));
+                numif += 1;
                 numVar += 1;
             }
 
-
         }
     }
+
 
     @Override public void enterFor_loop(lingBorParser.For_loopContext ctx) {
 

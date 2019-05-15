@@ -8,15 +8,14 @@ int main(){
     int b = s + 4 * k /2 - 1;
     int t = addOne(s);
 
-    if (s>=4 ){
-        s = s + 3;
-    } else if(s<0){
-        s = 2;
+    if (k<2){
+       k = 3;
     } else{
-        s = 1;
+       k = 4;
     }
 
-    printf("%d\n", s);
+
+    printf("%d\n", k);
 }
 
 

@@ -8,12 +8,11 @@ target triple = "x86_64-apple-macosx10.14.0"
 ; Function Attrs: noinline nounwind optnone ssp uwtable
 define i32 @main() #0 {
 entry:
-  %retval = alloca i32, align 4
+
   %s = alloca i32, align 4
   %k = alloca i32, align 4
   %b = alloca i32, align 4
   %t = alloca i32, align 4
-  store i32 0, i32* %retval, align 4
   store i32 -1, i32* %s, align 4
   %0 = load i32, i32* %s, align 4
   store i32 %0, i32* %k, align 4
@@ -27,34 +26,23 @@ entry:
   %3 = load i32, i32* %s, align 4
   %call = call i32 @addOne(i32 %3)
   store i32 %call, i32* %t, align 4
-  %4 = load i32, i32* %t, align 4
-  %call1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %4)
-  %5 = load i32, i32* %s, align 4
-  %cmp = icmp sge i32 %5, 4
+  %4 = load i32, i32* %k, align 4
+  %cmp = icmp slt i32 %4, 2
   br i1 %cmp, label %if.then, label %if.else
 
 if.then:                                          ; preds = %entry
-  %6 = load i32, i32* %s, align 4
-  %add2 = add nsw i32 %6, 3
-  store i32 %add2, i32* %s, align 4
+  store i32 3, i32* %k, align 4
   br label %if.end
 
 if.else:                                          ; preds = %entry
-  %7 = load i32, i32* %s, align 4
-  %cmp3 = icmp slt i32 %7, 0
-  br i1 %cmp3, label %if.then4, label %if.else5
-
-if.then4:                                         ; preds = %if.else
-  store i32 2, i32* %s, align 4
+  store i32 4, i32* %k, align 4
   br label %if.end
 
-if.else5:                                         ; preds = %if.else
-  store i32 1, i32* %s, align 4
-  br label %if.end
+if.end:                                           ; preds = %if.else, %if.then
+  %5 = load i32, i32* %k, align 4
+  %call1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %5)
 
-if.end:                                          ; preds = %if.end, %if.then
-  %8 = load i32, i32* %retval, align 4
-  ret i32 %8
+  ret i32 0
 }
 
 declare i32 @printf(i8*, ...) #1

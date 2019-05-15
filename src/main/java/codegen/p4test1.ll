@@ -10,7 +10,8 @@ entry:
   store i32 49, i32* %j, align 4
   %0 = load i32, i32* %j, align 4
   %op0 = add nsw i32 %0, 3
-  store i32 %op0, i32* %j, align 4  %1 = load i32, i32* %j, align 4
+  store i32 %op0, i32* %j, align 4
+  %1 = load i32, i32* %j, align 4
   %2 = load i32, i32* %i, align 4
   %op1 = add nsw i32 %1, %2
   %op2 = add nsw i32 %op1, 3
