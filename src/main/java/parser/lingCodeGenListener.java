@@ -341,6 +341,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
         numif = numIfCopy;
    }
 
+
+   // Number is stored in here.
+
     @Override public void enterDecl(lingBorParser.DeclContext ctx) {
         //KW_GLOBAL id (ASSIGN expr)? SEMI
         if(ctx.KW_GLOBAL() != null) {

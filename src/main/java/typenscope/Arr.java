@@ -19,6 +19,10 @@ public class Arr extends Symbol {
         this.size = size;
     }
 
+    public int getSize() {
+        return size;
+    }
+
     @Override
     public boolean isDefined(){
         return true;
@@ -27,5 +31,10 @@ public class Arr extends Symbol {
     @Override
     public String getType(){
         return "ARRAY";
+    }
+
+    @Override
+    public String toString() {
+        return String.format("ARRAY! name %s, on line %d, size %d", getName(), getLine(), size);
     }
 }
