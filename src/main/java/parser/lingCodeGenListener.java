@@ -12,9 +12,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class lingCodeGenListener extends lingBorBaseListener {
-
     private static final String PATH_DIRECTORY = "src/main/java/codegen/";
-
     private static final String LL_FILE_TYPE = ".ll";
 
     private String fileName;
@@ -206,7 +204,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             if (!regSymbolMap.containsKey(idName)) {
                 String regName = "%" + numVar;
                 String targetName = getTargetName(idName);
-
                 regSymbolMap.put(idName, regName);
                 //String type = getTypeByName(idName);
                 //I remember that no assign to array is permitted
@@ -464,6 +461,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             numInterVar += 1;
             numVar += 1;
 
+            /*
             //Todo we need to support multi lhs
             String left = evalExprLhs(ctx.lhs(0));
             String leftName = getTargetName(ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText());
@@ -471,7 +469,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             String right = evalExprLhs(ctx.lhs(1));
             String rightName = getTargetName(ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText());
             write(String.format("store i32 %s, i32* %s, align 4\n","%"+numVar,rightName));
-
+            */
 
             /**
              * lhs_item :
@@ -542,7 +540,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             stateForIf += 1;
             for(int i=0; i<ctx.bool_expr().size(); i++) {
 
-
                 if(i>0){
                     write(String.format("if.else%d:\n",numif-1));
                 }
@@ -565,13 +562,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 enterStatement(ctx.statement(ctx.bool_expr().size()));
                 write("  br label %if.end\n");
                 write("if.end:\n");
+                while(ctx.getChildCount()!=0) ctx.removeLastChild();
                 numif += 1;
-                numVar += 1;
             }
 
         }
     }
-
 
     @Override public void enterFor_loop(lingBorParser.For_loopContext ctx) {
 

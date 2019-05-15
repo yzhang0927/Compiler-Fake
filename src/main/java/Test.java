@@ -26,7 +26,7 @@ public class Test {
 
     public static void main(String[] args) {
         String filePath = "testcases/";
-        String fileName = "p4test3";
+        String fileName = "p4test2";
         String addr = filePath + fileName;
         HashMap<String, Symbol> symbolMap;
         HashMap<String, Func> funcMap;
@@ -80,7 +80,7 @@ public class Test {
             ParseTreeWalker.DEFAULT.walk(lcg, tree);
             System.out.println("-----Finished code gen-----");
 
-            /*
+
             System.out.println(tree.toStringTree(parser));
             JFrame frame = new JFrame("Antlr AST");
             JPanel panel = new JPanel();
@@ -92,7 +92,7 @@ public class Test {
             frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
             frame.setSize(2000,1000);
             frame.setVisible(true);
-            */
+
 
         } catch (IOException e) {
             throw new RuntimeException(e);

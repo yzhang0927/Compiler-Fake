@@ -473,13 +473,15 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
 
     @Override public void exitDef(lingBorParser.DefContext ctx) {
         System.out.println("<---Exiting a function---->\n");
-        curFunc.storeFuncVarMap(funcVarMap);
-        if(!isFuncError) funcMap.put(curFuncName,curFunc);
-
+        if(curFunc!= null && funcVarMap!=null) {
+            curFunc.storeFuncVarMap(funcVarMap);
+            if (!isFuncError) funcMap.put(curFuncName, curFunc);
+            funcVarMap.clear();
+        }
         curFuncName = null;
         curFunc = null;
 
-        funcVarMap.clear();
+
         this.statusFunc -= 1;
     }
 

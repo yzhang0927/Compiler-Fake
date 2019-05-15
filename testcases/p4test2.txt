@@ -1,18 +1,30 @@
-global s = 10;
-
-if s>5 then print 1;
-elsif s<10 then print 2;
-else print 3;
-end if
+global s = 3;
+global ss = 4;
 
 print s;
 
+if s>5 then print 11;
+elsif s<4 then print 22;
+else print 33;
+end if
+
 defun f(t)
   global s;
-  s = s+2;
-  local b =4;
-  print b;
-  return t+3;
+  local b = 22;
+
+  if b>5 then print 42;
+  else print 24;
+  end if
+
+  return t+b;
 end defun
 
-print f(s);
+defun ff(t)
+  local b = 22;
+  t = 44;
+  return t+b;
+end defun
+
+
+print f(ss);
+print ff(ss);

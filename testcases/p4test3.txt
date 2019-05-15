@@ -3,5 +3,5 @@ array a[1..10];
 global i = 35;
 global b;
 array b[1..20];
-a[12] = 5;
+a[9] = 5;
 a[4] = 3;
