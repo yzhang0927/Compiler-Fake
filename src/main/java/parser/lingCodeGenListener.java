@@ -10,8 +10,14 @@ import java.util.HashMap;
 
 public class lingCodeGenListener extends lingBorBaseListener {
 
-    private String fileName = "src/main/java/codegen/output.ll";
+    private static final String PATH_DIRECTORY = "src/main/java/codegen/";
+
+    private static final String LL_FILE_TYPE = ".ll";
+
+    private String fileName;
+
     private int numPrintCall = 0;
+
     private int numCall = 0;
     private int numVar = 0;
     private int numOp = 0;
@@ -24,6 +30,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
     HashMap<String, Symbol> funcVarMap;
     HashMap<String, Func> funcMap;
     HashMap<String, String> regSymbolMap = new HashMap<>();
+
+    public lingCodeGenListener(String inputFileName) {
+        fileName = PATH_DIRECTORY + inputFileName + LL_FILE_TYPE;
+    }
 
     public void importMaps(HashMap<String, Symbol> symbolMap, HashMap<String, Func> funcMap){
         this.symbolMap = symbolMap;
@@ -76,18 +86,23 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 write("  %"+varName+" = alloca i32, align 4\n");
             } else if(varType=="ARRAY"){
                     //ARRAY
-            } else {
+                } else {
                     //TUPLE
                 }
             }
     }
 
+    private void allocateArray(String varName, int size) throws IOException {
+        String output = String.format("  %%s = alloca [%d x i32], align 16", varName, size);
+        writer.write(output);
+    }
+
     @Override
     public void exitInput(lingBorParser.InputContext ctx) {
         try {
-            write("  ret i32 0\n}\n");
+            writer.write("  ret i32 0\n}\n");
             if (numPrintCall>0){
-                write("declare i32 @printf(i8*, ...)\n");
+                writer.write("declare i32 @printf(i8*, ...)\n");
             }
             writer.close();
         } catch (IOException e){
@@ -200,6 +215,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
                     write(String.format("  store i32 %s, i32* %s, align 4\n",outReg,"%"+targetVar));
                 }
             }
+        } else if (ctx.KW_ARRAY() != null) {
+            // TODO
         }
     }
 
@@ -281,6 +298,13 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+    @Override public void enterFor_loop(lingBorParser.For_loopContext ctx) {
+
+    }
+
+    @Override public void exitFor_loop(lingBorParser.For_loopContext ctx) {
+
+    }
 
 
 }

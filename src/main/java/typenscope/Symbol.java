@@ -56,4 +56,9 @@ public class Symbol {
     public String getType(){
         return "UNDEFINED";
     }
+
+    @Override
+    public String toString() {
+        return String.format("name %s, on line %d", name, line);
+    }
 }
