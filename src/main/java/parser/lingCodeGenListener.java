@@ -1,5 +1,6 @@
 package parser;
 
+import typenscope.Arr;
 import typenscope.Func;
 import typenscope.Symbol;
 
@@ -113,6 +114,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 write(String.format("@%s = global i32 0, align 4\n", varName));
             } else if (varType == "ARRAY") {
                 //ARRAY
+//                log("I have global array here");
+                if (!symbolMap.get(varName).isLocal()) {
+                    allocateGlobalArray(varName, getArraySize(varName));
+                }
             } else {
                 //TUPLE
             }
@@ -123,10 +128,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
 
     }
-
-    private void allocateArray(String varName, int size) throws IOException {
-        String output = String.format("  %%s = alloca [%d x i32], align 16", varName, size);
-        writer.write(output);
+// @b = common global [10 x i32] zeroinitializer, align 16, !dbg !6
+    private void allocateGlobalArray(String varName, int size) {
+        String output = String.format("  @%s = common global [%d x i32], align 16\n", varName, size);
+        write(output);
     }
 
     @Override
@@ -278,6 +283,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
         return "!";
     }
 
+    /**
+     * def : KW_DEFUN id LPAR expr RPAR body KW_END KW_DEFUN ;
+     *
+     * body : ( statement | decl )*   ; // no nested function definitions
+     * @param ctx
+     */
 
     @Override public void enterDef(lingBorParser.DefContext ctx){
 
@@ -306,6 +317,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 write(String.format("  %s = alloca i32, align 4\n","%"+varName));
             } else if(varType=="ARRAY"){
                 //ARRAY
+                handleLocalArrayWithName(varName);
             } else {
                 //TUPLE
             }
@@ -341,6 +353,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
         numVar = numVarCopy;
         numif = numIfCopy;
    }
+
+
+   // Number is stored in here.
 
     @Override public void enterDecl(lingBorParser.DeclContext ctx) {
         //KW_GLOBAL id (ASSIGN expr)? SEMI
@@ -382,7 +397,42 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         } else if (ctx.KW_ARRAY() != null) {
             // TODO
+//            log("~~~~~~~~~~~~~~~~~~\nArrayDecl\n");
+
         }
+    }
+
+    /**
+     * decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
+     * @param context
+     */
+    private void handleLocalArrayDeclaration(lingBorParser.DeclContext context) {
+        String arrayName = context.id(0).ID().getText();
+        if (!symbolMap.get(arrayName).isLocal()) {
+            return;
+        }
+        handleLocalArrayWithName(arrayName);
+    }
+
+    private void handleLocalArrayWithName(String arrayName) {
+        String targetArrayName = getTargetName(arrayName);
+        int arraySize = getArraySize(arrayName);
+        allocateLocalArray(targetArrayName, arraySize);
+    }
+
+    /**
+     * %a = alloca [10 x i32], align 16
+     * @param arraySize
+     */
+
+    private void allocateLocalArray(String arrayName, int arraySize) {
+        write(String.format("  %s = alloca [%d x i32], align 16\n", arrayName, arraySize));
+    }
+
+    private int getArraySize(String arrayName) {
+        int arraySize = ((Arr) symbolMap.get(arrayName)).getSize();
+//        log("getArraySize is " + arraySize);
+        return arraySize;
     }
 
     private String whichBoolOp(lingBorParser.Bool_exprContext ctx){
@@ -500,5 +550,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
     }
 
+    private void log(String string) {
+        System.err.println(string);
+    }
 
 }
