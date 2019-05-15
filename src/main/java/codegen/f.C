@@ -1,26 +1,24 @@
 #include <stdio.h>
 
-int a=2;
-
+int a = 15;
+int b = 12;
 int main(){
-    int s = -1;
-    int k = a;
-    int b = s + 4 * k /2 - 1;
-    int t = addOne(s);
+    int s = 3;
+    int k = 2;
 
-    if (k<2){
-       k = 3;
-    } else{
-       k = 4;
-    }
+    int t = s;
+    s = k;
+    k = t;
 
+    k = addOne(s);
+    printf("%d\n", k);
 
-    printf("%d\n", a);
 }
 
 
 int addOne(int a){
-    int b = 1;
-    printf("%d\n", b);
+    printf("%d\n", a);
+    b = 1;
+    printf("%d\n", a);
     return a+b;
 }

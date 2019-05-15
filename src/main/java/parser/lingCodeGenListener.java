@@ -31,6 +31,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     private int numIfCopy;
 
     private int stateForFun = 0;
+    private String curFuncInputId;
     private String curFuncText = "";
     private List<String> funcList = new LinkedList<>();
 
@@ -56,6 +57,25 @@ public class lingCodeGenListener extends lingBorBaseListener {
         } else {
             return funcVarMap.get(idName).getType();
         }
+    }
+
+    public String getTargetName(String idName){
+        String ret = "!";
+        if (stateForFun != 0 ) {
+            if(idName.equals(curFuncInputId)) {
+                ret = "%" + idName + ".addr";
+            } else if(funcVarMap.containsKey(idName)){
+                ret = "%" +idName;
+            } else if(symbolMap.containsKey(idName)){
+                ret = "@" +idName;
+            }
+        } else {
+            if (symbolMap.containsKey(idName)) {
+                ret = "@" + idName;
+            }
+        }
+        //System.out.println(ret+" "+idName+" "+curFuncInputId);
+        return ret;
     }
 
     private void write(String str){
@@ -87,7 +107,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             String varName = name;
             String varType = getTypeByName(name);
             if (varType=="INT_LIT"){
-                write(String.format("  @%s = global i32 0, align 4\n",varName));
+                write(String.format("@%s = global i32 0, align 4\n",varName));
             } else if(varType=="ARRAY"){
                 //ARRAY
             } else {
@@ -95,7 +115,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             }
         }
 
-        String mainHeader = "define i32 @main() #0 {\nentry:\n";
+        String mainHeader = "\ndefine i32 @main() #0 {\nentry:\n";
         write(mainHeader);
 
 
@@ -114,7 +134,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 writer.write("declare i32 @printf(i8*, ...)\n");
             }
             for(int n = 0; n<funcList.size(); n++){
-                writer.write(funcList.get(n));
+                String body = funcList.get(n);
+                if(body!="null") {
+                    writer.write(body);
+                }
             }
             writer.close();
         } catch (IOException e){
@@ -158,7 +181,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     }
 
     private boolean isNumber(String str){
-        if(str.contains("%")){return false;}
+        if(str.contains("%")||str.contains(("@"))){return false;}
         else {return true;}
     }
 
@@ -171,11 +194,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
             String idName = ctx.id().ID().getSymbol().getText();
             if(!regSymbolMap.containsKey(idName)){
                 String regName = "%"+numVar;
-                regSymbolMap.put(idName,regName);
+                String targetName = getTargetName(idName);
 
+                regSymbolMap.put(idName,regName);
                 //String type = getTypeByName(idName);
                 //I remember that no assign to array is permitted
-                write(String.format("  %s = load i32, i32* %s, align 4\n",regName,"%"+idName));
+                write(String.format("  %s = load i32, i32* %s, align 4\n",regName,targetName));
                 numVar+=1;
                 return regName;
             } else {
@@ -223,14 +247,16 @@ public class lingCodeGenListener extends lingBorBaseListener {
         stateForFun = 1;
         String funcName = ctx.id().ID().getSymbol().getText();
         String inputIdName = ctx.expr().id().ID().getSymbol().getText();
+        curFuncInputId = inputIdName;
         funcVarMap = funcMap.get(funcName).getFuncVarMap();
 
         String type = funcMap.get(funcName).getInputType();
         System.out.println("entering func,input type: "+type);
         //now only support int_lit, need to support for tuple
         //ToDo
-        write(String.format("define i32 @%s(i32 %s) #0 {\nentry:\n",funcName,"%"+inputIdName));
+        write(String.format("\ndefine i32 @%s(i32 %s) {\nentry:\n",funcName,"%"+inputIdName));
         write(String.format("  %s.addr = alloca i32, align 4\n","%"+inputIdName));
+        write(String.format("  store i32 %s, i32* %s.addr, align 4\n","%"+inputIdName,"%"+inputIdName));
 
         for (String idName : funcVarMap.keySet()){
             String varName = idName;
@@ -253,6 +279,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
         numVarCopy = numVar;
         numOpCopy = numOp;
         numIfCopy = numif;
+        numPrintCall = 0;
+        numCall = 0;
+        numOp = 0;
+        numVar = 0;
+        numif = 0;
+
     }
 
    @Override public void exitDef(lingBorParser.DefContext ctx){
@@ -277,9 +309,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 String outReg = evalExprRhs(ctx.expr(0));
                 regSymbolMap.clear();
 
-                String targetVar = ctx.id(0).ID().getSymbol().getText();
-                if (getTypeByName(targetVar) == "INT_LIT") {
-                    write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, "%" + targetVar));
+                String idName = ctx.id(0).ID().getSymbol().getText();
+                String targetName = getTargetName(idName);
+                if (getTypeByName(idName) == "INT_LIT") {
+                    write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, targetName));
                 } else {
 
                 }
@@ -292,13 +325,18 @@ public class lingCodeGenListener extends lingBorBaseListener {
             if (ctx.ASSIGN() != null) {
                 String outReg = evalExprRhs(ctx.expr(0));
                 regSymbolMap.clear();
+                String idName = ctx.id(0).ID().getSymbol().getText();
+                String targetName = getTargetName(idName);
 
-                String targetVar = ctx.id(0).ID().getSymbol().getText();
-                if (getTypeByName(targetVar) == "INT_LIT") {
-                    write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, "%" + targetVar));
+                if (getTypeByName(idName) == "INT_LIT") {
+                    write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, targetName));
                 } else {
 
                 }
+                //
+            } else {
+
+
             }
 
         } else if (ctx.KW_ARRAY() != null) {
@@ -326,16 +364,19 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
         if(ctx.EXCHANGE()!=null) {
-
+            //Todo support multi lhs,tuple support
+            write(" %temp = alloca i32, align 4");
 
         } else if(ctx.ASSIGN()!=null){
             String outOp = evalExprRhs(ctx.expr());
             regSymbolMap.clear();
             if(ctx.lhs(0).lhs_item().size()==1){
-                String target = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
-                write(String.format("  store i32 %s, i32* %s, align 4\n",outOp,"%"+target));
+                String idName = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
+                String targetName = getTargetName(idName);
+                write(String.format("  store i32 %s, i32* %s, align 4\n",outOp,targetName));
             } else {
 
             }
@@ -348,7 +389,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             regSymbolMap.clear();
 
             if (outOp == null){
-
             } else {
                 outFunc = outFunc + outOp + ")\n";
             }

@@ -1,9 +1,13 @@
 global s = 10;
 
 print s;
-s = s+2;
+
 
 defun f(t)
+  global s;
+  s = s+2;
+  local b =4;
+  print b;
   return t+3;
 end defun
 

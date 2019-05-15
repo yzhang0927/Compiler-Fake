@@ -4,6 +4,7 @@ import parser.lingBorParser;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Func extends Symbol {
 
@@ -24,13 +25,18 @@ public class Func extends Symbol {
     }
 
     public void storeFuncVarMap(HashMap<String, Symbol> funcVarMap) {
-        this.funcVarMap = funcVarMap;
+        HashMap<String, Symbol> cloneMap = new HashMap<>();
+        for(Map.Entry<String, Symbol> entry : funcVarMap.entrySet()) {
+            String key = entry.getKey();
+            Symbol value = entry.getValue();
+            cloneMap.put(key,value);
+        }
+        this.funcVarMap = cloneMap;
     }
 
     public HashMap<String, Symbol> getFuncVarMap(){
         return this.funcVarMap;
     }
-
     public boolean checkInputValid(String ls){
         return this.inputType.equals(ls);
     }
