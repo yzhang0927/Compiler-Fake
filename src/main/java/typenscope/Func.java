@@ -27,6 +27,10 @@ public class Func extends Symbol {
         this.funcVarMap = funcVarMap;
     }
 
+    public HashMap<String, Symbol> getFuncVarMap(){
+        return this.funcVarMap;
+    }
+
     public boolean checkInputValid(String ls){
         return this.inputType.equals(ls);
     }

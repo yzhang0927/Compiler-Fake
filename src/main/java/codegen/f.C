@@ -1,10 +1,10 @@
 #include <stdio.h>
 
-
+int a=2;
 
 int main(){
     int s = -1;
-    int k = s;
+    int k = a;
     int b = s + 4 * k /2 - 1;
     int t = addOne(s);
 
@@ -15,11 +15,12 @@ int main(){
     }
 
 
-    printf("%d\n", k);
+    printf("%d\n", a);
 }
 
 
 int addOne(int a){
     int b = 1;
+    printf("%d\n", b);
     return a+b;
 }

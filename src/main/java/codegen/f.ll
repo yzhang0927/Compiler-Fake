@@ -3,18 +3,20 @@ source_filename = "f.c"
 target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-apple-macosx10.14.0"
 
+@a = global i32 2, align 4
 @.str = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
 ; Function Attrs: noinline nounwind optnone ssp uwtable
 define i32 @main() #0 {
 entry:
-
+  %retval = alloca i32, align 4
   %s = alloca i32, align 4
   %k = alloca i32, align 4
   %b = alloca i32, align 4
   %t = alloca i32, align 4
+  store i32 0, i32* %retval, align 4
   store i32 -1, i32* %s, align 4
-  %0 = load i32, i32* %s, align 4
+  %0 = load i32, i32* @a, align 4
   store i32 %0, i32* %k, align 4
   %1 = load i32, i32* %s, align 4
   %2 = load i32, i32* %k, align 4
@@ -39,10 +41,10 @@ if.else:                                          ; preds = %entry
   br label %if.end
 
 if.end:                                           ; preds = %if.else, %if.then
-  %5 = load i32, i32* %k, align 4
+  %5 = load i32, i32* @a, align 4
   %call1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %5)
-
-  ret i32 0
+  %6 = load i32, i32* %retval, align 4
+  ret i32 %6
 }
 
 declare i32 @printf(i8*, ...) #1
@@ -54,9 +56,11 @@ entry:
   %b = alloca i32, align 4
   store i32 %a, i32* %a.addr, align 4
   store i32 1, i32* %b, align 4
-  %0 = load i32, i32* %a.addr, align 4
-  %1 = load i32, i32* %b, align 4
-  %add = add nsw i32 %0, %1
+  %0 = load i32, i32* %b, align 4
+  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %0)
+  %1 = load i32, i32* %a.addr, align 4
+  %2 = load i32, i32* %b, align 4
+  %add = add nsw i32 %1, %2
   ret i32 %add
 }
 

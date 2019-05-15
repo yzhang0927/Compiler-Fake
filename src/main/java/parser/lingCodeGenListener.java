@@ -7,6 +7,8 @@ import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 public class lingCodeGenListener extends lingBorBaseListener {
 
@@ -17,13 +19,21 @@ public class lingCodeGenListener extends lingBorBaseListener {
     private String fileName;
 
     private int numPrintCall = 0;
-
     private int numCall = 0;
     private int numVar = 0;
     private int numOp = 0;
     private int numif = 0;
 
+    private int numPrintCallCopy;
+    private int numCallCopy;
+    private int numVarCopy;
+    private int numOpCopy;
+    private int numIfCopy;
+
     private int stateForFun = 0;
+    private String curFuncText = "";
+    private List<String> funcList = new LinkedList<>();
+
     private BufferedWriter writer;
 
     HashMap<String, Symbol> symbolMap;
@@ -49,16 +59,14 @@ public class lingCodeGenListener extends lingBorBaseListener {
     }
 
     private void write(String str){
-        try{
-            writer.write(str);
-        } catch (IOException e) {
-            System.out.println("ERROR ! writing: "+ str + "error: " + e);
-        }
-    }
-
-    private void dealWithDef(lingBorParser.InputContext ctx){
-        for (lingBorParser.DefContext d:ctx.def()){
-
+        if(stateForFun!=0){
+            curFuncText += str;
+        } else {
+            try {
+                writer.write(str);
+            } catch (IOException e) {
+                System.out.println("ERROR ! writing: " + str + "error: " + e);
+            }
         }
     }
 
@@ -70,27 +78,27 @@ public class lingCodeGenListener extends lingBorBaseListener {
             System.out.println("ERROR ! Open target output file failed: " + e);
         }
 
+
         String header = "@.str = private unnamed_addr constant [4 x i8] c\"%d\\0A\\00\",align 1\n";
         write(header);
-
-        dealWithDef(ctx);
-
-        String mainHeader = "define i32 @main() #0 {\nentry:\n";
-        write(mainHeader);
-
 
         // declare all global var in advance just as Clang does
         for (String name: symbolMap.keySet()){
             String varName = name;
             String varType = getTypeByName(name);
             if (varType=="INT_LIT"){
-                write("  %"+varName+" = alloca i32, align 4\n");
+                write(String.format("  @%s = global i32 0, align 4\n",varName));
             } else if(varType=="ARRAY"){
-                    //ARRAY
-                } else {
-                    //TUPLE
-                }
+                //ARRAY
+            } else {
+                //TUPLE
             }
+        }
+
+        String mainHeader = "define i32 @main() #0 {\nentry:\n";
+        write(mainHeader);
+
+
     }
 
     private void allocateArray(String varName, int size) throws IOException {
@@ -104,6 +112,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
             writer.write("  ret i32 0\n}\n");
             if (numPrintCall>0){
                 writer.write("declare i32 @printf(i8*, ...)\n");
+            }
+            for(int n = 0; n<funcList.size(); n++){
+                writer.write(funcList.get(n));
             }
             writer.close();
         } catch (IOException e){
@@ -178,8 +189,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
             //I am only considering integer, this need to be altered if you are using tuple as input parameter
             String inReg = evalExprRhs(ctx.func_call().expr());
             String funcName = ctx.func_call().id().ID().getSymbol().getText();
-            write(String.format("  %s = call i32 @%s(i32 %s)\n","%call"+numCall,inReg,funcName));
-            return "%call"+numCall;
+            String callName = "%call"+numCall;
+            write(String.format("  %s = call i32 @%s(i32 %s)\n",callName,funcName,inReg));
+            this.numCall = this.numCall + 1;
+            return callName;
 
         } else if(ctx.array_ele() != null){
 
@@ -205,17 +218,89 @@ public class lingCodeGenListener extends lingBorBaseListener {
         return null;
     }
 
+    @Override public void enterDef(lingBorParser.DefContext ctx){
+
+        stateForFun = 1;
+        String funcName = ctx.id().ID().getSymbol().getText();
+        String inputIdName = ctx.expr().id().ID().getSymbol().getText();
+        funcVarMap = funcMap.get(funcName).getFuncVarMap();
+
+        String type = funcMap.get(funcName).getInputType();
+        System.out.println("entering func,input type: "+type);
+        //now only support int_lit, need to support for tuple
+        //ToDo
+        write(String.format("define i32 @%s(i32 %s) #0 {\nentry:\n",funcName,"%"+inputIdName));
+        write(String.format("  %s.addr = alloca i32, align 4\n","%"+inputIdName));
+
+        for (String idName : funcVarMap.keySet()){
+            String varName = idName;
+            if(varName.equals(inputIdName)) {
+                continue;
+            }
+            String varType = getTypeByName(varName);
+
+            if (varType=="INT_LIT"){
+                write(String.format("  %s = alloca i32, align 4\n","%"+varName));
+            } else if(varType=="ARRAY"){
+                //ARRAY
+            } else {
+                //TUPLE
+            }
+        }
+
+        numPrintCallCopy = numPrintCall;
+        numCallCopy = numCall;
+        numVarCopy = numVar;
+        numOpCopy = numOp;
+        numIfCopy = numif;
+    }
+
+   @Override public void exitDef(lingBorParser.DefContext ctx){
+
+        write("}\n");
+
+        funcList.add(curFuncText);
+        curFuncText = "";
+
+        stateForFun = 0;
+        numPrintCall = numPrintCallCopy;
+        numCall = numCallCopy;
+        numOp = numOpCopy;
+        numVar = numVarCopy;
+        numif = numIfCopy;
+   }
+
     @Override public void enterDecl(lingBorParser.DeclContext ctx) {
         //KW_GLOBAL id (ASSIGN expr)? SEMI
-        if(ctx.KW_GLOBAL() != null){
-            if(ctx.ASSIGN() != null) {
-                String outReg =  evalExprRhs(ctx.expr(0));
+        if(ctx.KW_GLOBAL() != null) {
+            if (ctx.ASSIGN() != null) {
+                String outReg = evalExprRhs(ctx.expr(0));
                 regSymbolMap.clear();
+
                 String targetVar = ctx.id(0).ID().getSymbol().getText();
-                if(getTypeByName(targetVar)=="INT_LIT"){
-                    write(String.format("  store i32 %s, i32* %s, align 4\n",outReg,"%"+targetVar));
+                if (getTypeByName(targetVar) == "INT_LIT") {
+                    write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, "%" + targetVar));
+                } else {
+
+                }
+                //
+            } else {
+
+
+            }
+        } else if (ctx.KW_LOCAL() != null){
+            if (ctx.ASSIGN() != null) {
+                String outReg = evalExprRhs(ctx.expr(0));
+                regSymbolMap.clear();
+
+                String targetVar = ctx.id(0).ID().getSymbol().getText();
+                if (getTypeByName(targetVar) == "INT_LIT") {
+                    write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, "%" + targetVar));
+                } else {
+
                 }
             }
+
         } else if (ctx.KW_ARRAY() != null) {
             // TODO
         }
@@ -244,12 +329,13 @@ public class lingCodeGenListener extends lingBorBaseListener {
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
         if(ctx.EXCHANGE()!=null) {
 
+
         } else if(ctx.ASSIGN()!=null){
             String outOp = evalExprRhs(ctx.expr());
+            regSymbolMap.clear();
             if(ctx.lhs(0).lhs_item().size()==1){
                 String target = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
                 write(String.format("  store i32 %s, i32* %s, align 4\n",outOp,"%"+target));
-                regSymbolMap.clear();
             } else {
 
             }
@@ -257,17 +343,25 @@ public class lingCodeGenListener extends lingBorBaseListener {
             //maybe split into two sentences
 
         } else if(ctx.PRINT()!=null){
-            String outFunc = "  %"+String.format("call%d = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 ",numCall);
             String outOp = evalExprRhs(ctx.expr());
+            String outFunc = String.format("  %s = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 ","%call"+numCall);
             regSymbolMap.clear();
 
             if (outOp == null){
+
             } else {
                 outFunc = outFunc + outOp + ")\n";
             }
-            numPrintCall += 1;
+
             numCall += 1;
+            numPrintCall += 1;
             write(outFunc);
+
+        } else if(ctx.RETURN()!=null) {
+            String outOp = evalExprRhs(ctx.expr());
+            regSymbolMap.clear();
+            //ToDo add tuple support
+            write(String.format("  ret i32 %s\n",outOp));
 
         } else if(ctx.bool_expr()!=null){
             for(int i=0; i<ctx.bool_expr().size(); i++) {
