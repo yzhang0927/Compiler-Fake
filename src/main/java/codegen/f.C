@@ -1,20 +1,26 @@
 #include <stdio.h>
 
-int simpleAdd(int a){
-    return a+1;
-}
+
 
 int main(){
-
     int s = -1;
-    int v = s;
-    int k = simpleAdd(s);
+    int k = s;
+    int b = s + 4 * k /2 - 1;
+    int t = addOne(s);
 
-    printf("%d\n", k);
-    printf("%d\n", 16);
-    printf("%d\n", 3*11-5);
-    //printf("%d\n", s-1);
-    //printf("%d\n", s-v);
-    //printf("%d\n", s);
+    if (s>=4 ){
+        s = s + 3;
+    } else if(s<0){
+        s = 2;
+    } else{
+        s = 1;
+    }
 
+    printf("%d\n", s);
+}
+
+
+int addOne(int a){
+    int b = 1;
+    return a+b;
 }

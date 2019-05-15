@@ -2,8 +2,8 @@
 print 23;
 print 4+5*(6-3);
 
-global i=17;
+global i=17-5+2;
 global j=49;
-***print i;
-***print j;
-***print i+1;
+j = j+3;
+global k = j+i+3;
+print k;
