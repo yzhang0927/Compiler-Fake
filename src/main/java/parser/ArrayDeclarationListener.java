@@ -39,7 +39,7 @@ public class ArrayDeclarationListener extends lingBorBaseListener {
         if (exprContext.id() != null) {
             String idName = exprContext.id().ID().getText();
             if ("INT_LIT".equals(symbolMap.get(idName).getType())) {
-//                symbolMap.get(idName).
+
             } else {
                 System.err.println("Error! array bounds have to be integer");
             }

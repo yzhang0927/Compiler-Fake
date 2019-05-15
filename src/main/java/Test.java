@@ -24,7 +24,7 @@ public class Test {
 
     public static void main(String[] args) {
         String filePath = "testcases/";
-        String fileName = "p4test1";
+        String fileName = "p4test3";
         String addr = filePath + fileName;
         HashMap<String, Symbol> symbolMap;
         HashMap<String, Func> funcMap;
