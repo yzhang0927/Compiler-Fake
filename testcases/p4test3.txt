@@ -1,0 +1,4 @@
+global a;
+array a[1..10];
+global b;
+array b[1..10];

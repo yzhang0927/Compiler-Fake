@@ -22,7 +22,9 @@ import static scanner.TestCompiler.testOneCase;
 public class Test {
 
     public static void main(String[] args) {
-        String addr = "testcases/p4test1";
+        String filePath = "testcases/";
+        String fileName = "p4test3";
+        String addr = filePath + fileName;
         HashMap<String, Symbol> symbolMap;
         HashMap<String, Func> funcMap;
 
@@ -66,7 +68,7 @@ public class Test {
             }
 
             System.out.println("-----Starting code gen-----");
-            lingCodeGenListener lcg = new lingCodeGenListener();
+            lingCodeGenListener lcg = new lingCodeGenListener(fileName);
             lcg.importMaps(symbolMap,funcMap);
             ParseTreeWalker.DEFAULT.walk(lcg, tree);
             System.out.println("-----Finished code gen-----");

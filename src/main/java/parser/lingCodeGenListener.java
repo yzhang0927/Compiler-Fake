@@ -9,13 +9,25 @@ import java.io.IOException;
 import java.util.HashMap;
 
 public class lingCodeGenListener extends lingBorBaseListener {
-    private String fileName = "src/main/java/codegen/output.ll";
+
+    private static final String PATH_DIRECTORY = "src/main/java/codegen/";
+
+    private static final String LL_FILE_TYPE = "ll";
+
+    private final String inputFileName;
+
+    private String fileName;
     private int numPrintCall = 0;
     private int numCall = 0;
     private BufferedWriter writer;
 
     HashMap<String, Symbol> symbolMap;
     HashMap<String, Func> funcMap;
+
+    public lingCodeGenListener(String inputFileName) {
+        this.inputFileName = inputFileName;
+        fileName = PATH_DIRECTORY + inputFileName + LL_FILE_TYPE;
+    }
 
     public void importMaps(HashMap<String, Symbol> symbolMap, HashMap<String, Func> funcMap){
         this.symbolMap = symbolMap;
@@ -35,7 +47,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 String varName = name;
                 String varType = symbolMap.get(name).getType();
                 if (varType=="INT_LIT"){
-                    writer.write("  %"+varName+" = alloca i32, align 4\n");
+                    writer.write("  %" + varName + " = alloca i32, align 4\n");
                 } else if(varType=="ARRAY"){
                     //ARRAY
                 } else {
@@ -47,6 +59,11 @@ public class lingCodeGenListener extends lingBorBaseListener {
         } catch (IOException e) {
             System.out.println("ERROR ! codegen cannot create output file: " + e);
         }
+    }
+
+    private void allocateArray(String varName, int size) throws IOException {
+        String output = String.format("  %%s = alloca [%d x i32], align 16", varName, size);
+        writer.write(output);
     }
 
     @Override
@@ -114,10 +131,36 @@ public class lingCodeGenListener extends lingBorBaseListener {
         if(ctx.KW_GLOBAL() != null){
             if(ctx.ASSIGN() != null) {
                 // read from symbol table.
-              evalExpr(ctx.expr(0));
+                evalExpr(ctx.expr(0));
             }
+        } else if (ctx.KW_ARRAY() != null) {
+            System.err.printf("hit array declaration\n");
+            handleArrayDeclaration(ctx);
         }
     }
+
+    // decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
+    // the implementation disregards "( id ASSIGN expr )?"
+    private void handleArrayDeclaration(lingBorParser.DeclContext context) {
+        log(context.toString());
+        String currArrayName = context.id(0).ID().getSymbol().getText();
+        Symbol currSymbol = symbolMap.get(currArrayName);
+        log(currArrayName);
+        log(currSymbol.toString());
+
+    }
+
+    private void log(String string) {
+        System.err.println(string);
+    }
+
+    @Override
+    public void enterExpr(lingBorParser.ExprContext ctx) {
+        // for tuple declaration
+
+    }
+
+
 
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
         if(ctx.ASSIGN()!=null){
@@ -144,5 +187,14 @@ public class lingCodeGenListener extends lingBorBaseListener {
             }
         }
     }
+
+    @Override public void enterFor_loop(lingBorParser.For_loopContext ctx) {
+
+    }
+
+    @Override public void exitFor_loop(lingBorParser.For_loopContext ctx) {
+
+    }
+
 
 }
