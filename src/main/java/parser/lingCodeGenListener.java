@@ -33,6 +33,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     private int numIfCopy;
 
     private int stateForFun = 0;
+    private int stateForIf = 0;
     private String curFuncInputId;
     private String curFuncText = "";
     private List<String> funcList = new LinkedList<>();
@@ -405,6 +406,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     }
 
     @Override public void enterStatement(lingBorParser.StatementContext ctx) {
+        
         if(ctx.EXCHANGE()!=null) {
             write(String.format(" %s = alloca i32, align 4\n","%$tmp"+numInterVar));
             write(String.format("  store i32 %s, i32* %s, align 4\n","%"+numVar,"%$tmp"+numInterVar));
@@ -419,7 +421,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             String right = evalExprLhs(ctx.lhs(1));
             String rightName = getTargetName(ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText());
             write(String.format("store i32 %s, i32* %s, align 4\n","%"+numVar,rightName));
-
 
 
 
@@ -457,7 +458,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
             write(String.format("  ret i32 %s\n",outOp));
 
         } else if(ctx.bool_expr()!=null){
+            stateForIf += 1;
             for(int i=0; i<ctx.bool_expr().size(); i++) {
+
 
                 if(i>0){
                     write(String.format("if.else%d:\n",numif-1));
@@ -470,7 +473,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 write(String.format("  br i1 %s, label %s, label %s\n","%cmp"+numif,"%if.then"+numif,"%if.else"+numif));
                 write(String.format("if.then%d: \n",i));
                 numif += 1;
+
                 enterStatement(ctx.statement(i));
+                ctx.statement(i).removeLastChild();
                 write("  br label %if.end\n");
             }
 

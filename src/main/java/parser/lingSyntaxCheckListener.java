@@ -695,6 +695,8 @@ public class lingSyntaxCheckListener extends lingBorBaseListener{
                 System.out.println(String.format("ERROR ! var:%s on line %d cannot be assigned with %s", leftType, rightType));
             }
 
+        } else if (ctx.bool_expr()!=null){
+
         }
     }
 

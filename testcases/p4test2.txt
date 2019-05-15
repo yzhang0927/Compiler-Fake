@@ -1,7 +1,11 @@
 global s = 10;
 
-print s;
+if s>5 then print 1;
+elsif s<10 then print 2;
+else print 3;
+end if
 
+print s;
 
 defun f(t)
   global s;
