@@ -12,10 +12,11 @@ define i32 @main() #0 {
 entry:
   %s = alloca i32, align 4
   %k = alloca i32, align 4
-  %t = alloca i32, align 4
+
   store i32 3, i32* %s, align 4
   store i32 2, i32* %k, align 4
   %0 = load i32, i32* %s, align 4
+  %t = alloca i32, align 4
   store i32 %0, i32* %t, align 4
   %1 = load i32, i32* %k, align 4
   store i32 %1, i32* %s, align 4
