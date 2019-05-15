@@ -1,4 +1,6 @@
 @.str = private unnamed_addr constant [4 x i8] c"%d\0A\00",align 1
+  @a = common global [10 x i32], align 16
+  @b = common global [0 x i32], align 16
 @i = global i32 0, align 4
 
 define i32 @main() #0 {

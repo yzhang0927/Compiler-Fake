@@ -22,12 +22,16 @@ import static scanner.TestCompiler.testOneCase;
 
 public class Test {
 
+    private static final String LINE_SEPARATION = "~~~~~~~~~~~~~~~~~~~~~~~~~~~\n";
+
     public static void main(String[] args) {
         String filePath = "testcases/";
         String fileName = "p4test3";
         String addr = filePath + fileName;
         HashMap<String, Symbol> symbolMap;
         HashMap<String, Func> funcMap;
+
+        System.out.printf("%sStarting Test with %s%n%s%n", LINE_SEPARATION, fileName, LINE_SEPARATION);
 
         try {
             // Create a CharStream that reads from standard input

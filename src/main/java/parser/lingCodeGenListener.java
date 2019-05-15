@@ -1,5 +1,6 @@
 package parser;
 
+import typenscope.Arr;
 import typenscope.Func;
 import typenscope.Symbol;
 
@@ -112,6 +113,11 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 write(String.format("@%s = global i32 0, align 4\n", varName));
             } else if (varType == "ARRAY") {
                 //ARRAY
+
+//                log("I have global array here");
+                allocateArray(varName, getArraySize(varName));
+
+
             } else {
                 //TUPLE
             }
@@ -122,10 +128,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
 
     }
-
-    private void allocateArray(String varName, int size) throws IOException {
-        String output = String.format("  %%s = alloca [%d x i32], align 16", varName, size);
-        writer.write(output);
+// @b = common global [10 x i32] zeroinitializer, align 16, !dbg !6
+    private void allocateArray(String varName, int size) {
+        String output = String.format("  @%s = common global [%d x i32], align 16\n", varName, size);
+        write(output);
     }
 
     @Override
@@ -384,7 +390,17 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         } else if (ctx.KW_ARRAY() != null) {
             // TODO
+            log("~~~~~~~~~~~~~~~~~~\nArrayDecl\n");
+
+
+
         }
+    }
+
+    private int getArraySize(String arrayName) {
+        int arraySize = ((Arr) symbolMap.get(arrayName)).getSize();
+        log("getArraySize is " + arraySize);
+        return arraySize;
     }
 
     private String whichBoolOp(lingBorParser.Bool_exprContext ctx){
@@ -498,5 +514,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
     }
 
+    private void log(String string) {
+        System.err.println(string);
+    }
 
 }
