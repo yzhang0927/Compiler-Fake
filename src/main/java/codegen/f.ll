@@ -12,19 +12,27 @@ entry:
   %k = alloca i32, align 4
   %b = alloca i32, align 4
   store i32 -1, i32* %s, align 4
-  store i32 6, i32* %k, align 4
   %0 = load i32, i32* %s, align 4
-  %1 = load i32, i32* %k, align 4
-  %mul = mul nsw i32 4, %1
-  %add = add nsw i32 %0, %mul
-  store i32 %add, i32* %b, align 4
-  %2 = load i32, i32* %s, align 4
-  %add1 = add nsw i32 %2, 3
+  store i32 %0, i32* %k, align 4
+  %1 = load i32, i32* %s, align 4
+  %2 = load i32, i32* %k, align 4
+  %mul = mul nsw i32 4, %2
+  %div = sdiv i32 %mul, 2
+  %add = add nsw i32 %1, %div
+  %sub = sub nsw i32 %add, 1
+  store i32 %sub, i32* %b, align 4
+  %3 = load i32, i32* %s, align 4
+  %add1 = add nsw i32 %3, 3
   store i32 %add1, i32* %s, align 4
+  %4 = load i32, i32* %b, align 4
+  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %4)
   ret i32 0
 }
 
+declare i32 @printf(i8*, ...) #1
+
 attributes #0 = { noinline nounwind optnone ssp uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+cx8,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #1 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+cx8,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
 !llvm.module.flags = !{!0, !1}
 !llvm.ident = !{!2}
