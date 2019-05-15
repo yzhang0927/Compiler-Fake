@@ -473,14 +473,45 @@ public class lingCodeGenListener extends lingBorBaseListener {
             write(String.format("store i32 %s, i32* %s, align 4\n","%"+numVar,rightName));
 
 
+            /**
+             * lhs_item :
+             *     // variable
+             *     id
+             *     | tuple_ele  // tuple component reference
+             *     | array_ele  ;
+             */
 
         } else if(ctx.ASSIGN()!=null){
             String outOp = evalExprRhs(ctx.expr());
             regSymbolMap.clear();
             if(ctx.lhs(0).lhs_item().size()==1){
-                String idName = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
-                String targetName = getTargetName(idName);
-                write(String.format("  store i32 %s, i32* %s, align 4\n",outOp,targetName));
+                lingBorParser.Lhs_itemContext lhsItem = ctx.lhs(0).lhs_item(0);
+                if (lhsItem.id() != null) {
+                    String idName = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
+                    String targetName = getTargetName(idName);
+                    write(String.format("  store i32 %s, i32* %s, align 4\n",outOp,targetName));
+                } else if (lhsItem.array_ele() != null) {
+                    /**
+                     * array_ele : id LBRAK expr RBRAK;
+                     */
+                    String arrayName = lhsItem.array_ele().id().ID().getText();
+                    if (symbolMap.containsKey(arrayName)) {
+                        int arraySize = getArraySize(arrayName);
+                        String index = evalExprRhs(lhsItem.array_ele().expr());
+                        if (Integer.parseInt(index) > arraySize) {
+                            log("Runtime exception: Index out of bound");
+                        } else {
+                            // store i32 120, i32* getelementptr inbounds ([10 x i32], [10 x i32]* @b, i64 0, i64 0), align 16
+//                            log(outOp);
+                            String targetName = getTargetName(arrayName);
+                            write(String.format("  store i32 %s, i32* getelementptr inbounds ([%d x i32], [%d x i32]* %s, i64 0, i64 0), align 16\n",
+                                    outOp, arraySize, arraySize, targetName));
+                        }
+
+                    } else {
+                        log("no such array defined with name " + arrayName);
+                    }
+                }
             } else {
 
             }
