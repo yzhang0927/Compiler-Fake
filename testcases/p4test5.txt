@@ -1,16 +1,10 @@
-global a = 12;
-if a>10 then
-    print a;
-else
-    print 10;
-end if
+***loops
 
-if a>10 then
-    print a;
-end if
+global a = 5;
 
-if a<10 then
-    print 10;
-elsif a>11 then
-    print 11;
-end if
+foreach i in 1..a do
+    foreach j in a..10 do
+        print j+i;
+    end for
+end for
+

@@ -1,8 +1,19 @@
 global s = 3;
 global ss = 110;
 
-print s;
+global a = 12;
+*** partial if(no else)
+if a>10 then
+    print a;
+else
+    print 10;
+end if
 
+if a>10 then
+    print a;
+end if
+
+*** nested if.. elsif.. else..
 if s>5 then
     if ss>100 then
         print 100;
@@ -15,9 +26,7 @@ else
     print 3;
 end if
 
-ss = 3;
-print ss;
-
+*** function with if else
 defun f(t)
   global s;
   local b = 22;

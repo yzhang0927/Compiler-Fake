@@ -1,4 +1,4 @@
-***basic stuff
+***basic stuff, arithmetic operation
 print 23;
 print 4+5*(6-3);
 

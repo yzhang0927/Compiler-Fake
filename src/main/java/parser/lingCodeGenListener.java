@@ -1,5 +1,6 @@
 package parser;
 
+import com.ibm.icu.text.CaseMap;
 import typenscope.Arr;
 import typenscope.Func;
 import typenscope.Symbol;
@@ -23,6 +24,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
     private int IfReturned = 0;
 
+    private int numLoop = 0;
     private int numInterVar = 0;
     private int numPrintCall = 0;
     private int numCall = 0;
@@ -30,6 +32,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     private int numOp = 0;
     private int numifLabel = 0;
 
+    private int numLoopCopy;
     private int numInterVarCopy;
     private int numPrintCallCopy;
     private int numCallCopy;
@@ -82,6 +85,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
         } else {
             if (symbolMap.containsKey(idName)) {
                 ret = "@" + idName;
+            } else {
+                ret = "%" + idName;
             }
         }
         //System.out.println(ret+" "+idName+" "+curFuncInputId);
@@ -564,7 +569,52 @@ public class lingCodeGenListener extends lingBorBaseListener {
             //ToDo add tuple support
             write(String.format("  ret i32 %s\n",outOp));
 
-        }else if (ctx.cond()!=null){
+        } else if (ctx.for_loop()!=null){
+            String idName = ctx.for_loop().expr().id().ID().getSymbol().getText();
+
+            if (ctx.for_loop().range()!= null) {
+                String lowerBound = evalExprRhs(ctx.for_loop().range().expr(0));
+                String upperBound = evalExprRhs(ctx.for_loop().range().expr(1));
+                System.out.println(idName);
+                String targetName = getTargetName(idName);
+
+                write(String.format("  %s = alloca i32, align 4\n", targetName));
+                write(String.format("  store i32 %s, i32* %s, align 4\n", lowerBound, targetName));
+                write(String.format("  br label %s\n", "%for.cond" + numLoop));
+
+                write(String.format("for.cond%d:\n", numLoop));
+                write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
+                write(String.format("  %s = icmp slt i32 %s, %s\n", "%cmp" + numLoop, "%" + numVar, upperBound));
+                numVar += 1;
+                write(String.format("  br i1 %s, label %s, label %s\n", "%cmp" + numLoop, "%for.body" + numLoop, "%for.end" + numLoop));
+
+                write(String.format("for.body%d:\n", numLoop));
+                write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
+                numVar += 1;
+
+                int numLoopCopy = numLoop;
+                numLoop += 1;
+
+                for (int i = 0; i < ctx.for_loop().statement().size(); ++i) {
+                    enterStatement(ctx.for_loop().statement(i));
+                }
+                write(String.format("  br label %s\n", "%for.inc" + numLoopCopy));
+
+                write(String.format("for.inc%d:\n", numLoopCopy));
+                write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
+                write(String.format("  %s = add nsw i32 %s, 1\n", "%inc"+numLoopCopy, "%" + numVar));
+                numVar += 1;
+                write(String.format("  store i32 %s, i32* %s, align 4\n", "%inc"+numLoopCopy, targetName));
+                write(String.format("  br label %s\n", "%for.cond" + numLoopCopy));
+
+                write(String.format("for.end%d:\n", numLoopCopy));
+
+            } else if (ctx.for_loop().array_id() != null) {
+
+            }
+            ctx.removeLastChild();
+
+        } else if (ctx.cond()!=null){
 
             String regLeft = evalExprRhs(ctx.cond().ifs().bool_expr().expr(0));
             String regRight = evalExprRhs(ctx.cond().ifs().bool_expr().expr(1));
@@ -631,7 +681,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             for(int i = 0; i < ctx.statement().size(); ++i) {
                 enterStatement(ctx.statement(i));
             }
-
             if(IfReturned==0) {
                 write("  br label %if.end"+numIfLabelCopy+"\n");
             } else {
@@ -641,11 +690,17 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+    private void dealWithLoop(String lowerBound, String upperBound){
+
+
+
+    }
 
     @Override
     public void enterFor_loop(lingBorParser.For_loopContext ctx) {
 
     }
+
 
     @Override
     public void exitFor_loop(lingBorParser.For_loopContext ctx) {

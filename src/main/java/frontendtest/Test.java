@@ -45,7 +45,7 @@ public class Test {
             runExternalTestCases();
         }
 
-        int currentTestingIndex = 4;
+        int currentTestingIndex = 5;
         runOneTestCaseWithIndex(currentTestingIndex);
     }
 

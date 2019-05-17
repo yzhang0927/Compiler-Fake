@@ -1,3 +1,5 @@
+*** array manipulation
+
 global a;
 array a[1..10];
 global i = 35;
@@ -8,3 +10,5 @@ a[4] = 3;
 global x = 0;
 x = a[4];
 print x;
+
+
