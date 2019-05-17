@@ -23,26 +23,30 @@ for.cond:                                         ; preds = %for.inc, %entry
 
 for.body:                                         ; preds = %for.cond
   %1 = load i32, i32* %i, align 4
+  %div = sdiv i32 %1, 2
   %2 = load i32, i32* %i, align 4
   %idxprom = sext i32 %2 to i64
   %arrayidx = getelementptr inbounds [15 x i32], [15 x i32]* @a, i64 0, i64 %idxprom
-  store i32 %1, i32* %arrayidx, align 4
-  %3 = load i32, i32* %i, align 4
-  %idxprom1 = sext i32 %3 to i64
+  store i32 %div, i32* %arrayidx, align 4
+  %3 = load i32, i32* @b, align 4
+  %mul = mul nsw i32 %3, 2
+  store i32 %mul, i32* @b, align 4
+  %4 = load i32, i32* %i, align 4
+  %idxprom1 = sext i32 %4 to i64
   %arrayidx2 = getelementptr inbounds [15 x i32], [15 x i32]* @a, i64 0, i64 %idxprom1
-  %4 = load i32, i32* %arrayidx2, align 4
-  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %4)
+  %5 = load i32, i32* %arrayidx2, align 4
+  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %5)
   br label %for.inc
 
 for.inc:                                          ; preds = %for.body
-  %5 = load i32, i32* %i, align 4
-  %inc = add nsw i32 %5, 1
+  %6 = load i32, i32* %i, align 4
+  %inc = add nsw i32 %6, 1
   store i32 %inc, i32* %i, align 4
   br label %for.cond
 
 for.end:                                          ; preds = %for.cond
-  %6 = load i32, i32* %retval, align 4
-  ret i32 %6
+  %7 = load i32, i32* %retval, align 4
+  ret i32 %7
 }
 
 declare i32 @printf(i8*, ...) #1

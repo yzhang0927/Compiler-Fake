@@ -13,8 +13,8 @@ entry:
   %x.addr = alloca i32, align 4
   store i32 %x, i32* %x.addr, align 4
   %0 = load i32, i32* %x.addr, align 4
-  %cmp0 = icmp sgt i32 %0, 1
-  br i1 %cmp0, label %if.then0, label %if.else0
+  %ifcmp0 = icmp sgt i32 %0, 1
+  br i1 %ifcmp0, label %if.then0, label %if.else0
 if.then0: 
   %op0 = sub nsw i32 %0, 1
   %call0 = call i32 @fib(i32 %op0)

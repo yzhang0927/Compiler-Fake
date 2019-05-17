@@ -1,7 +1,9 @@
+*** if,else,func
+
 global s = 3;
 global ss = 110;
-
 global a = 12;
+
 *** partial if(no else)
 if a>10 then
     print a;
@@ -21,12 +23,21 @@ if s>5 then
         print 50;
     end if
 elsif s<4 then
-    print 2;
+    print 4;
 else
     print 3;
 end if
 
 *** function with if else
+*** with local value
+
+defun ff(t)
+  local b = 22;
+  t = 44;
+  return t+b;
+end defun
+
+
 defun f(t)
   global s;
   local b = 22;
@@ -38,11 +49,6 @@ defun f(t)
   return t+b;
 end defun
 
-defun ff(t)
-  local b = 22;
-  t = 44;
-  return t+b;
-end defun
 
 
 print f(ss);

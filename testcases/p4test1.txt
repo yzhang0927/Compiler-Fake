@@ -1,9 +1,7 @@
 ***basic stuff, arithmetic operation
-print 23;
 print 4+5*(6-3);
-
 global i=17-5+2;
-global j=49;
 
+global j=49;
 j = j+3;
 print j;

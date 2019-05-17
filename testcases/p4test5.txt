@@ -1,13 +1,29 @@
 ***loops
 
-global a = 5;
+global len = 9;
+global leno = 3;
+global t = 0;
 
-foreach i in 1..a+4 do
-    foreach j in a..10 do
-        if j>i then print j;
-        else print i;
+global arr;
+array arr[1..8] kk = 9-kk/2;
+
+t = len;
+len = leno;
+leno = t;
+
+len<->leno;
+
+print leno;
+print len;
+
+
+foreach i in 1..len-1 do
+    foreach j in 1..len-i-1 do
+        if arr[j]>arr[j+1] then
+            t = arr[j];
+            arr[j] = arr[j+1];
+            arr[j+1] = t;
         end if
     end for
 end for
-
 
