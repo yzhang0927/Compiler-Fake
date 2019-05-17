@@ -1,25 +1,25 @@
-global b
+global b;
 array b [1 .. 100] j = j+1;
 
-global c
+global c;
 array c [1 .. 100] j = j+2;
 
-global k = 1;
+global k = 567;
+global gg;
 
-defun f0(a0,a1)
-  return a0 + a1
+defun f(a)
+  return a;
 end defun
 
-defun f1(a1)
-  global k
-  return k+a1
+defun ff(a)
+  global k;
+  return k+a;
 end defun
 
-defun f2(a0,a1)
-  a0<->a1
-  return a0
+defun ffff(a)
+  a.1<->a.2;
+  return a;
 end defun
 
-k = f0(2,3)
-k = f1(2)
-c = f2(b,c)
+k = f(2,3);
+k = ff(2);

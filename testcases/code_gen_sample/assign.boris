@@ -1,0 +1,25 @@
+global a = 2, 4;
+print ((a)), 8; *** 2, 4, 8
+
+global b = a, 8;
+print b; *** 2, 4, 8
+
+global x = 0;
+x = 32;
+print x; *** 32
+
+a = 64, 128;
+print a; *** 64, 128
+a = a;
+print a; *** 64, 128
+
+b = 256, a;
+print b; *** 256, 64, 128
+
+x, a = b;
+print x; *** 256
+print a; *** 64, 128
+
+x, a = a, x;
+print x; *** 64
+print a; *** 128, 256

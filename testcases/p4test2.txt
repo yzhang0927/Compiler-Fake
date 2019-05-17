@@ -1,0 +1,40 @@
+global s = 3;
+global ss = 110;
+
+print s;
+
+if s>5 then
+    if ss>100 then
+        print 100;
+    elsif ss<50 then
+        print 50;
+    end if
+elsif s<4 then
+    print 2;
+else
+    print 3;
+end if
+
+ss = 3;
+print ss;
+
+defun f(t)
+  global s;
+  local b = 22;
+
+  if b>5 then print 42;
+  else print 24;
+  end if
+
+  return t+b;
+end defun
+
+defun ff(t)
+  local b = 22;
+  t = 44;
+  return t+b;
+end defun
+
+
+print f(ss);
+print ff(ss);

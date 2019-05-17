@@ -77,6 +77,30 @@ public interface lingBorVisitor<T> extends ParseTreeVisitor<T> {
 	 */
 	T visitArray_id(lingBorParser.Array_idContext ctx);
 	/**
+	 * Visit a parse tree produced by {@link lingBorParser#cond}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitCond(lingBorParser.CondContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#ifs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitIfs(lingBorParser.IfsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#elsifs}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElsifs(lingBorParser.ElsifsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#elses}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitElses(lingBorParser.ElsesContext ctx);
+	/**
 	 * Visit a parse tree produced by {@link lingBorParser#range}.
 	 * @param ctx the parse tree
 	 * @return the visitor result
@@ -100,6 +124,24 @@ public interface lingBorVisitor<T> extends ParseTreeVisitor<T> {
 	 * @return the visitor result
 	 */
 	T visitLhs(lingBorParser.LhsContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#tuple_ele}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitTuple_ele(lingBorParser.Tuple_eleContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#array_ele}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitArray_ele(lingBorParser.Array_eleContext ctx);
+	/**
+	 * Visit a parse tree produced by {@link lingBorParser#func_call}.
+	 * @param ctx the parse tree
+	 * @return the visitor result
+	 */
+	T visitFunc_call(lingBorParser.Func_callContext ctx);
 	/**
 	 * Visit a parse tree produced by {@link lingBorParser#lhs_item}.
 	 * @param ctx the parse tree

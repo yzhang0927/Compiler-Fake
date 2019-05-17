@@ -42,9 +42,9 @@ OP_GREATEREQUAL: '>=';
 
 INT_LIT: [0-9]+;
 int_lit: INT_LIT;
+
 ID: [a-zA-Z_]+;
 id : ID;
-
 
 WS : ( ' ' | '\t' | '\r' | '\n' )+ -> channel(HIDDEN);
 LINE_COMMENT: '***' ~[\r\n]* -> channel(HIDDEN);
@@ -56,7 +56,7 @@ decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
      | KW_GLOBAL id (ASSIGN expr)? SEMI ;
 
 // function definition;
-def : KW_DEFUN id LPAR id RPAR body KW_END KW_DEFUN ;
+def : KW_DEFUN id LPAR expr RPAR body KW_END KW_DEFUN ;
 
 body : ( statement | decl )*   ; // no nested function definitions
 
@@ -66,16 +66,20 @@ while_loop: KW_WHILE bool_expr  KW_DO statement* KW_END KW_WHILE;
 
 statement : lhs ASSIGN expr SEMI
           | lhs EXCHANGE lhs SEMI
-	  | KW_IF bool_expr KW_THEN statement*
-	    (KW_ELSIF bool_expr KW_THEN statement*)*
-	    (KW_ELSE statement*)? KW_END KW_IF
-	  | for_loop
-	  | while_loop
-	  | RETURN expr SEMI
-	  | PRINT expr SEMI
-      ;
+	      | cond
+	      | for_loop
+	      | while_loop
+	      | RETURN expr SEMI
+	      | PRINT expr SEMI
+          ;
 
 array_id: id;
+
+cond: ifs elsifs? elses? KW_END KW_IF;
+
+ifs:  KW_IF bool_expr KW_THEN statement*;
+elsifs: (KW_ELSIF bool_expr KW_THEN statement*) elsifs?;
+elses: (KW_ELSE statement*);
 
 range : expr OP_DOTDOT expr ;
 
@@ -85,24 +89,29 @@ bool_op : OP_LESS | OP_GREATER | OP_EQUAL | OP_NOTEQUA | OP_LESSEQUAL | OP_GREAT
 
 lhs : lhs_item ( OP_COMMA lhs_item )* ;
 
+tuple_ele : id OP_DOT int_lit;
+array_ele : id LBRAK expr RBRAK;
+func_call : id LPAR expr RPAR
+          | id expr ;
+
 lhs_item :
     // variable
     id
-    | id OP_DOT int_lit  // tuple component reference
-    | id LBRAK expr RBRAK  ; // array element reference
-
+    | tuple_ele  // tuple component reference
+    | array_ele  ; // array element reference
 
 expr:
     // *ascending* order of precedence: from least important to most important
      // tuple constuctor
-    expr OP_COMMA expr
-    | expr ( OP_MULT | OP_DIV)  expr
+
+     expr ( OP_MULT | OP_DIV)  expr
     | expr ( OP_PLUS | OP_MINUS) expr
+    | expr OP_COMMA expr
     // there is no more unary minus!!
     |  LPAR expr RPAR
     |  id
     |  int_lit
-    |  id LPAR expr RPAR // function call, right-associative
-    |  id OP_DOT int_lit// tuple reference
-    |  id LBRAK expr RBRAK // array element refe\rence
+    |  func_call // function call, right-associative
+    |  tuple_ele //tuple reference
+    |  array_ele // array element refe\rence
     ;

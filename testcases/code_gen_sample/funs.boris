@@ -1,0 +1,16 @@
+defun square(x) return x * x; end defun
+
+global counter = 0;
+
+defun square_t(t)
+    global counter;
+    counter = counter + 1;
+
+    local z = t.0;
+    local w = t.1;
+    return square(z), square(w), counter;
+end defun
+
+global t = square_t(2, 4); *** 4, 16, 1
+print t;
+print square_t(square(0), 0); *** 0, 0, 2

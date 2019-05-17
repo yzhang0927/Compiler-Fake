@@ -118,6 +118,46 @@ public interface lingBorListener extends ParseTreeListener {
 	 */
 	void exitArray_id(lingBorParser.Array_idContext ctx);
 	/**
+	 * Enter a parse tree produced by {@link lingBorParser#cond}.
+	 * @param ctx the parse tree
+	 */
+	void enterCond(lingBorParser.CondContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#cond}.
+	 * @param ctx the parse tree
+	 */
+	void exitCond(lingBorParser.CondContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#ifs}.
+	 * @param ctx the parse tree
+	 */
+	void enterIfs(lingBorParser.IfsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#ifs}.
+	 * @param ctx the parse tree
+	 */
+	void exitIfs(lingBorParser.IfsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#elsifs}.
+	 * @param ctx the parse tree
+	 */
+	void enterElsifs(lingBorParser.ElsifsContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#elsifs}.
+	 * @param ctx the parse tree
+	 */
+	void exitElsifs(lingBorParser.ElsifsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#elses}.
+	 * @param ctx the parse tree
+	 */
+	void enterElses(lingBorParser.ElsesContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#elses}.
+	 * @param ctx the parse tree
+	 */
+	void exitElses(lingBorParser.ElsesContext ctx);
+	/**
 	 * Enter a parse tree produced by {@link lingBorParser#range}.
 	 * @param ctx the parse tree
 	 */
@@ -157,6 +197,36 @@ public interface lingBorListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitLhs(lingBorParser.LhsContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#tuple_ele}.
+	 * @param ctx the parse tree
+	 */
+	void enterTuple_ele(lingBorParser.Tuple_eleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#tuple_ele}.
+	 * @param ctx the parse tree
+	 */
+	void exitTuple_ele(lingBorParser.Tuple_eleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#array_ele}.
+	 * @param ctx the parse tree
+	 */
+	void enterArray_ele(lingBorParser.Array_eleContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#array_ele}.
+	 * @param ctx the parse tree
+	 */
+	void exitArray_ele(lingBorParser.Array_eleContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link lingBorParser#func_call}.
+	 * @param ctx the parse tree
+	 */
+	void enterFunc_call(lingBorParser.Func_callContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link lingBorParser#func_call}.
+	 * @param ctx the parse tree
+	 */
+	void exitFunc_call(lingBorParser.Func_callContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link lingBorParser#lhs_item}.
 	 * @param ctx the parse tree

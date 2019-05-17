@@ -1,5 +1,0 @@
-*** Hello, world!
-*** Except we have no way to print strings.
-print 131313;
-global a=0;
-global b=1;

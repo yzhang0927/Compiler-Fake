@@ -1,0 +1,7 @@
+defun fib(x)
+    if x>1 then return fib(x-1)+x;
+    else return x;
+    end if
+end defun
+
+print fib(4);
