@@ -77,10 +77,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
         if (stateForFun != 0) {
             if (idName.equals(curFuncInputId)) {
                 ret = "%" + idName + ".addr";
-            } else if (funcVarMap.containsKey(idName)) {
-                ret = "%" + idName;
             } else if (symbolMap.containsKey(idName)) {
                 ret = "@" + idName;
+            } else if (funcVarMap.containsKey(idName)) {
+                ret = "%" + idName;
             }
         } else {
             if (symbolMap.containsKey(idName)) {
@@ -110,6 +110,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     public void enterInput(lingBorParser.InputContext ctx) {
         write(FILE_HEADER);
         // declare all global var in advance just as Clang does
+        // S\symbolMap contains all global Var
         for (String name : symbolMap.keySet()) {
             String varName = name;
             String varType = getTypeByName(name);
@@ -118,9 +119,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
                     write(String.format("@%s = global i32 0, align 4\n", varName));
                     break;
                 case "ARRAY":
-                    if (!symbolMap.get(varName).isLocal()) {
-                        allocateGlobalArray(varName, getArraySize(varName));
-                    }
+                    allocateGlobalArray(varName, getArraySize(varName));
                     break;
                 case "TUPLE":
                     //TODO
@@ -132,9 +131,18 @@ public class lingCodeGenListener extends lingBorBaseListener {
         write(MAIN_HEADER);
     }
 
-// @b = common global [10 x i32] zeroinitializer, align 16, !dbg !6
-    private void allocateGlobalArray(String varName, int size) {
-        String output = String.format("  @%s = common global [%d x i32] zeroinitializer, align 16\n", varName, size);
+    /**
+     * %a = alloca [10 x i32], align 16
+     * @param arraySize
+     */
+
+    private void allocateLocalArray(String arrayName, int arraySize) {
+        write(String.format("  %s = alloca [%d x i32], align 16\n", arrayName, arraySize));
+    }
+
+    // @b = common global [10 x i32] zeroinitializer, align 16, !dbg !6
+    private void allocateGlobalArray(String arrayName, int arraySize) {
+        String output = String.format("@%s = common global [%d x i32] zeroinitializer, align 16\n", arrayName, arraySize);
         write(output);
     }
 
@@ -199,6 +207,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+
     // if it's only arithmetic op between int_lit, get the answer, otherwise (id involved)
     // we may need to generate code on the run.
     private String evalExprRhs(lingBorParser.ExprContext ctx) {
@@ -206,6 +215,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             return ctx.int_lit().INT_LIT().getSymbol().getText();
         } else if (ctx.id() != null) {
             String idName = ctx.id().ID().getSymbol().getText();
+            //regSymbolMap, temp storage for
             if (!regSymbolMap.containsKey(idName)) {
                 String regName = "%" + numVar;
                 String targetName = getTargetName(idName);
@@ -261,22 +271,34 @@ public class lingCodeGenListener extends lingBorBaseListener {
          * %0 = load i32, i32* getelementptr inbounds ([10 x i32], [10 x i32]* @b, i64 0, i64 1), align 4, !dbg !33
          *   store i32 %0, i32* %x, align 4, !dbg !32
          */
+
         String arrayName = array_eleContext.id().ID().getText();
-        String index = array_eleContext.expr().int_lit().getText();
-        int intIndex = Integer.parseInt(index);
         int arraySize = getArraySize(arrayName);
-        if (intIndex > arraySize) {
-            String errorMessage = String.format("array %s size %d index %s out of bound", arrayName, arraySize, index);
-            log("Runtime exception: " + errorMessage);
+        String indexReg;
+        //you will never know a[a[k]] has ever exceed its size before the real run time;
+        if(array_eleContext.expr().int_lit()!=null) {
+            indexReg= array_eleContext.expr().int_lit().getText();
+            int intIndex = Integer.parseInt(indexReg);
+            if (intIndex > arraySize) {
+                String errorMessage = String.format("array %s size %d index %s out of bound", arrayName, arraySize, indexReg);
+                log("Runtime exception: " + errorMessage);
+            }
+        } else {
+            String indexReg32 = evalExprRhs(array_eleContext.expr());
+            indexReg = "%idxprom"+numVar;
+            write(String.format("  %s = sext i32 %s to i64\n", indexReg,indexReg32));
         }
-        String currRegister = "%" + numVar++;
-        write(String.format("  %s = load i32, i32* getelementptr inbounds ([%d x i32], [%d x i32]* %s, i64 0, i64 %d), align 4\n",
-                currRegister,
+        String currArrIndex = "%arrayidx"+numVar;
+        write(String.format("  %s = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %s\n",
+                currArrIndex,
                 arraySize,
                 arraySize,
                 getTargetName(arrayName),
-                intIndex));
+                indexReg
+                ));
 
+        String currRegister = "%" + numVar++;
+        write(String.format("  %s = load i32, i32* %s\n",currRegister,currArrIndex));
         return currRegister;
     }
 
@@ -310,11 +332,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
         return "!";
     }
 
-    /**
-     * def : KW_DEFUN id LPAR expr RPAR body KW_END KW_DEFUN ;
-     * body : ( statement | decl )*   ; // no nested function definitions
-     * @param ctx
-     */
     @Override
     public void enterDef(lingBorParser.DefContext ctx){
         stateForFun = 1;
@@ -332,17 +349,16 @@ public class lingCodeGenListener extends lingBorBaseListener {
         write(String.format("  store i32 %s, i32* %s.addr, align 4\n","%"+inputIdName,"%"+inputIdName));
 
         for (String idName : funcVarMap.keySet()){
-            String varName = idName;
-            if(varName.equals(inputIdName)) {
+            if(idName.equals(inputIdName)||symbolMap.containsKey(idName)) {
                 continue;
             }
-            String varType = getTypeByName(varName);
+            String varType = getTypeByName(idName);
 
             if (varType=="INT_LIT"){
-                write(String.format("  %s = alloca i32, align 4\n","%"+varName));
+                write(String.format("  %s = alloca i32, align 4\n","%"+idName));
             } else if(varType=="ARRAY"){
-                //ARRAY
-                handleLocalArrayWithName(varName);
+                int arraySize = getArraySize(idName);
+                allocateLocalArray(getTargetName(idName), arraySize);
             } else {
                 //TUPLE
             }
@@ -354,6 +370,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         numVarCopy = numVar;
         numOpCopy = numOp;
         numIfLabelCopy = numifLabel;
+
         numInterVar = 0;
         numPrintCall = 0;
         numCall = 0;
@@ -371,6 +388,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         curFuncText = "";
 
         stateForFun = 0;
+
         numInterVar = numInterVarCopy;
         numPrintCall = numPrintCallCopy;
         numCall = numCallCopy;
@@ -386,20 +404,26 @@ public class lingCodeGenListener extends lingBorBaseListener {
     public void enterDecl(lingBorParser.DeclContext ctx) {
         //KW_GLOBAL id (ASSIGN expr)? SEMI
         if(ctx.KW_GLOBAL() != null) {
+            String idName = ctx.id(0).ID().getSymbol().getText();
             if (ctx.ASSIGN() != null) {
                 String outReg = evalExprRhs(ctx.expr(0));
                 regSymbolMap.clear();
 
-                String idName = ctx.id(0).ID().getSymbol().getText();
                 String targetName = getTargetName(idName);
                 if (getTypeByName(idName) == "INT_LIT") {
                     write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, targetName));
+                } else if(getTypeByName(idName) == "ARRAY"){
+                    //not gonna happen in any circumstances
                 } else {
+                    //ToDo tuple.
+                }
+
+            } else {
+                if(getTypeByName(idName) == "ARRAY"){
 
                 }
-                //
-            } else {
-
+                // only when in func, you make global var inside as a local var
+                // we can do nothing, since we can always get a global var with @reg
 
             }
         } else if (ctx.KW_LOCAL() != null){
@@ -422,38 +446,11 @@ public class lingCodeGenListener extends lingBorBaseListener {
             }
 
         } else if (ctx.KW_ARRAY() != null) {
-            // TODO
-//            log("~~~~~~~~~~~~~~~~~~\nArrayDecl\n");
-
+            if(ctx.ASSIGN()!=null) dealWithLoopAssign(ctx);
         }
     }
 
-    /**
-     * decl : KW_ARRAY id LBRAK expr OP_DOTDOT expr RBRAK ( id ASSIGN expr )? SEMI
-     * @param context
-     */
-    private void handleLocalArrayDeclaration(lingBorParser.DeclContext context) {
-        String arrayName = context.id(0).ID().getText();
-        if (!symbolMap.get(arrayName).isLocal()) {
-            return;
-        }
-        handleLocalArrayWithName(arrayName);
-    }
 
-    private void handleLocalArrayWithName(String arrayName) {
-        String targetArrayName = getTargetName(arrayName);
-        int arraySize = getArraySize(arrayName);
-        allocateLocalArray(targetArrayName, arraySize);
-    }
-
-    /**
-     * %a = alloca [10 x i32], align 16
-     * @param arraySize
-     */
-
-    private void allocateLocalArray(String arrayName, int arraySize) {
-        write(String.format("  %s = alloca [%d x i32], align 16\n", arrayName, arraySize));
-    }
 
     private int getArraySize(String arrayName) {
         int arraySize = ((Arr) symbolMap.get(arrayName)).getSize();
@@ -606,17 +603,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 numVar += 1;
                 write(String.format("  store i32 %s, i32* %s, align 4\n", "%inc"+numLoopCopy, targetName));
                 write(String.format("  br label %s\n", "%for.cond" + numLoopCopy));
-
                 write(String.format("for.end%d:\n", numLoopCopy));
 
             } else if (ctx.for_loop().array_id() != null) {
 
             }
             ctx.removeLastChild();
-
-        } else if (ctx.while_loop()!=null) {
-
-
 
         } else if (ctx.cond()!=null){
 
@@ -694,22 +686,60 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
-    private void dealWithLoop(String lowerBound, String upperBound){
+    private void dealWithLoopAssign(lingBorParser.DeclContext ctx){
+
+        String idNameArray = ctx.id(0).ID().getSymbol().getText();
+        String idNameInput = ctx.id(1).ID().getSymbol().getText();
+        int arraySize = getArraySize(idNameArray);
+
+        String lowerBound = evalExprRhs(ctx.expr(0));
+        String upperBound = evalExprRhs(ctx.expr(1));
+
+        String targetName = getTargetName(idNameInput);
+
+        write(String.format("  %s = alloca i32, align 4\n", targetName));
+        write(String.format("  store i32 %s, i32* %s, align 4\n", lowerBound, targetName));
+        write(String.format("  br label %s\n", "%for.cond" + numLoop));
+
+        write(String.format("for.cond%d:\n", numLoop));
+        write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
+        write(String.format("  %s = icmp slt i32 %s, %s\n", "%forcmp" + numLoop, "%" + numVar, upperBound));
+        numVar += 1;
+        write(String.format("  br i1 %s, label %s, label %s\n", "%forcmp" + numLoop, "%for.body" + numLoop, "%for.end" + numLoop));
+
+        write(String.format("for.body%d:\n", numLoop));
+        write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
+
+        int numVarCopy = numVar;
+
+        numVar += 1;
+        int numLoopCopy = numLoop;
+        numLoop += 1;
 
 
+        String outReg = evalExprRhs(ctx.expr(2));
+        write(String.format("  %s = sext i32 %s to i64\n", "%idxprom"+numLoopCopy,"%"+numLoopCopy));
+
+        write(String.format("  %s = getelementptr inbounds [%d x i32], [%d x i32]* @a, i64 0, i64 %s\n",
+                "%arrayidx"+numLoopCopy,
+                arraySize,
+                arraySize,
+                "%idxprom"+numLoopCopy));
+
+        write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, "%arrayidx"+numLoopCopy));
+        // tuple will not be allowed here anyway
+        write(String.format("  br label %s\n", "%for.inc" + numLoopCopy));
+
+        write(String.format("for.inc%d:\n", numLoopCopy));
+        write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
+        write(String.format("  %s = add nsw i32 %s, 1\n", "%inc"+numLoopCopy, "%" + numVar));
+        numVar += 1;
+        write(String.format("  store i32 %s, i32* %s, align 4\n", "%inc"+numLoopCopy, targetName));
+        write(String.format("  br label %s\n", "%for.cond" + numLoopCopy));
+        write(String.format("for.end%d:\n", numLoopCopy));
 
     }
 
-    @Override
-    public void enterFor_loop(lingBorParser.For_loopContext ctx) {
-
-    }
-
-
-    @Override
-    public void exitFor_loop(lingBorParser.For_loopContext ctx) {
-
-    }
 
     private void log(String string) {
         System.err.println(string);

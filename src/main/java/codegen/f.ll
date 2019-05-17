@@ -3,14 +3,16 @@ source_filename = "f.C"
 target datalayout = "e-m:o-i64:64-f80:128-n8:16:32:64-S128"
 target triple = "x86_64-apple-macosx10.14.0"
 
-@a = global i32 15, align 4
+@a = global [15 x i32] zeroinitializer, align 16
 @b = global i32 12, align 4
 @.str = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
 ; Function Attrs: noinline norecurse optnone ssp uwtable
 define i32 @main() #0 {
 entry:
+  %retval = alloca i32, align 4
   %i = alloca i32, align 4
+  store i32 0, i32* %retval, align 4
   store i32 0, i32* %i, align 4
   br label %for.cond
 
@@ -21,17 +23,26 @@ for.cond:                                         ; preds = %for.inc, %entry
 
 for.body:                                         ; preds = %for.cond
   %1 = load i32, i32* %i, align 4
-  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %1)
+  %2 = load i32, i32* %i, align 4
+  %idxprom = sext i32 %2 to i64
+  %arrayidx = getelementptr inbounds [15 x i32], [15 x i32]* @a, i64 0, i64 %idxprom
+  store i32 %1, i32* %arrayidx, align 4
+  %3 = load i32, i32* %i, align 4
+  %idxprom1 = sext i32 %3 to i64
+  %arrayidx2 = getelementptr inbounds [15 x i32], [15 x i32]* @a, i64 0, i64 %idxprom1
+  %4 = load i32, i32* %arrayidx2, align 4
+  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %4)
   br label %for.inc
 
 for.inc:                                          ; preds = %for.body
-  %2 = load i32, i32* %i, align 4
-  %inc = add nsw i32 %2, 1
+  %5 = load i32, i32* %i, align 4
+  %inc = add nsw i32 %5, 1
   store i32 %inc, i32* %i, align 4
   br label %for.cond
 
 for.end:                                          ; preds = %for.cond
-  ret i32 0
+  %6 = load i32, i32* %retval, align 4
+  ret i32 %6
 }
 
 declare i32 @printf(i8*, ...) #1

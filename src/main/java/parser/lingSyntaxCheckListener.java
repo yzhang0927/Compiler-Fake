@@ -503,6 +503,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
                 printSymbolMap();
                 System.out.println(String.format("SUCCESS! The global array id:%s on line %d has been defined",idName,line));
             } else if(!isInSymbolMap(idName)){
+
                 isFuncError = true;
                 isSyntaxError += 1;
                 System.out.println(String.format("ERROR ! The array:%s line %d has not been defined its scope",idName,line));
