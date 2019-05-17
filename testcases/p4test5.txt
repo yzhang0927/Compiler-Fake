@@ -2,9 +2,12 @@
 
 global a = 5;
 
-foreach i in 1..a do
+foreach i in 1..a+4 do
     foreach j in a..10 do
-        print j+i;
+        if j>i then print j;
+        else print i;
+        end if
     end for
 end for
+
 

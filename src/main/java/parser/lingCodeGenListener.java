@@ -584,9 +584,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
                 write(String.format("for.cond%d:\n", numLoop));
                 write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
-                write(String.format("  %s = icmp slt i32 %s, %s\n", "%cmp" + numLoop, "%" + numVar, upperBound));
+                write(String.format("  %s = icmp slt i32 %s, %s\n", "%forcmp" + numLoop, "%" + numVar, upperBound));
                 numVar += 1;
-                write(String.format("  br i1 %s, label %s, label %s\n", "%cmp" + numLoop, "%for.body" + numLoop, "%for.end" + numLoop));
+                write(String.format("  br i1 %s, label %s, label %s\n", "%forcmp" + numLoop, "%for.body" + numLoop, "%for.end" + numLoop));
 
                 write(String.format("for.body%d:\n", numLoop));
                 write(String.format("  %s = load i32, i32* %s, align 4\n", "%" + numVar, targetName));
@@ -614,14 +614,18 @@ public class lingCodeGenListener extends lingBorBaseListener {
             }
             ctx.removeLastChild();
 
+        } else if (ctx.while_loop()!=null) {
+
+
+
         } else if (ctx.cond()!=null){
 
             String regLeft = evalExprRhs(ctx.cond().ifs().bool_expr().expr(0));
             String regRight = evalExprRhs(ctx.cond().ifs().bool_expr().expr(1));
             String op = whichBoolOp(ctx.cond().ifs().bool_expr());
 
-            write(String.format("  %s = icmp %s i32 %s, %s\n","%cmp"+numifLabel,op,regLeft,regRight));
-            write(String.format("  br i1 %s, label %s, label %s\n","%cmp"+numifLabel,"%if.then"+numifLabel,"%if.else"+numifLabel));
+            write(String.format("  %s = icmp %s i32 %s, %s\n","%ifcmp"+numifLabel,op,regLeft,regRight));
+            write(String.format("  br i1 %s, label %s, label %s\n","%ifcmp"+numifLabel,"%if.then"+numifLabel,"%if.else"+numifLabel));
             write(String.format("if.then%d: \n",numifLabel));
 
             int numIfLabelCopy =numifLabel;
