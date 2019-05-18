@@ -53,7 +53,7 @@ if.else2:
   %cmp5 = icmp slt i32 %5, 4
   br i1 %cmp5, label %if.then5, label %if.else5
 if.then5: 
-  %call5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 2)
+  %call5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 4)
   br label %if.end2
 if.else5: 
   %call6 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 3)
@@ -68,6 +68,20 @@ if.end2:
   ret i32 0
 }
 declare i32 @printf(i8*, ...)
+
+define i32 @ff(i32 %t) {
+entry:
+  %t.addr = alloca i32, align 4
+  store i32 %t, i32* %t.addr, align 4
+  %b = alloca i32, align 4
+  store i32 22, i32* %b, align 4
+  store i32 44, i32* %t.addr, align 4
+  %0 = load i32, i32* %t.addr, align 4
+  %1 = load i32, i32* %b, align 4
+  %op0 = add nsw i32 %0, %1
+  ret i32 %op0
+  ret i32 0
+}
 
 define i32 @f(i32 %t) {
 entry:
@@ -88,19 +102,6 @@ if.end0:
   %1 = load i32, i32* %t.addr, align 4
   %2 = load i32, i32* %b, align 4
   %op0 = add nsw i32 %1, %2
-  ret i32 %op0
-  ret i32 0
-}
-
-define i32 @ff(i32 %t) {
-entry:
-  %t.addr = alloca i32, align 4
-  store i32 %t, i32* %t.addr, align 4
-  %b = alloca i32, align 4
-  store i32 22, i32* %b, align 4
-  %0 = load i32, i32* %t.addr, align 4
-  %1 = load i32, i32* %b, align 4
-  %op0 = add nsw i32 %0, %1
   ret i32 %op0
   ret i32 0
 }

@@ -2,6 +2,7 @@
 print 4+5*(6-3);
 global i=17-5+2;
 
-global j=49;
+global j = 49;
+global a = 22;
 j = j+3;
 print j;

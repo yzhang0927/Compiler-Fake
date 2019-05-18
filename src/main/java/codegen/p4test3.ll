@@ -34,9 +34,9 @@ for.cond1:
 for.body1:
   %5 = load i32, i32* %j, align 4
   %6 = load i32, i32* %j, align 4
-  %idxprom7 = sext i32 %6 to i64
-  %arrayidx7 = getelementptr inbounds [10 x i32], [10 x i32]* @a, i64 0, i64 %idxprom7
-  %7 = load i32, i32* %arrayidx7
+  %idxprom1 = sext i32 %6 to i64
+  %arrayidx1 = getelementptr inbounds [10 x i32], [10 x i32]* @a, i64 0, i64 %idxprom1
+  %7 = load i32, i32* %arrayidx1
   %call1 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %7)
   br label %for.inc1
 for.inc1:

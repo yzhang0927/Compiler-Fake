@@ -1,4 +1,4 @@
-*** if,else,func
+*** nested if,else,func
 
 global s = 3;
 global ss = 110;

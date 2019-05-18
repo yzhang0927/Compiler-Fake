@@ -45,7 +45,7 @@ public class Test {
             runExternalTestCases();
         }
 
-        int currentTestingIndex = 5;
+        int currentTestingIndex = 4;
         runOneTestCaseWithIndex(currentTestingIndex);
     }
 
@@ -113,11 +113,11 @@ public class Test {
         System.out.println("Has input file passed syntax check without error？: " + lstx.hasPassedSyntaxCheck());
         System.out.println("Total Number of syntax error: " + lstx.numSyntaxError());
         System.out.println("-----Finished syntax checking-----");
-        /*
+
         if (!lstx.hasPassedSyntaxCheck()) {
             System.out.println("Error found, stopping");
             return;
-        }*/
+        }
 
         System.out.println("-----Starting code gen-----");
         ArrayDeclarationListener arrayDeclarationListener = new ArrayDeclarationListener(symbolMap);

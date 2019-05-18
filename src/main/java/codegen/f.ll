@@ -5,54 +5,17 @@ target triple = "x86_64-apple-macosx10.14.0"
 
 @a = global [15 x i32] zeroinitializer, align 16
 @b = global i32 12, align 4
-@.str = private unnamed_addr constant [4 x i8] c"%d\0A\00", align 1
 
-; Function Attrs: noinline norecurse optnone ssp uwtable
+; Function Attrs: noinline norecurse nounwind optnone ssp uwtable
 define i32 @main() #0 {
 entry:
-  %retval = alloca i32, align 4
-  %i = alloca i32, align 4
-  store i32 0, i32* %retval, align 4
-  store i32 0, i32* %i, align 4
-  br label %for.cond
+  %0 = load i32, i32* @b, align 4
 
-for.cond:                                         ; preds = %for.inc, %entry
-  %0 = load i32, i32* %i, align 4
-  %cmp = icmp slt i32 %0, 4
-  br i1 %cmp, label %for.body, label %for.end
-
-for.body:                                         ; preds = %for.cond
-  %1 = load i32, i32* %i, align 4
-  %div = sdiv i32 %1, 2
-  %2 = load i32, i32* %i, align 4
-  %idxprom = sext i32 %2 to i64
-  %arrayidx = getelementptr inbounds [15 x i32], [15 x i32]* @a, i64 0, i64 %idxprom
-  store i32 %div, i32* %arrayidx, align 4
-  %3 = load i32, i32* @b, align 4
-  %mul = mul nsw i32 %3, 2
-  store i32 %mul, i32* @b, align 4
-  %4 = load i32, i32* %i, align 4
-  %idxprom1 = sext i32 %4 to i64
-  %arrayidx2 = getelementptr inbounds [15 x i32], [15 x i32]* @a, i64 0, i64 %idxprom1
-  %5 = load i32, i32* %arrayidx2, align 4
-  %call = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %5)
-  br label %for.inc
-
-for.inc:                                          ; preds = %for.body
-  %6 = load i32, i32* %i, align 4
-  %inc = add nsw i32 %6, 1
-  store i32 %inc, i32* %i, align 4
-  br label %for.cond
-
-for.end:                                          ; preds = %for.cond
-  %7 = load i32, i32* %retval, align 4
-  ret i32 %7
+  store i32 %0, i32* getelementptr inbounds ([15 x i32], [15 x i32]* @a, i64 0, i64 12), align 16
+  ret i32 0
 }
 
-declare i32 @printf(i8*, ...) #1
-
-attributes #0 = { noinline norecurse optnone ssp uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+cx8,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
-attributes #1 = { "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+cx8,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
+attributes #0 = { noinline norecurse nounwind optnone ssp uwtable "correctly-rounded-divide-sqrt-fp-math"="false" "disable-tail-calls"="false" "less-precise-fpmad"="false" "min-legal-vector-width"="0" "no-frame-pointer-elim"="true" "no-frame-pointer-elim-non-leaf" "no-infs-fp-math"="false" "no-jump-tables"="false" "no-nans-fp-math"="false" "no-signed-zeros-fp-math"="false" "no-trapping-math"="false" "stack-protector-buffer-size"="8" "target-cpu"="penryn" "target-features"="+cx16,+cx8,+fxsr,+mmx,+sahf,+sse,+sse2,+sse3,+sse4.1,+ssse3,+x87" "unsafe-fp-math"="false" "use-soft-float"="false" }
 
 !llvm.module.flags = !{!0, !1}
 !llvm.ident = !{!2}

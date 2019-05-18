@@ -1,8 +1,27 @@
-defun fib(x)
-    if x>1 then return fib(x-1)+x;
-    else return x;
-    end if
-end defun
+***array, bubble sort
 
-print fib(4);
+global arr;
+array arr[1..10];
+global len = 10;
 
+arr[1] = 123;
+arr[2] = 23;
+arr[3] = 1234;
+arr[4] = 1;
+arr[5] = 21;
+arr[6] = 11;
+arr[7] = 213;
+arr[8] = 22;
+arr[9] = 121;
+
+foreach i in 1..len-1 do
+    foreach j in 1..len-i-1 do
+        if arr[j]>arr[j+1] then
+            arr[j] <-> arr[j+1];
+        end if
+    end for
+end for
+
+foreach k in 1..10 do
+    print arr[k];
+end for
