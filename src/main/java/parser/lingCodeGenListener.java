@@ -226,6 +226,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
             //regSymbolMap, temp storage for
             if (!regSymbolMap.containsKey(idName)) {
                 String regName = "%" + numVar;
+                
                 String targetName = getTargetName(idName);
                 regSymbolMap.put(idName, regName);
                 /*
