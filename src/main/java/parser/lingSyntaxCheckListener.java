@@ -689,7 +689,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
                 }
                 return;
             }
-            if (leftType != rightType) {
+            if (!leftType.equals(rightType)) {
                 isFuncError = true;
                 isSyntaxError += 1;
                 System.out.println(String.format("ERROR ! ASSIGN statement on line %d invalid! %s cannot be assigned with a %s", line,leftType, rightType));

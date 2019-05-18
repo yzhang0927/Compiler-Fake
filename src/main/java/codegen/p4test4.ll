@@ -24,25 +24,23 @@ entry:
   %arrayidx8 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 9
   store i32 121, i32* %arrayidx8, align 4
   %0 = load i32, i32* @len, align 4
-  %op0 = sub nsw i32 %0, 1
   %i = alloca i32, align 4
   store i32 1, i32* %i, align 4
   br label %for.cond0
 for.cond0:
   %1 = load i32, i32* %i, align 4
-  %forcmp0 = icmp slt i32 %1, %op0
+  %forcmp0 = icmp slt i32 %1, %0
   br i1 %forcmp0, label %for.body0, label %for.end0
 for.body0:
   %2 = load i32, i32* %i, align 4
   %3 = load i32, i32* %i, align 4
-  %op1 = sub nsw i32 %0, %3
-  %op2 = sub nsw i32 %op1, 1
+  %op0 = sub nsw i32 %0, %3
   %j = alloca i32, align 4
   store i32 1, i32* %j, align 4
   br label %for.cond1
 for.cond1:
   %4 = load i32, i32* %j, align 4
-  %forcmp1 = icmp slt i32 %4, %op2
+  %forcmp1 = icmp slt i32 %4, %op0
   br i1 %forcmp1, label %for.body1, label %for.end1
 for.body1:
   %5 = load i32, i32* %j, align 4
@@ -50,8 +48,8 @@ for.body1:
   %idxprom9 = sext i32 %6 to i64
   %arrayidx9 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom9
   %7 = load i32, i32* %arrayidx9
-  %op3 = add nsw i32 %6, 1
-  %idxprom10 = sext i32 %op3 to i64
+  %op1 = add nsw i32 %6, 1
+  %idxprom10 = sext i32 %op1 to i64
   %arrayidx10 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom10
   %8 = load i32, i32* %arrayidx10
   %ifcmp0 = icmp sgt i32 %7, %8
@@ -60,8 +58,8 @@ if.then0:
   %tmp0 = alloca i32, align 4
   %idxprom11 = sext i32 %6 to i64
   %arrayidx11 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom11
-  %op4 = add nsw i32 %6, 1
-  %idxprom12 = sext i32 %op4 to i64
+  %op2 = add nsw i32 %6, 1
+  %idxprom12 = sext i32 %op2 to i64
   %arrayidx12 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom12
   %9 = load i32, i32* %arrayidx12
   store i32 %9, i32* %tmp0, align 4

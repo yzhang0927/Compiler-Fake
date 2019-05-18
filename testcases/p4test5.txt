@@ -1,17 +1,19 @@
-*** tuple 
+*** tuple
 
 global tp = 2,3;
-global a = 32;
-global b = 11;
-a,b = 12,13;
-tp.1 = 3;
 
-print a
-print b
-print tp
+print tp.0;
+print tp.1;
 
-defun funTuple(b)
-    local a = b.1,b.2;
-    return a;
+tp = 4,5;
 
-print funTuple(tp);
+print tp.0;
+print tp.1;
+
+global a = 0;
+global b = 0;
+
+a,b = tp;
+
+print a;
+print b;

@@ -123,11 +123,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 case "ARRAY":
                     allocateGlobalArray(varName, getArraySize(varName));
                     break;
-                case "TUPLE":
-                    //TODO
-                    break;
                 default:
-                    throw new AssertionError("unknown var type");
+                    System.out.println(Integer.parseInt(varType.split(",")[1]));
+                    allocateGlobalArray(varName, Integer.parseInt(varType.split(",")[1]));
+                    //only tuple will end up here, type checking has been performed,
+                    //tuple type was in the form of "TUPLE,X"
+
             }
         }
         write(MAIN_HEADER);
@@ -214,10 +215,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
     // we may need to generate code on the run.
     private String evalExprRhs(lingBorParser.ExprContext ctx) {
         if (ctx.OP_COMMA() != null) {
+            return evalExprRhs(ctx.expr(0))+":"+evalExprRhs(ctx.expr(1));
+            //It will give you a string 3:4:%varNum
+            //a = 3,4,b
             //TODO Multi-element Tuple
-            //get List of reg by extract single element and recursive call.
-            // a helper func that returns list<String> is needed.
-
         } else if (ctx.int_lit() != null) {
             return ctx.int_lit().INT_LIT().getSymbol().getText();
         } else if (ctx.id() != null) {
@@ -226,11 +227,29 @@ public class lingCodeGenListener extends lingBorBaseListener {
             if (!regSymbolMap.containsKey(idName)) {
                 String regName = "%" + numVar;
                 String targetName = getTargetName(idName);
+                String type = getTypeByName(idName);
                 regSymbolMap.put(idName, regName);
-                //String type = getTypeByName(idName);
-                //I remember that no assign to array is permitted
-                write(String.format("  %s = load i32, i32* %s, align 4\n", regName, targetName));
-                numVar += 1;
+
+
+                if(type.split(",")[0].equals("TUPLE")) {
+                    int length = Integer.parseInt(type.split(",")[1]);
+                    for(int i=0; i<length; i++){
+                        write(String.format("  %s = load i32, i32* getelementptr inbounds ([%d x i32], [%d x i32]* %s, i64 0, i64 %d), align 4\n",
+                                "%" + numVar,
+                                length,
+                                length,
+                                targetName,
+                                i
+                        ));
+                        numVar += 1;
+                    }
+
+                } else {
+                    //I remember that no assign to array is permitted
+                    write(String.format("  %s = load i32, i32* %s, align 4\n", regName, targetName));
+                    numVar += 1;
+
+                }
                 return regName;
             } else {
                 return regSymbolMap.get(idName);
@@ -248,8 +267,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
         } else if (ctx.array_ele() != null) {
             return evaluateArray(ctx.array_ele(),false);
         } else if (ctx.tuple_ele() != null) {
-
-
+            //a = s.1, basically still a int
+            return evaluateTuple(ctx.tuple_ele(),false);
         } else if (ctx.LPAR() != null) {
             // it means it is in the form of LPAR expr RPAR
             return evalExprRhs(ctx.expr(0));
@@ -268,6 +287,35 @@ public class lingCodeGenListener extends lingBorBaseListener {
         return null;
     }
 
+    private String evaluateTuple(lingBorParser.Tuple_eleContext tuple_eleContext, boolean isLhs) {
+        String tupleName = tuple_eleContext.id().ID().getText();
+        int tupleSize = Integer.parseInt(getTypeByName(tupleName).split(",")[1]);
+        String index = tuple_eleContext.int_lit().getText();
+        int intIndex = Integer.parseInt(index);
+        if (intIndex > tupleSize) {
+            String errorMessage = String.format("tuple %s size %d index %s out of bound", tupleName, tupleSize, index);
+            log("Runtime exception: " + errorMessage);
+                return null;
+        }
+
+        String currArrIndex = "%arrayidx"+numArray++;
+        write(String.format("  %s = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %s\n",
+                currArrIndex,
+                tupleSize,
+                tupleSize,
+                getTargetName(tupleName),
+                index
+        ));
+
+        if(!isLhs) {
+            String currRegister = "%" + numVar++;
+            write(String.format("  %s = load i32, i32* %s\n", currRegister, currArrIndex));
+            return currRegister;
+        } else {
+            return currArrIndex;
+        }
+    }
+
     private String evaluateArray(lingBorParser.Array_eleContext array_eleContext, boolean isLhs) {
         /**
          * array_ele : id LBRAK expr RBRAK;
@@ -279,7 +327,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         String arrayName = array_eleContext.id().ID().getText();
         int arraySize = getArraySize(arrayName);
         String indexReg;
-        //you will never know a[a[k]] has ever exceed its size before the real run time;
+        //you will never know a[a[k]] has ever exceed its size before run time;
         if(array_eleContext.expr().int_lit()!=null) {
             indexReg= array_eleContext.expr().int_lit().getText();
             int intIndex = Integer.parseInt(indexReg);
@@ -311,23 +359,28 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+    private String evalExprLhsItem(lingBorParser.Lhs_itemContext ctx){
+        if (ctx.id() != null) {
+            String idName = ctx.id().ID().getSymbol().getText();
+            return getTargetName(idName);
+        } else if (ctx.array_ele() != null) {
+            return evaluateArray(ctx.array_ele(),true);
+        } else if (ctx.tuple_ele() != null) {
+            return evaluateTuple(ctx.tuple_ele(),true);
+        }
+        return "!";
+    }
     private String evalExprLhs(lingBorParser.LhsContext ctx){
         int numItem = ctx.OP_COMMA().size()+1;
         if(numItem==1) {
-            if (ctx.lhs_item(0).id() != null) {
-                String idName = ctx.lhs_item(0).id().ID().getSymbol().getText();
-                return getTargetName(idName);
-            } else if (ctx.lhs_item(0).array_ele() != null) {
-                return evaluateArray(ctx.lhs_item(0).array_ele(),true);
-            } else if (ctx.lhs_item(0).tuple_ele() != null) {
-
-            }
-
+            return evalExprLhsItem(ctx.lhs_item(0));
         } else {
-            //ToDo multi element Tuple
-            //extract single element and loop, recall this function to get list of Reg.
+            String regs = evalExprLhsItem(ctx.lhs_item(0));
+            for (int i =1; i<numItem; i++){
+                regs += ":"+evalExprLhsItem(ctx.lhs_item(i));
+            }
+            return regs;
         }
-        return "!";
     }
 
     @Override
@@ -340,7 +393,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
         String type = funcMap.get(funcName).getInputType();
         System.out.println("entering func,input type: "+type);
 
-        //TODO: now only support int_lit, need to support for tuple
+        //TODO: now only support int_lit as input, need to support for tuple
 
         write(String.format("\ndefine i32 @%s(i32 %s) {\nentry:\n",funcName,"%"+inputIdName));
         write(String.format("  %s.addr = alloca i32, align 4\n","%"+inputIdName));
@@ -358,7 +411,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 int arraySize = getArraySize(idName);
                 allocateLocalArray(getTargetName(idName), arraySize);
             } else {
-                //TUPLE
+                //tuple
+                allocateLocalArray(getTargetName(idName), Integer.parseInt(varType.split(",")[1]));
             }
         }
         numArrayCopy = numArray;
@@ -414,8 +468,18 @@ public class lingCodeGenListener extends lingBorBaseListener {
                     write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, targetName));
                 } else if(getTypeByName(idName) == "ARRAY"){
                     //not gonna happen in any circumstances
-                } else {
-                    //ToDo tuple.
+                } else if(getTypeByName(idName).split(",")[0].equals("TUPLE")){
+                    String lengthTuple = getTypeByName(idName).split(",")[1];
+                    String[] regsLst = outReg.split(":");
+                    for (int i =0;i<regsLst.length;i++){
+                        write(String.format("  store i32 %s, i32* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 %d), align 16\n",
+                                regsLst[i],
+                                lengthTuple,
+                                lengthTuple,
+                                targetName,
+                                i
+                                ));
+                    }
                 }
 
             } else {
@@ -423,7 +487,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
                 }
                 // only when in func, you make global var inside as a local var
-                // we can do nothing, since we can always get a global var with @reg
+                // we can do nothing here since we can always get a global var with @reg
 
             }
         } else if (ctx.KW_LOCAL() != null){
@@ -434,11 +498,21 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 String targetName = getTargetName(idName);
 
                 if (getTypeByName(idName) == "INT_LIT") {
-                    //TODO ADD SUPPORT FOR ARRAY
                     write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, targetName));
-                } else {
-
+                } else if(getTypeByName(idName).split(",")[0].equals("TUPLE")){
+                    String lengthTuple = getTypeByName(idName).split(",")[1];
+                    String[] regsLst = outReg.split(":");
+                    for (int i =0;i<regsLst.length;i++){
+                        write(String.format("  store i32 %s, i32* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 %d), align 16\n",
+                                regsLst[i],
+                                lengthTuple,
+                                lengthTuple,
+                                targetName,
+                                i
+                        ));
+                    }
                 }
+
                 //
             } else {
 
@@ -450,7 +524,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
-
+    private int getTupleSize(String tupleIdName){
+        return 0;
+    }
 
     private int getArraySize(String arrayName) {
         int arraySize = ((Arr) symbolMap.get(arrayName)).getSize();
@@ -525,17 +601,49 @@ public class lingCodeGenListener extends lingBorBaseListener {
              */
 
         } else if(ctx.ASSIGN()!=null){
-            //if(ctx.expr().COMMA()=null && ctx.lhs(0).COMMA()==null){
-            String outOp = evalExprRhs(ctx.expr());
+
+            String outReg = evalExprRhs(ctx.expr());
             regSymbolMap.clear();
-            String inOp = evalExprLhs(ctx.lhs(0));
-            write(String.format("  store i32 %s, i32* %s, align 4\n", outOp, inOp));
+            String inReg = evalExprLhs(ctx.lhs(0));
 
-            //} else {
+            if(outReg.split(":").length>1 && inReg.split(":").length==1) {
+                String idName = ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText();
+                int lengthTuple = Integer.parseInt(getTypeByName(idName).split(",")[1]);
+                String targetName = getTargetName(idName);
+                String[] regsLst = outReg.split(":");
+                for (int i =0;i<regsLst.length;i++){
+                    write(String.format("  store i32 %s, i32* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 %d), align 16\n",
+                            regsLst[i],
+                            lengthTuple,
+                            lengthTuple,
+                            targetName,
+                            i
+                    ));
+                }
+            } else if(outReg.split(":").length==1 && inReg.split(":").length>1) {
+                String idName = ctx.expr().id().ID().getSymbol().getText();
+                int lengthTuple = Integer.parseInt(getTypeByName(idName).split(",")[1]);
+                String targetName = getTargetName(idName);
+                String[] regsLst = inReg.split(":");
+                for (int i =0;i<regsLst.length;i++) {
+                    write(String.format("  %s = load i32, i32* getelementptr inbounds ([%d x i32], [%d x i32]* %s, i64 0, i64 %d), align 4\n",
+                            "%"+numVar,
+                            lengthTuple,
+                            lengthTuple,
+                            targetName,
+                            i
+                            ));
+                    write(String.format("  store i32 %s, i32* @b, align 4\n","%"+numVar,regsLst[i]));
+                    numVar++;
+                }
 
-                //tbi for multiple lhs(multiple int, array not allowed)
-                //maybe split into two sentences
-            //}
+
+            } else if(outReg.split(":").length>1 && inReg.split(":").length>1) {
+
+            } else {
+                write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, inReg));
+            }
+
         } else if(ctx.PRINT()!=null){
             String outOp = evalExprRhs(ctx.expr());
             String outFunc = String.format("  %s = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 ","%call"+numCall);
@@ -554,7 +662,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             IfReturned=1;
             String outOp = evalExprRhs(ctx.expr());
             regSymbolMap.clear();
-            //ToDo add tuple support
             write(String.format("  ret i32 %s\n",outOp));
 
         } else if (ctx.for_loop()!=null){
@@ -732,7 +839,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
         write(String.format("for.end%d:\n", numLoopCopy));
 
     }
-
 
     private void log(String string) {
         System.err.println(string);

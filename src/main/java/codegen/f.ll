@@ -10,8 +10,9 @@ target triple = "x86_64-apple-macosx10.14.0"
 define i32 @main() #0 {
 entry:
   %0 = load i32, i32* @b, align 4
-
   store i32 %0, i32* getelementptr inbounds ([15 x i32], [15 x i32]* @a, i64 0, i64 12), align 16
+  %1 = load i32, i32* getelementptr inbounds ([15 x i32], [15 x i32]* @a, i64 0, i64 11), align 4
+  store i32 %1, i32* @b, align 4
   ret i32 0
 }
 

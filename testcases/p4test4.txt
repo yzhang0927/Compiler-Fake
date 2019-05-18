@@ -14,8 +14,8 @@ arr[7] = 213;
 arr[8] = 22;
 arr[9] = 121;
 
-foreach i in 1..len-1 do
-    foreach j in 1..len-i-1 do
+foreach i in 1..len do
+    foreach j in 1..len-i do
         if arr[j]>arr[j+1] then
             arr[j] <-> arr[j+1];
         end if
