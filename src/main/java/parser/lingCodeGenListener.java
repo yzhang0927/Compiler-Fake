@@ -227,9 +227,9 @@ public class lingCodeGenListener extends lingBorBaseListener {
             if (!regSymbolMap.containsKey(idName)) {
                 String regName = "%" + numVar;
                 String targetName = getTargetName(idName);
-                String type = getTypeByName(idName);
                 regSymbolMap.put(idName, regName);
-
+                /*
+                String type = getTypeByName(idName);
 
                 if(type.split(",")[0].equals("TUPLE")) {
                     int length = Integer.parseInt(type.split(",")[1]);
@@ -244,12 +244,11 @@ public class lingCodeGenListener extends lingBorBaseListener {
                         numVar += 1;
                     }
 
-                } else {
+                } else {*/
                     //I remember that no assign to array is permitted
-                    write(String.format("  %s = load i32, i32* %s, align 4\n", regName, targetName));
-                    numVar += 1;
-
-                }
+                write(String.format("  %s = load i32, i32* %s, align 4\n", regName, targetName));
+                numVar += 1;
+                //}
                 return regName;
             } else {
                 return regSymbolMap.get(idName);
