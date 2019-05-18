@@ -3,6 +3,7 @@ package parser;
 import com.ibm.icu.text.CaseMap;
 import typenscope.Arr;
 import typenscope.Func;
+import typenscope.Intlit;
 import typenscope.Symbol;
 
 import java.io.BufferedWriter;
@@ -11,6 +12,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 public class lingCodeGenListener extends lingBorBaseListener {
 
@@ -44,6 +46,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
     private int stateForFun = 0;
     private int stateForIf = 0;
+    private Stack<String> curFuncForId = new Stack<>();
     private String curFuncInputId;
     private String curFuncText = "";
     private List<String> funcList = new LinkedList<>();
@@ -66,10 +69,15 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+
     public String getTypeByName(String idName) {
         if (stateForFun == 0) {
+            if(symbolMap.get(idName)==null)
+                return "UNDEFINED";
             return symbolMap.get(idName).getType();
         } else {
+            if(funcVarMap.get(idName)==null)
+                return "UNDEFINED";
             return funcVarMap.get(idName).getType();
         }
     }
@@ -226,30 +234,20 @@ public class lingCodeGenListener extends lingBorBaseListener {
             //regSymbolMap, temp storage for
             if (!regSymbolMap.containsKey(idName)) {
                 String regName = "%" + numVar;
-                
+
                 String targetName = getTargetName(idName);
                 regSymbolMap.put(idName, regName);
-                /*
+                System.out.println(idName);
                 String type = getTypeByName(idName);
+                System.out.println(idName+":::"+type);
 
                 if(type.split(",")[0].equals("TUPLE")) {
-                    int length = Integer.parseInt(type.split(",")[1]);
-                    for(int i=0; i<length; i++){
-                        write(String.format("  %s = load i32, i32* getelementptr inbounds ([%d x i32], [%d x i32]* %s, i64 0, i64 %d), align 4\n",
-                                "%" + numVar,
-                                length,
-                                length,
-                                targetName,
-                                i
-                        ));
-                        numVar += 1;
-                    }
 
-                } else {*/
+                } else {
                     //I remember that no assign to array is permitted
-                write(String.format("  %s = load i32, i32* %s, align 4\n", regName, targetName));
-                numVar += 1;
-                //}
+                    write(String.format("  %s = load i32, i32* %s, align 4\n", regName, targetName));
+                    numVar += 1;
+                }
                 return regName;
             } else {
                 return regSymbolMap.get(idName);
@@ -513,19 +511,13 @@ public class lingCodeGenListener extends lingBorBaseListener {
                     }
                 }
 
-                //
             } else {
-
 
             }
 
         } else if (ctx.KW_ARRAY() != null) {
             if(ctx.ASSIGN()!=null) dealWithLoopAssign(ctx);
         }
-    }
-
-    private int getTupleSize(String tupleIdName){
-        return 0;
     }
 
     private int getArraySize(String arrayName) {
@@ -554,42 +546,42 @@ public class lingCodeGenListener extends lingBorBaseListener {
         }
     }
 
+    public void singleValueExchange(String regRight,String regLeft){
+
+        String tempRegName =  "%tmp" + (numInterVar++);
+        //load left expr into a reg
+        write(String.format("  %s = alloca i32, align 4\n",tempRegName));
+        String tempReg = "%"+ (numVar++);
+
+        write(String.format("  %s = load i32, i32* %s\n",tempReg ,regRight));
+        write(String.format("  store i32 %s, i32* %s, align 4\n", tempReg, tempRegName));
+
+        tempReg = "%"+(numVar++);
+        write(String.format("  %s = load i32, i32* %s\n",tempReg ,regLeft));
+        write(String.format("  store i32 %s, i32* %s, align 4\n", tempReg, regRight));
+
+        tempReg = "%"+(numVar++);
+        write(String.format("  %s = load i32, i32* %s\n",tempReg ,tempRegName));
+        write(String.format("  store i32 %s, i32* %s, align 4\n", tempReg, regLeft));
+
+    }
+
+
     @Override
     public void enterStatement(lingBorParser.StatementContext ctx) {
         
         if(ctx.EXCHANGE()!=null) {
             // only element on both sides
 
-            String tempRegName =  "%tmp" + (numInterVar++);
-            //load left expr into a reg
-            write(String.format("  %s = alloca i32, align 4\n",tempRegName));
             // store left reg content into temp var
             String regLeft = evalExprLhs(ctx.lhs(0));
             //write(String.format("  store i32 %s, i32* %s, align 4\n", regLeft, tempRegName));
-
             String regRight = evalExprLhs(ctx.lhs(1));
             //store right reg into left reg
+            singleValueExchange(regLeft,regRight);
 
-            String tempReg = "%"+ (numVar++);
-
-            write(String.format("  %s = load i32, i32* %s\n",tempReg ,regRight));
-            write(String.format("  store i32 %s, i32* %s, align 4\n", tempReg, tempRegName));
-
-            tempReg = "%"+(numVar++);
-            write(String.format("  %s = load i32, i32* %s\n",tempReg ,regLeft));
-            write(String.format("  store i32 %s, i32* %s, align 4\n", tempReg, regRight));
-
-            tempReg = "%"+(numVar++);
-            write(String.format("  %s = load i32, i32* %s\n",tempReg ,tempRegName));
-            write(String.format("  store i32 %s, i32* %s, align 4\n", tempReg, regLeft));
             /*
             //Todo we need to support multi lhs
-            String left = evalExprLhs(ctx.lhs(0));
-            String leftName = getTargetName(ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText());
-            write(String.format("store i32 %s, i32* %s, align 4\n","%"+numVar,leftName));
-            String right = evalExprLhs(ctx.lhs(1));
-            String rightName = getTargetName(ctx.lhs(0).lhs_item(0).id().ID().getSymbol().getText());
-            write(String.format("store i32 %s, i32* %s, align 4\n","%"+numVar,rightName));
             */
 
             /**
@@ -633,7 +625,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
                             targetName,
                             i
                             ));
-                    write(String.format("  store i32 %s, i32* @b, align 4\n","%"+numVar,regsLst[i]));
+                    write(String.format("  store i32 %s, i32* %s, align 4\n","%"+numVar,regsLst[i]));
                     numVar++;
                 }
 
@@ -666,12 +658,12 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         } else if (ctx.for_loop()!=null){
             String idName = ctx.for_loop().expr().id().ID().getSymbol().getText();
-
+            curFuncForId.add(idName);
             if (ctx.for_loop().range()!= null) {
                 String lowerBound = evalExprRhs(ctx.for_loop().range().expr(0));
                 String upperBound = evalExprRhs(ctx.for_loop().range().expr(1));
                 System.out.println(idName);
-                String targetName = getTargetName(idName);
+                String targetName = "%"+idName;
 
                 write(String.format("  %s = alloca i32, align 4\n", targetName));
                 write(String.format("  store i32 %s, i32* %s, align 4\n", lowerBound, targetName));
@@ -706,6 +698,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
             } else if (ctx.for_loop().array_id() != null) {
 
             }
+            //popSymbolByName(idName);
+            curFuncForId.remove(idName);
             ctx.removeLastChild();
 
         } else if (ctx.cond()!=null){

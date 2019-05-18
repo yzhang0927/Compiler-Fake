@@ -24,15 +24,13 @@ entry:
   store i32 0, i32* @a, align 4
   store i32 0, i32* @b, align 4
   %4 = load i32, i32* getelementptr inbounds ([2 x i32], [2 x i32]* @tp, i64 0, i64 0), align 4
+  store i32 %4, i32* @a, align 4
   %5 = load i32, i32* getelementptr inbounds ([2 x i32], [2 x i32]* @tp, i64 0, i64 1), align 4
-  %6 = load i32, i32* getelementptr inbounds ([2 x i32], [2 x i32]* @tp, i64 0, i64 0), align 4
-  store i32 %6, i32* @b, align 4
-  %7 = load i32, i32* getelementptr inbounds ([2 x i32], [2 x i32]* @tp, i64 0, i64 1), align 4
-  store i32 %7, i32* @b, align 4
-  %8 = load i32, i32* @a, align 4
-  %call4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %8)
-  %9 = load i32, i32* @b, align 4
-  %call5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %9)
+  store i32 %5, i32* @b, align 4
+  %6 = load i32, i32* @a, align 4
+  %call4 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %6)
+  %7 = load i32, i32* @b, align 4
+  %call5 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %7)
   ret i32 0
 }
 declare i32 @printf(i8*, ...)

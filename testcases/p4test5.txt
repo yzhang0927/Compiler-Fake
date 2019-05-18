@@ -17,3 +17,5 @@ a,b = tp;
 
 print a;
 print b;
+
+defun ss 

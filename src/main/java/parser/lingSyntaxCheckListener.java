@@ -590,6 +590,21 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
     @Override
     public void enterFor_loop(lingBorParser.For_loopContext ctx) {
 
+
+        if(ctx.expr().id()!= null) {
+            String idName = ctx.expr().id().ID().getSymbol().getText();
+            int line = ctx.expr().id().ID().getSymbol().getLine();
+            Symbol idSymbol = new Intlit(idName,line);
+            putSymbolByName(idName,idSymbol);
+            printSymbolMap();
+
+            this.statusForLoop += 1;
+        } else {
+            isFuncError = true;
+            isSyntaxError += 1;
+            System.out.println("ERROR ! illegal expr found as foreach index var, id only!");
+        }
+
         if(ctx.array_id()!=null){
             String idName = ctx.array_id().id().ID().getSymbol().getText();
             int line = ctx.array_id().id().ID().getSymbol().getLine();
@@ -611,17 +626,6 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
             }
         }
 
-        if(ctx.expr().id()!= null) {
-            String idName = ctx.expr().id().ID().getSymbol().getText();
-            int line = ctx.expr().id().ID().getSymbol().getLine();
-            Symbol idSymbol = new Intlit(idName,line);
-            putSymbolByName(idName,idSymbol);
-            this.statusForLoop += 1;
-        } else {
-            isFuncError = true;
-            isSyntaxError += 1;
-            System.out.println("ERROR ! illegal expr found as foreach index var, id only!");
-        }
 
     }
 

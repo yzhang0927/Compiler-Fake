@@ -1,11 +1,21 @@
 #include <stdio.h>
 
-int a[15]={0};
-int b = 12;
+int a[5];
 
+void display(int n[])
+{
+    for(int i=0; i<5; i++)
+        printf("%d ",n[i]);
+}
+
+void displayInt(int a){
+    printf("%d ",a);
+}
 
 int main(){
-    a[12] = b;
-    b = a[11];
-
+    for(int i=0; i<5;i++ ){
+        a[i]=i+1;
+    }
+    display(a);
 }
+
