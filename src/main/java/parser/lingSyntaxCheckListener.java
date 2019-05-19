@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.Token;
 import typenscope.*;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.regex.Pattern;
 
 public class lingSyntaxCheckListener extends lingBorBaseListener {
@@ -11,7 +12,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
     private HashMap<String, Symbol> globalMap = new HashMap<>();
     private HashMap<String, Symbol> funcVarMap = new HashMap<>();
     private HashMap<String, Func> funcMap = new HashMap<>();
-
+    private HashSet<String> globalVarInFunc = new HashSet<>();
     private String curFuncName = null;
     private String curFuncVar = null;
     private Func curFunc = null;
@@ -460,6 +461,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
             curFuncVar = ctx.expr().id().ID().getSymbol().getText();
             String inputVarName = ctx.expr().id().ID().getSymbol().getText();
             curFunc = new Func(curFuncName, line, inputVarName, ctx);
+            curFunc.storeFuncVarMap(this.funcVarMap);
             funcMap.put(curFuncName,curFunc);
             if (ctx.body().statement() != null) {
                 for (lingBorParser.StatementContext st0 : ctx.body().statement()) {
@@ -479,15 +481,15 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
         System.out.println("<---Exiting a function---->\n");
         if(curFunc!= null && funcVarMap!=null) {
             curFunc.storeFuncVarMap(funcVarMap);
+            curFunc.storeGlobalVar(globalVarInFunc);
 
             if (!isFuncError) funcMap.put(curFuncName, curFunc);
             else funcMap.remove(curFuncName);
-
+            globalVarInFunc.clear();
             funcVarMap.clear();
         }
         curFuncName = null;
         curFunc = null;
-
 
         this.statusFunc -= 1;
     }
@@ -553,6 +555,7 @@ public class lingSyntaxCheckListener extends lingBorBaseListener {
                 } else {
                     if(globalMap.containsKey(idName) && globalMap.get(idName).isDefined()){
                         putSymbolByName(idName,globalMap.get(idName));
+                        globalVarInFunc.add(idName);
                         printSymbolMap();
                         System.out.println(String.format("SUCCESS ! global var:%s on line %d is declared in function",idName, line));
                     } else {

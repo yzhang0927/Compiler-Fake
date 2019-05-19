@@ -55,18 +55,18 @@ for.body1:
   %ifcmp0 = icmp sgt i32 %7, %8
   br i1 %ifcmp0, label %if.then0, label %if.else0
 if.then0: 
-  %tmp0 = alloca i32, align 4
   %idxprom11 = sext i32 %6 to i64
   %arrayidx11 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom11
   %op2 = add nsw i32 %6, 1
   %idxprom12 = sext i32 %op2 to i64
   %arrayidx12 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom12
-  %9 = load i32, i32* %arrayidx12
-  store i32 %9, i32* %tmp0, align 4
-  %10 = load i32, i32* %arrayidx11
-  store i32 %10, i32* %arrayidx12, align 4
-  %11 = load i32, i32* %tmp0
-  store i32 %11, i32* %arrayidx11, align 4
+  %tmp13 = alloca i32, align 4
+  %9 = load i32, i32* %arrayidx11
+  store i32 %9, i32* %tmp13, align 4
+  %10 = load i32, i32* %arrayidx12
+  store i32 %10, i32* %arrayidx11, align 4
+  %11 = load i32, i32* %tmp13
+  store i32 %11, i32* %arrayidx12, align 4
   br label %if.end0
 if.else0: 
   br label %if.end0
@@ -95,9 +95,9 @@ for.cond2:
 for.body2:
   %15 = load i32, i32* %k, align 4
   %16 = load i32, i32* %k, align 4
-  %idxprom13 = sext i32 %16 to i64
-  %arrayidx13 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom13
-  %17 = load i32, i32* %arrayidx13
+  %idxprom14 = sext i32 %16 to i64
+  %arrayidx14 = getelementptr inbounds [10 x i32], [10 x i32]* @arr, i64 0, i64 %idxprom14
+  %17 = load i32, i32* %arrayidx14
   %call0 = call i32 (i8*, ...) @printf(i8* getelementptr inbounds ([4 x i8], [4 x i8]* @.str, i64 0, i64 0), i32 %17)
   br label %for.inc2
 for.inc2:

@@ -9,10 +9,7 @@ import typenscope.Symbol;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 public class lingCodeGenListener extends lingBorBaseListener {
 
@@ -47,6 +44,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
     private int stateForFun = 0;
     private int stateForIf = 0;
     private Stack<String> curFuncForId = new Stack<>();
+    private Func curFunc;
     private String curFuncInputId;
     private String curFuncText = "";
     private List<String> funcList = new LinkedList<>();
@@ -87,10 +85,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
         if (stateForFun != 0) {
             if (idName.equals(curFuncInputId)) {
                 ret = "%" + idName + ".addr";
+            } else if (funcVarMap.containsKey(idName)&&!curFunc.getGlobalVarInFunc().contains(idName)) {
+                ret = "%" + idName;
             } else if (symbolMap.containsKey(idName)) {
                 ret = "@" + idName;
-            } else if (funcVarMap.containsKey(idName)) {
-                ret = "%" + idName;
             }
         } else {
             if (symbolMap.containsKey(idName)) {
@@ -146,6 +144,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
      * %a = alloca [10 x i32], align 16
      * @param arraySize
      */
+
 
     private void allocateLocalArray(String arrayName, int arraySize) {
         write(String.format("  %s = alloca [%d x i32], align 16\n", arrayName, arraySize));
@@ -239,9 +238,13 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 regSymbolMap.put(idName, regName);
                 System.out.println(idName);
                 String type = getTypeByName(idName);
-                System.out.println(idName+":::"+type);
 
                 if(type.split(",")[0].equals("TUPLE")) {
+
+                    regName = String.format("* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 0)",
+                                type.split(",")[1],
+                                type.split(",")[1],
+                                targetName);
 
                 } else {
                     //I remember that no assign to array is permitted
@@ -286,31 +289,46 @@ public class lingCodeGenListener extends lingBorBaseListener {
     }
 
     private String evaluateTuple(lingBorParser.Tuple_eleContext tuple_eleContext, boolean isLhs) {
+
         String tupleName = tuple_eleContext.id().ID().getText();
-        int tupleSize = Integer.parseInt(getTypeByName(tupleName).split(",")[1]);
-        String index = tuple_eleContext.int_lit().getText();
-        int intIndex = Integer.parseInt(index);
+        String type;
+        if(stateForFun!=0 && tupleName.equals(curFuncInputId)){
+            type = curFunc.getInputType();
+        } else {
+            type = getTypeByName(tupleName);
+        }
+        int tupleSize = Integer.parseInt(type.split(",")[1]);
+
+
+        String indexReg = tuple_eleContext.int_lit().getText();
+        int intIndex = Integer.parseInt(indexReg);
         if (intIndex > tupleSize) {
-            String errorMessage = String.format("tuple %s size %d index %s out of bound", tupleName, tupleSize, index);
+            String errorMessage = String.format("tuple %s size %d index %s out of bound", tupleName, tupleSize, indexReg);
             log("Runtime exception: " + errorMessage);
-                return null;
+            return null;
         }
 
-        String currArrIndex = "%arrayidx"+numArray++;
-        write(String.format("  %s = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %s\n",
-                currArrIndex,
-                tupleSize,
-                tupleSize,
-                getTargetName(tupleName),
-                index
-        ));
+        String currTupleIndex = "%arrayidx"+numInterVar++;
+        if(stateForFun!=0 && tupleName.equals(curFuncInputId)){
+            String currRegister = "%" + numVar++;
+            write(String.format("  %s = load i32*, i32** %s, align 8\n",currRegister,"%"+tupleName+".addr"));
+            write(String.format("  %s = getelementptr inbounds i32, i32* %s, i64 %d\n",currTupleIndex,currRegister,intIndex));
+        } else {
+            write(String.format("  %s = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %s\n",
+                    currTupleIndex,
+                    tupleSize,
+                    tupleSize,
+                    getTargetName(tupleName),
+                    indexReg
+            ));
+        }
 
         if(!isLhs) {
             String currRegister = "%" + numVar++;
-            write(String.format("  %s = load i32, i32* %s\n", currRegister, currArrIndex));
+            write(String.format("  %s = load i32, i32* %s\n", currRegister, currTupleIndex));
             return currRegister;
         } else {
-            return currArrIndex;
+            return currTupleIndex;
         }
     }
 
@@ -336,10 +354,10 @@ public class lingCodeGenListener extends lingBorBaseListener {
             }
         } else {
             String indexReg32 = evalExprRhs(array_eleContext.expr());
-            indexReg = "%idxprom"+numArray;
+            indexReg = "%idxprom"+numInterVar;
             write(String.format("  %s = sext i32 %s to i64\n", indexReg,indexReg32));
         }
-        String currArrIndex = "%arrayidx"+numArray++;
+        String currArrIndex = "%arrayidx"+numInterVar++;
         write(String.format("  %s = getelementptr inbounds [%d x i32], [%d x i32]* %s, i64 0, i64 %s\n",
                 currArrIndex,
                 arraySize,
@@ -386,19 +404,25 @@ public class lingCodeGenListener extends lingBorBaseListener {
         stateForFun = 1;
         String funcName = ctx.id().ID().getSymbol().getText();
         String inputIdName = ctx.expr().id().ID().getSymbol().getText();
+        curFunc = funcMap.get(funcName);
         curFuncInputId = inputIdName;
         funcVarMap = funcMap.get(funcName).getFuncVarMap();
         String type = funcMap.get(funcName).getInputType();
         System.out.println("entering func,input type: "+type);
 
         //TODO: now only support int_lit as input, need to support for tuple
-
-        write(String.format("\ndefine i32 @%s(i32 %s) {\nentry:\n",funcName,"%"+inputIdName));
-        write(String.format("  %s.addr = alloca i32, align 4\n","%"+inputIdName));
-        write(String.format("  store i32 %s, i32* %s.addr, align 4\n","%"+inputIdName,"%"+inputIdName));
+        if(type.equals("INT_LIT")) {
+            write(String.format("\ndefine i32 @%s(i32 %s) {\nentry:\n", funcName, "%" + inputIdName));
+            write(String.format("  %s.addr = alloca i32, align 4\n", "%" + inputIdName));
+            write(String.format("  store i32 %s, i32* %s.addr, align 4\n", "%" + inputIdName, "%" + inputIdName));
+        } else if(type.split(",")[0].equals("TUPLE")){
+            write(String.format("\ndefine i32 @%s(i32* %s) {\nentry:\n", funcName, "%" + inputIdName));
+            write(String.format("  %s.addr = alloca i32*, align 4\n", "%" + inputIdName));
+            write(String.format("  store i32* %s, i32** %s.addr, align 4\n", "%" + inputIdName, "%" + inputIdName));
+        }
 
         for (String idName : funcVarMap.keySet()){
-            if(idName.equals(inputIdName)||symbolMap.containsKey(idName)) {
+            if(idName.equals(inputIdName)||curFunc.getGlobalVarInFunc().contains(idName)) {
                 continue;
             }
             String varType = getTypeByName(idName);
@@ -437,7 +461,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         funcList.add(curFuncText);
         curFuncText = "";
-
+        curFunc = null;
         stateForFun = 0;
 
         numArray = numArrayCopy;
@@ -470,13 +494,32 @@ public class lingCodeGenListener extends lingBorBaseListener {
                     String lengthTuple = getTypeByName(idName).split(",")[1];
                     String[] regsLst = outReg.split(":");
                     for (int i =0;i<regsLst.length;i++){
-                        write(String.format("  store i32 %s, i32* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 %d), align 16\n",
-                                regsLst[i],
-                                lengthTuple,
-                                lengthTuple,
-                                targetName,
-                                i
-                                ));
+                        System.out.println(targetName);
+                        String regOut = regsLst[i];
+                        if(!isNumber(regOut)){
+                            regOut = "%"+numVar++;
+                            write(String.format("  %s = load i32, i32* %s, align 4\n",regOut,regsLst[i]));
+                        }
+                        if(targetName.contains("@")) {
+                            write(String.format("  store i32 %s, i32* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 %d), align 16\n",
+                                    regOut,
+                                    lengthTuple,
+                                    lengthTuple,
+                                    targetName,
+                                    i
+                            ));
+                        } else {
+                            String arrayIndexReg = "%arrayidx"+numInterVar++;
+                            write(String.format("  %s = getelementptr inbounds [%s x i32], [%s x i32]* %s, i64 0, i64 %d\n",
+                                    arrayIndexReg,
+                                    lengthTuple,
+                                    lengthTuple,
+                                    targetName,
+                                    i
+                                    ));
+
+                            write(String.format("  store i32 %s, i32* %s, align 16\n",regOut, arrayIndexReg));
+                        }
                     }
                 }
 
@@ -494,20 +537,27 @@ public class lingCodeGenListener extends lingBorBaseListener {
                 regSymbolMap.clear();
                 String idName = ctx.id(0).ID().getSymbol().getText();
                 String targetName = getTargetName(idName);
-
+                System.out.println(targetName);
                 if (getTypeByName(idName) == "INT_LIT") {
                     write(String.format("  store i32 %s, i32* %s, align 4\n", outReg, targetName));
                 } else if(getTypeByName(idName).split(",")[0].equals("TUPLE")){
                     String lengthTuple = getTypeByName(idName).split(",")[1];
                     String[] regsLst = outReg.split(":");
-                    for (int i =0;i<regsLst.length;i++){
-                        write(String.format("  store i32 %s, i32* getelementptr inbounds ([%s x i32], [%s x i32]* %s, i64 0, i64 %d), align 16\n",
-                                regsLst[i],
+                    for (int i=0; i<regsLst.length; i++) {
+                        String regOut = regsLst[i];
+                        if(!isNumber(regOut)){
+                            regOut = "%"+numVar++;
+                            write(String.format("  %s = load i32, i32* %s, align 4\n",regOut,regsLst[i]));
+                        }
+                        String arrayIndexReg = "%arrayidx" + numInterVar++;
+                        write(String.format("  %s = getelementptr inbounds [%s x i32], [%s x i32]* %s, i64 0, i64 %d\n",
+                                arrayIndexReg,
                                 lengthTuple,
                                 lengthTuple,
                                 targetName,
                                 i
                         ));
+                        write(String.format("  store i32 %s, i32* %s\n", regOut, arrayIndexReg));
                     }
                 }
 
@@ -652,6 +702,7 @@ public class lingCodeGenListener extends lingBorBaseListener {
 
         } else if (ctx.RETURN() != null) {
             IfReturned=1;
+
             String outOp = evalExprRhs(ctx.expr());
             regSymbolMap.clear();
             write(String.format("  ret i32 %s\n",outOp));
@@ -662,7 +713,6 @@ public class lingCodeGenListener extends lingBorBaseListener {
             if (ctx.for_loop().range()!= null) {
                 String lowerBound = evalExprRhs(ctx.for_loop().range().expr(0));
                 String upperBound = evalExprRhs(ctx.for_loop().range().expr(1));
-                System.out.println(idName);
                 String targetName = "%"+idName;
 
                 write(String.format("  %s = alloca i32, align 4\n", targetName));
@@ -807,8 +857,8 @@ public class lingCodeGenListener extends lingBorBaseListener {
         int numLoopCopy = numLoop;
         numLoop += 1;
 
-        String indxReg = "%idxprom"+numArray;
-        String arrayReg = "%arrayidx"+numArray++;
+        String indxReg = "%idxprom"+numInterVar;
+        String arrayReg = "%arrayidx"+numInterVar++;
 
         String outReg = evalExprRhs(ctx.expr(2));
         write(String.format("  %s = sext i32 %s to i64\n", indxReg,"%"+numLoopCopy));

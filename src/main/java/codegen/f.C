@@ -1,21 +1,20 @@
 #include <stdio.h>
 
-int a[5];
 
-void display(int n[])
+int aa = 2;
+
+int display(int n[])
 {
-    for(int i=0; i<5; i++)
-        printf("%d ",n[i]);
+int b[5];
+    return n[0]+n[1];
 }
 
-void displayInt(int a){
-    printf("%d ",a);
-}
 
 int main(){
-    for(int i=0; i<5;i++ ){
-        a[i]=i+1;
-    }
-    display(a);
+int a[5];
+a[1] = aa;
+//a[1] = 3;
+//a[3] = a[0]+a[1];
+printf("%d ",display(a));
 }
 
